@@ -3,8 +3,6 @@ Write-Host "Setting keyboard to Belgian" -ForegroundColor Magenta
 powershell -command "Set-WinUserLanguageList -Force '$keyboard'"
 Write-Host "Keyboard set!"
 
-$dummy = Read-Host "..."
-
 Write-Host "Creating bookmark for Ansible Forms" -ForegroundColor Magenta
 # Define the path to your Chrome bookmarks file
 $bookmarksFilePath = "C:\Users\Administrator.DEMO\AppData\Local\Google\Chrome\User Data\Default\Bookmarks"
@@ -33,8 +31,48 @@ $updatedData | Set-Content $bookmarksFilePath
 
 Write-Host "Bookmark added successfully."
 
+$explanationToShow = @"
 
-$dummy = Read-Host "... install Ansible Forms now ..."
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+> ssh to the redhat server, and execute the following commands:
+> Use putty to connect to rhel1.demo.netapp.com
+> username: root
+> password: Netapp1!
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# disable selinux
+sudo setenforce 0
+
+# install git, vim and podman-compose
+dnf install -y git vim podman-compose
+
+# create the apps folder
+mkdir -p /srv/apps
+cd /srv/apps
+
+# clone the ansible-lod repository
+git clone https://github.com/vcmirko/ansible-lod.git
+cd ansible-lod
+
+# write access will be needed on the datafolder
+chmod -R 664 ./data
+# the mysql init folder needs execute rights 
+chmod -R +x ./data/mysql/init/
+
+# set docker.io as the default registry
+
+
+
+# start the containers
+podman-compose up -d
+
+
+"@
+
+Write-Host $explanationToShow -ForegroundColor Yellow
+
+$dummy = Read-Host "... install Ansible Forms now with the above command on the rhel1 host, press enter when your are done ..."
+
 Write-Host "Creating loopback credentials for self-automation"
 add-type @"
     using System.Net;
@@ -57,12 +95,27 @@ $loginApiUrl = "https://rhel1.demo.netapp.com/api/v1/auth/login"
 # Define your basic authentication credentials
 $basicAuth = "YWRtaW46QW5zaWJsZUZvcm1zITEyMw=="
 
-write-host "Getting token"
-# Make the HTTP POST request to obtain the access token
-$loginResponse = Invoke-RestMethod -Uri $loginApiUrl -Method Post -Headers @{
-    "Authorization" = "Basic $basicAuth"
-} -ContentType "application/json"
+# loop until the token is acquired
 
+while ($true) {
+    try{
+        write-host "Getting token"
+        # Make the HTTP POST request to obtain the access token
+        $loginResponse = Invoke-RestMethod -Uri $loginApiUrl -Method Post -Headers @{
+            "Authorization" = "Basic $basicAuth"
+        } -ContentType "application/json"
+    } catch {
+        write-host "Ansibleforms not running yet"
+        start-sleep -s 5
+        continue
+    }
+    if($loginResponse.token) {
+        break
+    }
+    write-host "Ansibleforms not running yet"
+    start-sleep -s 5
+    continue    
+}
 
 # Check if the login was successful and obtain the access token
 if ($loginResponse.token) {
@@ -130,3 +183,6 @@ if ($loginResponse.token) {
 }
 
 $dummy = Read-Host "Press any key to continue"
+
+
+
