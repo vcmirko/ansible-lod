@@ -13,7 +13,7 @@
     qlogname: "test_create_svm.create_svm"
   roles:
     - { role: maf/facts, qtask: credentials }  
-    - { role: maf/logic, qtask: bypass }
+    - { role: maf/logic, qtask: svm_create }
     - { role: ontap/subnet, qtask: facts }
     - { role: ontap/subnet, qtask: create }
     - { role: ontap/svm, qtask: facts }
