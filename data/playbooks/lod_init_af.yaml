@@ -4,7 +4,7 @@
   tasks:
     - name: Get AF authentication token
       uri:
-        url: "https://rhel1.demo.netapp.com:8443/api/v1/auth/login"
+        url: "https://rhel1.demo.netapp.com/api/v1/auth/login"
         method: POST
         body_format: json
         headers:
@@ -19,7 +19,7 @@
 
     - name: Create AF credential ontap
       uri:
-        url: "https://rhel1.demo.netapp.com:8443/api/v1/credential"
+        url: "https://rhel1.demo.netapp.com/api/v1/credential"
         method: POST
         body_format: json
         headers:
@@ -41,7 +41,7 @@
 
     - name: Create AF credential aiqum
       uri:
-        url: "https://rhel1.demo.netapp.com:8443/api/v1/credential"
+        url: "https://rhel1.demo.netapp.com/api/v1/credential"
         method: POST
         body_format: json
         headers:

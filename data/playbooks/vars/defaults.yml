@@ -5,33 +5,24 @@ vars_defaults:
     api_role         : admin                  # if you want to authentication with certificates / role for user creation
     api_certificate_folder: api_certificates  # folder to store api certificates
     api_certificate_expiry_days: 365          # validity of the api certificates  
-  volume_vmware:
-    multiplier: 1.5
-  volume_cifs:
-    multiplier: 2
   cifs:
-    ou: "CN=Computers,DC=slash,DC=local"
-    domain: slash.local
+    ou: "CN=Computers,DC=demo,DC=netapp,DC=com"
+    domain: demo.netapp.com
   cifs_local_group:
     name: "BUILTIN\\Administrators"
     members: 
-    - "slash\\Domain Admins"       
+    - "demo.netapp.com\\Domain Admins"       
   dns:
-    domains: slash.local
-    servers: 172.16.0.32
+    domains: demo.netapp.com
+    servers: 192.168.0.253
     skip_validation: true
-  vscan_scanner_pools:
-    - scanner_pool: sp-01
-      scanner_policy: primary
-    - scanner_pool: sp-02
-      scanner_policy: secondary
   subnet:
-    name: "mirko-lab"
-    subnet: "172.16.128.0/16"
-    gateway: "172.16.0.1"
-    broadcast_domain: "vlan-16"
+    name: "demo-lab"
+    subnet: "192.168.0.0/24"
+    gateway: "192.168.0.1"
+    broadcast_domain: "e0c"
     ip_ranges:
-      - "172.16.128.100-172.16.128.150"
+      - "192.168.0.160-192.168.0.169"
     ipspace: "Default"
   volume:
     wait_for_completion   : true

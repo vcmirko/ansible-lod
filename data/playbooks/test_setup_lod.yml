@@ -4,7 +4,7 @@
   become: false
   gather_facts: false
   vars_files:
-    - "vars/credentials_lod.yml"
+    - "vars/credentials.yml"
     - "vars/defaults.yml"
     - "vars/templates.yml"
     - "vars/overrides.yml"

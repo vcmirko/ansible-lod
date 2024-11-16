@@ -26,7 +26,8 @@ roles:
       - local/demo
   - name: public
     groups: []
-constants: {}
+constants: 
+  AIQUM_HOST: "aiqum.demo.netapp.com"
 forms:
   - name: Demo Form Ansible No input
     showHelp: true
