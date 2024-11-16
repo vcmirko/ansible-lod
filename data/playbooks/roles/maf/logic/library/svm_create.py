@@ -41,6 +41,7 @@ def run_module():
     err = None
     # debug          = module.params['debug']
     ve             = module.params['vars_external']
+    cluster        = ve.get("cluster", {})
     svm            = ve.get("svm", {})
     volumes        = ve.get("volumes", [])
 
@@ -48,17 +49,17 @@ def run_module():
     try:
 
         # validate input
-        validate_input([source, destination])
+        validate_input([cluser, svm, volumes])
 
         # set template name
         svm["template"] = "nas_nfs"
 
         # complete svm lifs
         if svm.get("lifs", None):   
-            svm["lifs"][0]["node"] = f"{source_cluster['name']}-01" # set node name
+            svm["lifs"][0]["node"] = f"{cluster['name']}-01" # set node name
 
         # loop over volumes and set junction path
-        for volume in source_volumes:
+        for volume in volumes:
             volume["junction_path"] = f"/{volume['name']}"
 
         # reassign to vars_external
