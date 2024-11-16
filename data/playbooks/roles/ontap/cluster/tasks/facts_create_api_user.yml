@@ -1,0 +1,32 @@
+---
+## Naming facts
+- name: Merge Extravars
+  ansible.builtin.set_fact:
+    cluster             : "{{ 'cluster' | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
+
+- debug: var=ontap_username
+- debug: var=ontap_password
+- debug: var=ansible_host
+
+- name: Set naming facts
+  ansible.builtin.set_fact:
+    # ansible_python_interpreter:   /usr/bin/python3
+    netapp_hostname                              : "{{ cluster.management_ip | default(ansible_host) }}"
+    netapp_username                              : "{{ ontap_username }}"
+    netapp_password                              : "{{ ontap_password }}"
+    
+    cluster_api_username                         : "{{ vars_defaults.config.api_username                | default('api_user') }}"
+    cluster_api_role                             : "{{ vars_defaults.config.api_role                    | default('admin') }}"
+    cluster_api_certificate_expiry_days          : "{{ vars_defaults.config.api_certificate_expiry_days | default(365) }}"
+    cluster_api_certificate_expiry_threshold_days: "{{ vars_defaults.config.api_certificate_expiry_threshold_days | default(30) }}"
+    cluster_api_certificate_folder               : "{{ vars_defaults.config.api_certificate_folder      | default('api_certificates') }}"
+    netapp_api_certificate_base                  : "{{ playbook_dir }}/{{ vars_defaults.config.api_certificate_folder | default('api_certificates') }}/{{ cluster.name | default(inventory_hostname) }}___{{ vars_defaults.config.api_username | default('api_user') }}"        
+
+- name: Set naming facts
+  set_fact:
+    cluster_api_key_filepath    : "{{ netapp_api_certificate_base }}.key"
+    cluster_api_cert_filepath   : "{{ netapp_api_certificate_base }}.crt"
+
+
+
+

@@ -1,0 +1,43 @@
+---
+
+- name: "Role - ontap/vserver_peer/create"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_vserver_peer:        "{{ vserver_peer        | to_nice_yaml(2) | indent(2,true) | do_log('ontap/vserver_peer/create','vserver_peer',qlogname) }}"
+
+  - name: "Create vserver peering [{{ vserver_peer[0].svm.name }}] -> [{{ vserver_peer[1].svm.name }}]"  
+    netapp.ontap.na_ontap_vserver_peer:
+      state                       : present
+      peer_vserver                : "{{ vserver_peer[1].svm.name     | default(omit) }}"
+      local_name_for_peer         : "{{ vserver_peer[1].svm.name     | default(omit) }}"
+      vserver                     : "{{ vserver_peer[0].svm.name     | default(omit) }}"
+      local_name_for_source       : "{{ vserver_peer[0].svm.name     | default(omit) }}"
+      peer_cluster                : "{{ vserver_peer[1].cluster.name | default(omit) }}"
+      applications                : ['snapmirror']
+      peer_options:    
+        hostname                  : "{{ vserver_peer[1].cluster.management_ip    | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+    register: vserver_peer_result
+
+  - name: wait for vserver peering to be established
+    pause:
+      seconds: 5
+    when: vserver_peer_result.changed
+
+  when: 
+  - vserver_peer | default([]) | length == 2
+  - vserver_peer[0].svm.name | default(false)
+  - vserver_peer[1].svm.name | default(false)

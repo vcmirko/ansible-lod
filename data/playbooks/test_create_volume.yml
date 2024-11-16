@@ -1,0 +1,21 @@
+---
+- name: "Create volume"
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    - "vars/credentials.yml"
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+    - "vars/tests/test_volume.yml"
+  vars:
+    qlogname: "test_create_volume"
+  roles:
+    - { role: maf/facts, qtask: credentials }  
+    - { role: maf/logic, qtask: bypass }
+    - { role: ontap/volume, qtask: facts }
+    - { role: ontap/volume, qtask: create }
+    - { role: aiqum/management, qtask: facts }
+    - { role: aiqum/management, qtask: rediscover }
+

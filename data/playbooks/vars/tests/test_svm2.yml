@@ -1,0 +1,24 @@
+vars_external:
+  cluster:
+    name: r2d2
+    management_ip: 172.16.57.1
+  svm:
+    name: svm2
+    comment: created by ansible
+    lifs:
+      - address: 172.16.96.4
+        node: r2d2-01
+        port: e0c-16
+        name: data
+        netmask: 255.255.0.0
+        gateway: 172.16.0.1
+        service_policy: default-data-files
+        ipspace_name: Default
+        is_dns_update_enabled: false
+        is_auto_revert: false
+  volumes:
+  - name: vol3
+    size: 50
+  - name: vol4
+    size: 50
+  

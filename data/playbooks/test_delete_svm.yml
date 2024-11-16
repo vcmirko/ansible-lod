@@ -1,0 +1,20 @@
+---
+- name: "Delete Svm"
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    - "vars/credentials.yml"
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+    - "vars/tests/test_svm.yml"
+  vars:
+    qlogname: "test_delete_svm"
+  roles:
+    - { role: maf/facts, qtask: credentials }  
+    - { role: maf/logic, qtask: svm_delete}
+    - { role: ontap/svm, qtask: facts_delete }
+    - { role: ontap/svm, qtask: delete }    
+    - { role: aiqum/management, qtask: facts }
+    - { role: aiqum/management, qtask: rediscover }

@@ -1,0 +1,21 @@
+---
+## Naming facts
+- name: Merge Extravars
+  ansible.builtin.set_fact:
+    cluster             : "{{ 'cluster' | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
+
+- name: Set naming facts
+  ansible.builtin.set_fact:
+    # ansible_python_interpreter:   /usr/bin/python3
+    netapp_hostname            : "{{ cluster.management_ip  | default(ansible_host) }}"
+    netapp_username            : "{{ ontap_username }}"
+    netapp_password            : "{{ ontap_password }}"
+    netapp_api_certificate_base: "{{ playbook_dir }}/{{ vars_defaults.config.api_certificate_folder | default('api_certificates') }}/{{ cluster.name | default('') }}___{{ vars_defaults.config.api_username | default('api_user') }}"
+    netapp_api_use_certificate : "{{ vars_defaults.config.api_use_certificate           | default(false) }}"
+
+- name: Set naming facts - authentication
+  no_log: true
+  set_fact:
+    auth_rest: "{{ netapp_hostname | auth_rest(netapp_username,netapp_password,netapp_api_certificate_base,netapp_api_use_certificate) }}"
+
+

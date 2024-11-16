@@ -1,0 +1,13 @@
+---
+# unfortunately, ansible doesn't allow looping roles
+# so we have a local tasks "create_one" which includes facts & create of the lif role
+# hence we can create multiple lifs in a loop
+
+# - debug: var=qtask_child
+
+- name: create multiple lifs
+  include_tasks: "create_one.yml" 
+  loop_control:
+    loop_var: lif_item
+    label: "Creating lif {{ lif_item.name }}"
+  loop: "{{ lifs }}"

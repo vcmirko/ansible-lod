@@ -1,0 +1,124 @@
+---
+- name: "Role - ontap/cifs/create"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/cifs/create','cluster',qlogname) }}"
+      l_svm:     "{{ svm     | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_cifs:    "{{ cifs    | to_nice_yaml(2) | indent(2,true) | do_log('','cifs',qlogname) }}"
+
+    ## Enable Cifs
+  - name: "Enable cifs"      
+    netapp.ontap.na_ontap_cifs_server:
+      state                   : present
+      vserver                 : "{{ svm.name }}"
+      name                    : "{{ cifs.name }}"
+      admin_user_name         : "{{ ad_username }}"     # need to be processed in the credentials step !
+      admin_password          : "{{ ad_password }}"
+      domain                  : "{{ cifs.domain }}"
+      ou                      : "{{ cifs.ou }}"
+      session_security        : "{{ cifs.session_security         | default(omit) }}"
+      smb_encryption          : "{{ cifs.smb_encryption           | default(omit) }}"
+      smb_signing             : "{{ cifs.smb_signing              | default(omit) }}"
+      try_ldap_channel_binding: "{{ cifs.try_ldap_channel_binding | default(omit) }}"
+      restrict_anonymous      : "{{ cifs.restrict_anonymous       | default(omit) }}"
+      lm_compatibility_level  : "{{ cifs.lm_compatibility_level   | default(omit) }}"
+      ldap_referral_enabled   : "{{ cifs.ldap_referral_enabled    | default(omit) }}"
+      kdc_encryption          : "{{ cifs.kdc_encryption           | default(omit) }}"
+      is_multichannel_enabled : "{{ cifs.is_multichannel_enabled  | default(omit) }}"
+      encrypt_dc_connection   : "{{ cifs.encrypt_dc_connection    | default(omit) }}"
+      default_site            : "{{ cifs.default_site             | default(omit) }}"
+      aes_netlogon_enabled    : "{{ cifs.aes_netlogon_enabled     | default(omit) }}"
+      service_state           : "started"
+      force                   : True
+      <<: *auth
+    no_log: true
+    delegate_to: localhost
+
+    ## Set cifs options with no rest support
+  - name: "Set cifs options - no rest equivalent"
+    netapp.ontap.na_ontap_rest_cli:
+      command: 'cifs/options'
+      verb: 'PATCH'
+      params: 
+        vserver: '{{ svm.name }}'
+      body: 
+        is_advertise_dfs_enabled: "{{ cifs.is_advertise_dfs_enabled | default(omit) }}"
+        is_nbns_enabled         : "{{ cifs.is_nbns_enabled          | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+    when: 
+    - svm.services.cifs.allowed | default(false)
+    - cifs.is_advertise_dfs_enabled is not undefined
+    - cifs.is_nbns_enabled is not undefined
+    - (svm.subtype | default('default')) == 'default'
+
+    ## Create cifs privileges
+  - name: Create cifs privileges
+    netapp.ontap.na_ontap_restit:
+      api: protocols/cifs/users-and-groups/privileges
+      method: POST
+      body:
+        name: "{{ cifs_privilege.name }}"
+        svm: 
+          name: "{{ svm.name }}"
+        privileges: "{{ cifs_privilege.privileges }}"
+      <<: *auth
+    delegate_to: localhost
+    loop_control:
+      loop_var: cifs_privilege
+      label: "Creating cifs privilege for {{ cifs_privilege.name }}"
+    # loop only where name is defined
+    loop: "{{ cifs.privileges | default([]) }}"
+    when: 
+    - cifs.privileges | default(false)
+    - (svm.subtype | default('default')) == 'default'  
+
+    ## Remove admins ==> special case, the list is a list of strings, if the string starts with '!' it should be removed
+  - name: "Remove unwanted admins"          
+    netapp.ontap.na_ontap_cifs_local_group_member:
+      state: absent
+      vserver: "{{ svm.name }}"
+      group: "BUILTIN\\Administrators"
+      member: "{{ member }}"
+      <<: *auth
+    delegate_to: localhost
+    loop: "{{ cifs.administrators | default([]) | select('search', '^!') | map('regex_replace', '^!', '') | list}}"
+    loop_control:
+      loop_var: member
+      label: "Removing {{ member }} to administrators"    
+    when: 
+    - cifs.administrators | default(false)  
+    - (svm.subtype | default('default')) == 'default'
+
+    ## Add Extra admins
+  - name: "Add extra admins"          
+    netapp.ontap.na_ontap_cifs_local_group_member:
+      state: present
+      vserver: "{{ svm.name }}"
+      group: "BUILTIN\\Administrators"
+      member: "{{ member }}"
+      <<: *auth
+    delegate_to: localhost
+    loop: "{{ cifs.administrators | default([]) | reject('search', '^!') | list }}"
+    loop_control:
+      loop_var: member
+      label: "Adding {{ member }} to administrators"    
+    when: 
+    - cifs.administrators | default(false)  
+    - (svm.subtype | default('default')) == 'default'
+
+  when:
+  - svm.name | default(false)
+  - cifs.name | default(false)

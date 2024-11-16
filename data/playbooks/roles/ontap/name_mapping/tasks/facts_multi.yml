@@ -1,0 +1,7 @@
+---
+
+## Naming facts
+- name: Merge Extravars
+  ansible.builtin.set_fact:
+    name_mappings : "{{ 'name_mappings' | merge_lists(v=vars_local,required_keys=['direction'],c=qtask_child) }}"
+

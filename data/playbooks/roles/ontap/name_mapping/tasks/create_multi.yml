@@ -1,0 +1,13 @@
+---
+# unfortunately, ansible doesn't allow looping roles
+# so we have a local tasks "create_one" which includes facts & create of the name_mapping role
+# hence we can create multiple name_mappings in a loop
+
+# - debug: var=qtask_child
+
+- name: Create multiple name_mappings
+  include_tasks: "create_one.yml" 
+  loop_control:
+    loop_var: name_mapping_item
+    label: "Creating name_mapping {{ name_mapping_item.direction }} -> {{ name_mapping_item.index | default('') }}"
+  loop: "{{ name_mappings }}"

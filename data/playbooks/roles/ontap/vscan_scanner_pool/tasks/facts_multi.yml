@@ -1,0 +1,7 @@
+---
+
+## Naming facts
+- name: Merge Extravars
+  ansible.builtin.set_fact:
+    scanner_pools : "{{ 'vscan_scanner_pools' | merge_lists(v=vars_local,required_keys=['scanner_pool'],c=qtask_child) }}"
+

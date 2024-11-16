@@ -1,0 +1,23 @@
+vars_external:
+  cluster:
+    name: bb8
+    management_ip: 172.16.56.1
+  svm:
+    name: svm1
+    comment: created by ansible
+    lifs:
+      - address: 172.16.96.3
+        node: bb8-01
+        port: e0c-16
+        name: data
+        netmask: 255.255.0.0
+        gateway: 172.16.0.1
+        service_policy: default-data-files
+        ipspace_name: Default
+        is_dns_update_enabled: false
+        is_auto_revert: false
+  volumes:
+  - name: vol1
+    size: 50
+  - name: vol2
+    size: 50

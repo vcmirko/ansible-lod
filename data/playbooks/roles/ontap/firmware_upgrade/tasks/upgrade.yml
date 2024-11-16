@@ -1,0 +1,29 @@
+---
+- name: "Role - ontap/firmware_upgrade/upgrade"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/firmware_upgrade/upgrade','cluster',qlogname) }}"
+      l_firmware: "{{ firmware | to_nice_yaml(2) | indent(2,true) | do_log('','firmware',qlogname) }}"
+
+    ## download image
+  - name: "Update disk fw" 
+    na_ontap_firmware_upgrade:
+      package_url: "{{ firmware.baseurl }}/{{ firmware.filename }}"
+      <<: *auth
+    ignore_errors: true
+    delegate_to: localhost
+  when:
+  - firmware.baseurl | default(false)
+  - firmware.filename | default(false)

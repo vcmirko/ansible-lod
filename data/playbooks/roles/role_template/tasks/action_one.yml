@@ -1,0 +1,3 @@
+---
+- include_tasks: "{{ playbook_dir}}/roles/<role_collection>/<role_name>/tasks/facts.yml"
+- include_tasks: "{{ playbook_dir}}/roles/<role_collection>/<role_name>/tasks/<action>.yml"

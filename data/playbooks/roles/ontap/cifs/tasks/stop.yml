@@ -1,0 +1,34 @@
+---
+- name: "Role - ontap/cifs/stop"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/cifs/stop','cluster',qlogname) }}"
+      l_svm:     "{{ svm     | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_cifs:    "{{ cifs    | to_nice_yaml(2) | indent(2,true) | do_log('','cifs',qlogname) }}"
+
+    ## Enable Cifs
+  - name: "Enable cifs"      
+    netapp.ontap.na_ontap_cifs_server:
+      state                   : present
+      vserver                 : "{{ svm.name }}"
+      name                    : "{{ cifs.name }}"
+      service_state           : "stopped"
+      force                   : True
+      <<: *auth
+    delegate_to: localhost
+
+  when: 
+  - cifs.name | default(false)
+  - svm.name | default(false)

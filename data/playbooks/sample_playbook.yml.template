@@ -1,0 +1,67 @@
+---
+###########################################
+# Playbook template
+###########################################
+- name: "Playbook template"
+  hosts: localhost
+  become: false
+  gather_facts: false
+
+###########################################
+# Variables
+# after loading vars files, make sure the following 3 vars are set
+# - vars_defaults
+# - vars_templates
+# - vars_overrides
+# - vars_external
+# These are crucials and must be set in some way or another
+###########################################
+
+  vars_files:
+    - "vars/credentials.yml"
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+    - "vars/tests/empty_vars_external.yml"
+
+###########################################
+# Set play-specific variables
+# If you want logging enabled, set qlogname
+# 
+# Logging is running the custom filter do_log
+# by default it will log logs/ as a logfile
+# if you want to log in a different way, 
+# the code is in the filter_plugins folder
+# write whatever logic makes sense to you
+###########################################
+
+  vars:
+    qlogname: "playbook_template"
+
+###########################################
+# Mandatory Roles
+# 2 custom mandatory roles
+# 1) credentials => to parse/load credentials => custom role
+# 2) logic => to apply logic, convert vars_external to vars_local => custom role
+#    in the logic role, we also default the qlogname, in case logging is not set
+#    qlogname must be set as fast as possible, otherwise logging will break the playbook
+#
+# the folder 'maf' is a custom folder, you can name it whatever you want, matching your customer/project
+# 'maf' is just a sample name and short for 'my ansible framework'
+###########################################
+
+  roles:
+    - { role: maf/facts, qtask: credentials }  
+    - { role: maf/logic, qtask: bypass }
+
+###########################################
+# Add your roles here
+###########################################
+
+    # - { role: ontap/svm, qtask: facts }
+    # - { role: ontap/svm, qtask: create }
+
+###########################################
+# End of play
+# Add more plays if needed
+###########################################

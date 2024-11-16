@@ -1,0 +1,24 @@
+---
+- name: "Setup lod"
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    - "vars/credentials_lod.yml"
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+    - "vars/tests/test_setup_lod.yml"
+  vars:
+    qlogname: "test_setup_lod.create_subnet_and_register"
+  roles:
+    - { role: maf/facts, qtask: credentials }  
+    - { role: maf/logic, qtask: bypass }
+    - { role: ontap/subnet, qtask: facts, qchild: cluster1 }
+    - { role: ontap/subnet, qtask: create, qchild: cluster1 }
+    - { role: ontap/subnet, qtask: facts, qchild: cluster2 }
+    - { role: ontap/subnet, qtask: create, qchild: cluster2 }
+    - { role: aiqum/management, qtask: facts, qchild: cluster1 }
+    - { role: aiqum/management, qtask: register, qchild: cluster1 }
+    - { role: aiqum/management, qtask: facts, qchild: cluster2 }
+    - { role: aiqum/management, qtask: register, qchild: cluster2 }

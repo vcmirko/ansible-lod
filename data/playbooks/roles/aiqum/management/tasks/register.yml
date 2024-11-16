@@ -1,0 +1,55 @@
+---
+- name: "Role - ontap/aiqum/register"
+  block:
+  - set_fact:
+      no_log: true
+      auth: &auth
+        user: "{{ aiq_username }}"
+        password: "{{ aiq_password }}"
+        force_basic_auth: yes
+        validate_certs: no
+        return_content: yes
+        body_format: json      
+
+    # logging
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/aiqum/register','cluster',qlogname) }}"
+
+  - name: Get CLUSTER in Aiqum
+    # no_log: true
+    uri:
+      url: "https://{{ aiq_hostname }}/api/datacenter/cluster/clusters?name={{ cluster_name }}"
+      method: GET
+      status_code: 200,201
+      <<: *auth
+    delegate_to: localhost
+    ignore_errors: true
+    register: cluster_obj
+
+  - block: 
+    - name: Register CLUSTER in Aiqum
+      #  no_log: true
+      uri:
+        url: "https://{{ aiq_hostname }}/api/admin/datasources/clusters"
+        body:
+          address: "{{ cluster_ip }}"
+          username: "{{ netapp_username }}"
+          password: "{{ netapp_password}}"
+          port: 443
+          protocol: https
+        method: POST
+        status_code: 200,201
+        <<: *auth
+      delegate_to: localhost
+      register: aiqum_register_obj
+      ignore_errors: true
+      when: cluster_obj.json.records | length == 0
+    rescue:
+    - debug: 
+        msg: "Cluster registration failed"
+    - debug: var=aiqum_register_obj
+  when:
+  - aiq_hostname | default(false)
+  - aiq_username | default(false)
+  - aiq_password | default(false)
+  - cluster_name | default(false)

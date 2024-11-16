@@ -1,0 +1,12 @@
+---
+vars_overrides:
+  volume:
+    size_unit: mb
+  cifs:
+    domain: "lab.local"
+    ou: "CN=Computers,DC=lab,DC=local"
+  dns:
+    domains: "lab.local"
+    servers: "x.x.x.x"
+  lun:
+    size_unit: mb

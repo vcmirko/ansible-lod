@@ -1,0 +1,13 @@
+---
+# unfortunately, ansible doesn't allow looping roles
+# so we have a local tasks "delete_one" which includes facts & delete of the lif role
+# hence we can delete multiple lifs in a loop
+
+# - debug: var=qtask_child
+
+- name: delete multiple lifs
+  include_tasks: "delete_one.yml" 
+  loop_control:
+    loop_var: lif_item
+    label: "Creating lif {{ lif_item.name }}"
+  loop: "{{ lifs }}"

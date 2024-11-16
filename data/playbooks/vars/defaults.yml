@@ -1,0 +1,54 @@
+vars_defaults:
+  config:
+    api_use_certificate: false
+    api_username     : api_user               # if you want to authentication with certificates
+    api_role         : admin                  # if you want to authentication with certificates / role for user creation
+    api_certificate_folder: api_certificates  # folder to store api certificates
+    api_certificate_expiry_days: 365          # validity of the api certificates  
+  volume_vmware:
+    multiplier: 1.5
+  volume_cifs:
+    multiplier: 2
+  cifs:
+    ou: "CN=Computers,DC=slash,DC=local"
+    domain: slash.local
+  cifs_local_group:
+    name: "BUILTIN\\Administrators"
+    members: 
+    - "slash\\Domain Admins"       
+  dns:
+    domains: slash.local
+    servers: 172.16.0.32
+    skip_validation: true
+  vscan_scanner_pools:
+    - scanner_pool: sp-01
+      scanner_policy: primary
+    - scanner_pool: sp-02
+      scanner_policy: secondary
+  subnet:
+    name: "mirko-lab"
+    subnet: "172.16.128.0/16"
+    gateway: "172.16.0.1"
+    broadcast_domain: "vlan-16"
+    ip_ranges:
+      - "172.16.128.100-172.16.128.150"
+    ipspace: "Default"
+  volume:
+    wait_for_completion   : true
+    percent_snapshot_space: 0
+    space_guarantee       : none
+    read_realloc          : space_optimized
+    language              : c.utf_8
+    type                  : rw
+    size_unit             : gb
+  qos_policy_group: 
+    fixed_qos_options:
+      max_throughput_iops: 0
+      min_throughput_iops: 0
+      max_throughput_mbps: 0
+      min_throughput_mbps: 0
+  lun:
+    size_unit: gb
+  svm:  
+    svm_type: default
+    

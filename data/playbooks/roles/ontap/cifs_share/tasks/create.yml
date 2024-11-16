@@ -1,0 +1,124 @@
+---
+- name: "Role - ontap/cifs_share/create"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/cifs_share/create','cluster',qlogname) }}"
+      l_svm: "{{ svm | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_cifs_share: "{{ cifs_share | to_nice_yaml(2) | indent(2,true) | do_log('','cifs_share',qlogname) }}"
+
+    ## Create Cifs Share
+  - name: "Create Cifs Share [{{ cifs_share.name | default('none') }}]"        
+    netapp.ontap.na_ontap_cifs:
+      state                   : present
+      share_name              : "{{ cifs_share.name }}"
+      path                    : "{{ cifs_share.path                     | default(omit) }}"
+      vserver                 : "{{ svm.name }}"
+      comment                 : "{{ cifs_share.comment                  | default(omit) }}"
+      access_based_enumeration: "{{ cifs_share.access_based_enumeration | default(omit) }}"
+      show_snapshot           : "{{ cifs_share.show_snapshot            | default(omit) }}"
+      show_previous_versions  : "{{ cifs_share.show_previous_versions   | default(omit) }}"
+      oplocks                 : "{{ cifs_share.oplocks                  | default(omit) }}"
+      home_directory          : "{{ cifs_share.home_directory           | default(omit) }}"
+      change_notify           : "{{ cifs_share.change_notify            | default(omit) }}"
+      encryption              : "{{ cifs_share.encryption               | default(omit) }}"
+      namespace_caching       : "{{ cifs_share.namespace_caching        | default(omit) }}"
+      continuously_available  : "{{ cifs_share.continuously_available   | default(omit) }}"
+      cifs_browsable          : "{{ cifs_share.browsable                | default(omit) }}"
+      allow_unencrypted_access: "{{ cifs_share.allow_unencrypted_access | default(omit) }}"
+      unix_symlink            : "{{ cifs_share.unix_symlink             | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+
+  - name: Get cifs share uuid
+    netapp.ontap.na_ontap_restit:
+      api: /protocols/cifs/shares
+      method: GET
+      query:
+        svm.name: "{{ svm.name }}"
+        name: "{{ cifs_share.name }}"
+      <<: *auth
+    delegate_to: localhost
+    register: cifs_share_info
+
+    ## Set Vscan Profile
+
+  - name: "Set Vscan Profile for Cifs Share [{{ cifs_share.name }}]"
+    netapp.ontap.na_ontap_restit:
+      api: /protocols/cifs/shares/{{ cifs_share_info.response.records[0].svm.uuid }}/{{ cifs_share.name}}
+      method: PATCH
+      body:
+        vscan_profile: "{{ cifs_share.vscan_profile | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+    when: 
+      - cifs_share_info.response.num_records | default(0) | int > 0
+      - cifs_share.vscan_profile | default(false)
+
+    ## Create Cifs Share
+  - name: "Setting Cifs Share ACLs"        
+    netapp.ontap.na_ontap_cifs_acl:
+      state                   : "{{ acl.state }}"
+      share_name              : "{{ cifs_share.name }}"
+      vserver                 : "{{ svm.name }}"
+      user_or_group           : "{{ acl.user_or_group }}"
+      permission              : "{{ acl.permission }}"
+      type                    : "{{ acl.acl_type       | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+    loop: "{{ cifs_share.acls }}"
+    loop_control:
+      loop_var: acl
+      label: "Setting {{ acl.state}} -> {{ acl.permission }} for {{ acl.user_or_group }} on {{ cifs_share.name }}"
+    when: 
+    - cifs_share.acls | default(false)
+
+    ## Set Cifs Share file security permissions
+  - name: "Setting file security permissions for Cifs Share [{{ cifs_share.name }}]"          
+    netapp.ontap.na_ontap_file_security_permissions:
+      state         : present
+      vserver       : "{{ svm.name}}"
+      access_control: "{{ cifs_share.file_security_permissions.access_control | default(omit) }}"
+      path          : "{{ cifs_share.path }}"
+      owner         : "{{ cifs_share.file_security_permissions.owner          | default(omit) }}"
+      acls          : "{{ cifs_share.file_security_permissions.acls           | default(omit) }}"
+      group         : "{{ cifs_share.file_security_permissions.group          | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+    when: 
+    - cifs_share.file_security_permissions | default(false)
+
+      ## Set Cifs Share file security permissions acl
+  - name: "Setting file security permissions acl for Cifs Share [{{ cifs_share.name }}]"          
+    netapp.ontap.na_ontap_file_security_permissions_acl:
+      state         : "{{ acl.state             | default('present')}}"
+      vserver       : "{{ svm.name}}"
+      access_control: "{{ acl.access_control     | default(omit) }}"
+      path          : "{{ cifs_share.path }}"
+      access        : "{{ acl.access             | default(omit) }}"
+      acl_user      : "{{ acl.acl_user           | default(omit) }}"
+      apply_to      : "{{ acl.apply_to           | default(omit) }}"
+      propagation_mode: "{{ acl.propagation_mode | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+    loop: "{{ cifs_share.file_security_permissions_acls }}"
+    loop_control:
+      loop_var: acl
+      label: "Setting {{ acl.state }} -> {{ acl.access }} for {{ acl.acl_user }} on {{ cifs_share.path }}"
+    when: 
+    - cifs_share.file_security_permissions_acls | default(false)
+  
+  when: 
+  - cifs_share.name | default(false) 
+  - svm.name | default(false)

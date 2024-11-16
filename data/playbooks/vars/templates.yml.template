@@ -1,0 +1,73 @@
+vars_templates:
+  template_example_cifs:
+    lif:
+      service_policy: default-data-files
+      ipspace_name: Default
+      is_dns_update_enabled: false
+      is_auto_revert: false      
+    svm:
+      allowed_protocols: cifs
+      services:
+        cifs:
+          allowed: true
+        nfs:
+          allowed: false
+      volume_delete_retention_hours: 3
+    volume:
+      volume_security_style: ntfs
+    cifs_share:
+      access_based_enumeration: true
+      file_security_permissions:
+        access_control: file_directory
+        owner: "BUILTIN\\Administrators"
+        group: "BUILTIN\\Administrators"
+        acls:
+        - user: "BUILTIN\\Administrators"
+          access: access_allow
+          apply_to:
+            this_folder: true
+            sub_folders: true
+            files: true
+    cifs:
+      session_security: sign
+      administrators:           # extra admins in builtin\administrators
+      - "SLASH\\mirko"
+      privileges:               # replacement for superuser
+      - name: "BUILTIN\\Administrators"
+        privileges: 
+        - SeTcbPrivilege
+      - name: "SLASH\\Domain Admins"
+        privileges: 
+        - SeTcbPrivilege      
+  template_example_nfs: 
+    lif:
+      service_policy: default-data-files
+      ipspace_name: Default
+      is_dns_update_enabled: false
+      is_auto_revert: false    
+    svm:
+      allowed_protocols: nfs
+      services: 
+        nfs:
+          allowed: true
+          enabled: true
+        cifs:
+          allowed: false
+    volume:
+      volume_security_style: unix
+      snapdir_access: hidden
+    export_policy:
+      name: default
+      rules: 
+        - client_match: "0.0.0.0/0"
+          ro_rule: "sys"
+          rw_rule: "none"
+          super_user_security: "none"
+          protocol: nfs
+          is_new_item: true
+  svm_dr:
+    svm:
+      subtype: dp_destination
+  vol_dr:
+    volume:
+      type: dp

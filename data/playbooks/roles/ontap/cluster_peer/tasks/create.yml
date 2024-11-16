@@ -1,0 +1,37 @@
+---
+- name: "Role - ontap/cluster_peer/create"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_cluster_peer: "{{ cluster_peer | to_nice_yaml(2) | indent(2,true) | do_log('ontap/cluster_peer/create','cluster_peer',qlogname) }}"
+
+  - name: "Create cluster peering between {{ cluster_peer[0].name }} and {{ cluster_peer[1].name }}"  
+    netapp.ontap.na_ontap_cluster_peer:
+      state                       : present
+      source_intercluster_lifs    : "{{ cluster_peer[0].intercluster_ips | default(omit) }}"
+      dest_intercluster_lifs      : "{{ cluster_peer[1].intercluster_ips | default(omit) }}"
+      passphrase                  : "{{ cluster_peer[0].passphrase       | default('ThisIsASecretPassphrase') }}"
+      peer_options:    
+        hostname                  : "{{ cluster_peer[1].management_ip    | default(omit) }}"
+      encryption_protocol_proposed: tls_psk
+      <<: *auth
+    delegate_to: localhost
+  when:
+  - cluster_peer | default([]) | length > 1
+  - cluster_peer[0].name | default(false)
+  - cluster_peer[1].name | default(false)
+  - cluster_peer[0].intercluster_ips | default(false)
+  - cluster_peer[1].intercluster_ips | default(false)
+  - cluster_peer[1].management_ip | default(false)
+  - cluster_peer[0].management_ip | default(false)

@@ -1,0 +1,16 @@
+---
+- name: "End aiqum maintenance with inventory"
+  hosts: ontap_clusters
+  become: false
+  gather_facts: false
+  vars_files:
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+  vars:
+    qlogname: "test_aiqum_maintenance_end_with_inventory"
+    vars_external: {}
+  roles:
+    - { role: maf/logic, qtask: bypass }
+    - { role: aiqum/maintenance, qtask: facts }
+    - { role: aiqum/maintenance, qtask: end }

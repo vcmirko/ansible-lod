@@ -1,0 +1,38 @@
+---
+- name: "Role - ontap/cifs_local_group/add"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/cifs_local_group/add','cluster',qlogname) }}"
+      l_svm:     "{{ svm     | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_cifs_local_group: "{{ cifs_local_group | to_nice_yaml(2) | indent(2,true) | do_log('','cifs_local_group',qlogname) }}"
+
+    ## Add Cifs User To Local Group
+  - name: "Add Cifs Local User To Group [{{ cifs_local_group.name }}]"          
+    netapp.ontap.na_ontap_cifs_local_group_member:
+      state: present
+      vserver: "{{ svm.name }}"
+      group: "{{ cifs_local_group.name }}"
+      member: "{{ member }}"
+      <<: *auth
+    delegate_to: localhost
+    loop: "{{ cifs_local_group.members | list }}"
+    loop_control:
+      loop_var: member
+      label: "{{ member + ' -> ' + cifs_local_group.name  }}"   
+       
+  when: 
+  - svm.name | default(false)
+  - cifs_local_group.members | default(false)
+  - cifs_local_group.name | default(false)

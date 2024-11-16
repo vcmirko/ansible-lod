@@ -1,0 +1,13 @@
+---
+# unfortunately, ansible doesn't allow looping roles
+# so we have a local tasks "Recover_one" which includes facts & Recover of the lun role
+# hence we can Recover multiple luns in a loop
+
+- name: Recover multiple luns
+  # debug:
+  #   msg: "{{ lun.name }}"
+  include_tasks: "recover.yml" 
+  loop_control:
+    loop_var: lun_item
+    label: "Recover lun {{ lun_item.name }}"
+  loop: "{{ luns }}"

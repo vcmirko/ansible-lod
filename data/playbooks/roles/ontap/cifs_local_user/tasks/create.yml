@@ -1,0 +1,45 @@
+---
+- name: "Role - ontap/cifs_local_user/create"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/cifs_local_user/create','cluster',qlogname) }}"
+      l_svm:     "{{ svm     | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_cifs_local_user: "{{ cifs_local_user | to_nice_yaml(2) | indent(2,true) | do_log('','cifs_local_user',qlogname) }}"
+
+    ## Create Cifs Local User
+  - name: "Create cifs local user [{{ cifs_local_user.name | default('None') }}]"        
+    netapp.ontap.na_ontap_cifs_local_user:
+      state           : present
+      vserver         : "{{ svm.name }}"
+      name            : "{{ cifs_local_user.name }}"
+      user_password   : "{{ cifs_local_user.password         | default(omit) }}"
+      full_name       : "{{ cifs_local_user.full_name        | default(omit)  }}"
+      account_disabled: "{{ cifs_local_user.account_disabled | default(omit) }}"
+      description     : "{{ cifs_local_user.description      | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+    no_log: true     
+
+  - name: "Add Cifs Local User [{{ cifs_local_user.name | default(None) }}] To Group [{{ cifs_local_group.name | default(None) }}]"
+    netapp.ontap.na_ontap_cifs_local_group_member:
+      state  : present
+      vserver: "{{ svm.name }}"
+      group  : "{{ cifs_local_group.name | default(omit)}}"
+      member : "{{ cifs_local_user.name  | default(omit)}}"
+      <<: *auth
+    delegate_to: localhost
+  when: 
+  - svm.name | default(false)
+  - cifs_local_user.name | default(false)

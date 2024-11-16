@@ -1,0 +1,13 @@
+---
+# unfortunately, ansible doesn't allow looping roles
+# so we have a local tasks "migrate_one" which includes facts & migrate of the lif role
+# hence we can migrate multiple lifs in a loop
+
+# - debug: var=qtask_child
+
+- name: migrate multiple lifs
+  include_tasks: "migrate_one.yml" 
+  loop_control:
+    loop_var: lif_item
+    label: "Creating lif {{ lif_item.name }}"
+  loop: "{{ lifs }}"

@@ -1,0 +1,32 @@
+---
+- name: "Role - ontap/file_security_permissions/create"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+    # logging
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/file_security_permissions/create','cluster',qlogname) }}"
+      l_svm: "{{ svm | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_file_security_permissions: "{{ file_security_permissions | to_nice_yaml(2) | indent(2,true) | do_log('','file_security_permissions',qlogname) }}"
+
+  - name: "Setting NTFS DACL on {{ file_security_permissions.path | default('none') }}"          
+    netapp.ontap.na_ontap_file_security_permissions:
+      state         : present
+      vserver       : "{{ svm.name}}"
+      access_control: "{{ file_security_permissions.access_control | default(omit) }}"
+      path          : "{{ file_security_permissions.path }}"
+      owner         : "{{ file_security_permissions.owner          | default(omit) }}"
+      acls          : "{{ file_security_permissions.acls           | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+
+  when: file_security_permissions.path | default(false)

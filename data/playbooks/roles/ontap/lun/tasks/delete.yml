@@ -1,0 +1,108 @@
+---
+- name: "Role - ontap/lun/delete"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_cluster:             "{{ cluster             | to_nice_yaml(2) | indent(2,true) | do_log('ontap/lun/delete','cluster',qlogname) }}"
+      l_svm:                 "{{ svm                 | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_volume:              "{{ volume              | to_nice_yaml(2) | indent(2,true) | do_log('','volume',qlogname) }}"
+      l_lun:                 "{{ lun                 | to_nice_yaml(2) | indent(2,true) | do_log('','lun',qlogname) }}"
+
+  - name: Get lun info
+    netapp.ontap.na_ontap_restit:
+      api: /storage/luns
+      method: GET
+      query:
+        location.logical_unit: "{{ lun.name}}"
+        svm.name: "{{ svm.name }}"
+      <<: *auth
+    delegate_to: localhost
+    register: lun_uuid
+
+  # - debug: var=lun_uuid
+
+
+  - name: Get lun info
+    netapp.ontap.na_ontap_restit:
+      api: /storage/luns/{{ lun_uuid.response.records[0].uuid }}
+      method: GET
+      <<: *auth
+    delegate_to: localhost
+    register: lun_info
+    when: lun_uuid.response.num_records > 0
+
+  # - debug: var=lun_info
+
+  - name: Check status 
+    assert:
+      that:
+        - lun_info.response.status.state == "offline"
+        # - lun_info.response.status.mapped == false
+      fail_msg: "LUN is still online"
+      success_msg: "LUN is offline"
+    when: lun_info.response | default(false)
+
+
+  - name: Get all LUN mappings 
+    netapp.ontap.na_ontap_rest_info:
+      gather_subset:
+        - "protocols/san/lun-maps"
+      use_python_keys:            true
+      parameters: 
+        svm.name: "{{ svm.name }}"
+        lun.name: "/vol/{{ volume.name }}/{{ lun.name }}"
+      <<: *auth
+    delegate_to: localhost
+    register: lun_map_info
+    when:
+      - lun_info.response | default(false)
+
+  # # - debug: var=lun_map_info
+
+  - name: Remove all LUN mappings 
+    netapp.ontap.na_ontap_lun_map:
+      state:                    absent
+      vserver:                  "{{ lun_mapping.svm.name }}"
+      initiator_group_name:     "{{ lun_mapping.igroup.name }}"
+      path:                     "{{ lun_mapping.lun.name }}"
+      <<: *auth
+    delegate_to: localhost
+    when:
+      - lun_map_info.ontap_info.protocols_san_lun_maps.num_records|int > 0
+      - lun_mapping.svm.name | default(false)
+      - lun_info.response | default(false)
+    loop_control:
+      loop_var: lun_mapping
+      label: "unmapping lun {{ lun_mapping.lun.name }} from initiator group {{ lun_mapping.igroup.name }} in SVM {{ lun_mapping.svm.name }}"
+    loop:
+      "{{ lun_map_info.ontap_info.protocols_san_lun_maps.records | default([]) }}"
+    
+
+  - name: "Delete lun"
+    netapp.ontap.na_ontap_lun:
+      state: absent
+      vserver:                 "{{ svm.name }}"    
+      name:                    "{{ lun.name }}"
+      flexvol_name:            "{{ volume.name }}"
+      <<: *auth
+    delegate_to: localhost
+    when: 
+    - lun_info.response | default(false)
+
+  when:
+  - volume.name | default(false)
+  - lun.name | default(false)
+  - svm.name | default(false)
+
+

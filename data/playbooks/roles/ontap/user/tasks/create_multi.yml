@@ -1,0 +1,13 @@
+---
+# unfortunately, ansible doesn't allow looping roles
+# so we have a local tasks "create_one" which includes facts & create of the user role
+# hence we can create multiple users in a loop
+
+# - debug: var=qtask_child
+
+- name: Create multiple users
+  include_tasks: "create_one.yml" 
+  loop_control:
+    loop_var: user_item
+    label: "Creating user {{ user_item.name }}"
+  loop: "{{ users }}"

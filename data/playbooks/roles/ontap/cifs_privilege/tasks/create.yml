@@ -1,0 +1,36 @@
+---
+- name: "Role - ontap/cifs_privilege/create"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/cifs_privilege/create','cluster',qlogname) }}"
+      l_svm:     "{{ svm     | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_cifs_privilege: "{{ cifs_privilege | to_nice_yaml(2) | indent(2,true) | do_log('','cifs_privilege',qlogname) }}"
+
+    ## Create Cifs Share
+  - name: "Setting cifs privilege [{{ cifs_privilege.name | default('none') }}]"        
+    netapp.ontap.na_ontap_restit:
+      api: protocols/cifs/users-and-groups/privileges
+      method: POST
+      body:
+        name: "{{ cifs_privilege.name }}"
+        svm: 
+          name: "{{ svm.name }}"
+        privileges: "{{ cifs_privilege.privileges }}"
+      <<: *auth
+    delegate_to: localhost
+
+  when: 
+  - svm.name | default(false)
+  - cifs_privilege.name | default(false)

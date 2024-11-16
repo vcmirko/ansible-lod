@@ -1,0 +1,43 @@
+---
+- name: "Role - ontap/lif/create"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_cluster:               "{{ cluster              | to_nice_yaml(2) | indent(2,true) | do_log('ontap/lif/create','cluster',qlogname) }}"
+      l_svm:                   "{{ svm                  | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_lif:                   "{{ lif                  | to_nice_yaml(2) | indent(2,true) | do_log('','lif',qlogname) }}"
+
+  - name: "create lif {{ lif.name }}"               
+    netapp.ontap.na_ontap_interface:
+      state                : present
+      address              : "{{ lif.address | default(omit) }}"
+      interface_name       : "{{ lif.name }}"
+      interface_type       : "{{ lif.interface_type | default('ip') }}" # manadatory in latest collection
+      vserver              : "{{ svm.name }}"
+      admin_status         : "up"
+      home_node            : "{{ lif.node | default(omit) }}"
+      home_port            : "{{ lif.port | default(omit) }}"
+      subnet_name          : "{{ lif.subnet_name | default(omit) }}"        # you can use a subnet name instead of address/netmask
+      is_auto_revert       : "{{ lif.is_auto_revert | default(omit) }}"
+      is_dns_update_enabled: "{{ lif.is_dns_update_enabled | default(omit) }}"
+      netmask              : "{{ lif.netmask | default(omit) }}"
+      service_policy       : "{{ lif.service_policy | default('default-data-files') }}"
+      ipspace              : "{{ ipspace.name | default(omit) }}"
+      # broadcast_domain     : "{{ broadcast_domain.name | default(omit) }}" # there are some properties mutually exclusive
+      <<: *auth
+    delegate_to: localhost
+
+  when: 
+  - svm.name | default(false)
+  - lif.name | default(false)

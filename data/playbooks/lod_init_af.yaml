@@ -1,0 +1,61 @@
+---
+- name: Perform AF tasks
+  hosts: localhost
+  tasks:
+    - name: Get AF authentication token
+      uri:
+        url: "https://rhel1.demo.netapp.com:8443/api/v1/auth/login"
+        method: POST
+        body_format: json
+        headers:
+          accept: application/json
+        force_basic_auth: true
+        user: "{{ loopback.user }}"
+        password: "{{ loopback.password }}"
+        body: ""
+        status_code: 200
+        validate_certs: no  # Disable certificate validation
+      register: auth_result
+
+    - name: Create AF credential ontap
+      uri:
+        url: "https://rhel1.demo.netapp.com:8443/api/v1/credential"
+        method: POST
+        body_format: json
+        headers:
+          accept: application/json
+          Authorization: "Bearer {{ auth_result.json.token }}"
+          Content-Type: application/json
+        body: |
+          {
+            "name": "ontap_rest",
+            "user": "admin",
+            "password": "{{ password }}",
+            "description": "Ontap connection"
+          }
+        status_code: 200
+        validate_certs: no  # Disable certificate validation
+      when: auth_result.status == 200
+      ignore_errors: true
+
+
+    - name: Create AF credential aiqum
+      uri:
+        url: "https://rhel1.demo.netapp.com:8443/api/v1/credential"
+        method: POST
+        body_format: json
+        headers:
+          accept: application/json
+          Authorization: "Bearer {{ auth_result.json.token }}"
+          Content-Type: application/json
+        body: |
+          {
+            "name": "aiqum_rest",
+            "user": "admin",
+            "password": "{{ password }}",
+            "description": "Ontap connection"
+          }
+        status_code: 200
+        validate_certs: no  # Disable certificate validation
+      when: auth_result.status == 200
+      ignore_errors: true

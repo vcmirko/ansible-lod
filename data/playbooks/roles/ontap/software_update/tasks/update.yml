@@ -1,0 +1,91 @@
+---
+- name: "Role - ontap/sofware/update"
+  block:
+  - set_fact:
+      ontap_login: &ontap_login
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest.validate_certs | default(false) }}"
+        https: "{{ auth_rest.https | default(true) }}"
+        use_rest: always
+
+  # logging
+  - set_fact:
+      l_cluster:    "{{ cluster    | to_nice_yaml(2) | indent(2,true) | do_log('ontap/software/update','cluster',qlogname) }}"
+      l_software:   "{{ software   | to_nice_yaml(2) | indent(2,true) | do_log('','software',qlogname) }}"
+
+  # set the maintenance hours
+  - set_fact:
+      aiqum_ontap_maintenance_hours: 4
+
+    # enable maintenance in aiqum
+  - name: "Enable maintenance in aiqum" 
+    include_tasks: "{{ playbook_dir }}/roles/aiqum/maintenance/tasks/start_one.yml"
+    ignore_errors: true
+
+  - name: Get all ip interfaces not home
+    netapp.ontap.na_ontap_rest_info:
+      fields:
+      - 'location'
+      - 'svm'
+      use_python_keys: true
+      gather_subset:
+        - ip_interfaces_info
+      parameters:
+        location.is_home: false
+      <<: *ontap_login
+    register: lif_info
+    delegate_to: localhost
+
+  - name: "Revert ip interfaces to home"
+    na_ontap_interface:
+      interface_name: "{{ lif.name }}"
+      vserver: "{{ lif.svm.name | default(omit) }}"
+      home_node: "{{ lif.location.home_node.name | default(omit) }}"
+      home_port: "{{ lif.location.home_port.name | default(omit) }}"
+      <<: *ontap_login
+    delegate_to: localhost
+    loop: "{{ lif_info.ontap_info.network_ip_interfaces.records | list }}"
+    loop_control:
+      loop_var: lif
+      label: "reverting {{ lif.name }} on {{ lif.svm.name | default('cluster') }} -> {{ lif.location.home_node.name }}:{{ lif.location.home_port.name }}"
+    when:
+      - lif_info.ontap_info.network_ip_interfaces.num_records|int > 0
+
+    # set autosupport
+  - name: "Invoke Autosupport - MAINTENANCE START" 
+    netapp.ontap.na_ontap_autosupport_invoke:
+      autosupport_message: "MAINT=4h Starting Upgrade to version {{ software.version }}"
+      <<: *ontap_login
+    delegate_to: localhost
+
+    # update image
+  - name: "Update Software" 
+    na_ontap_software_update:
+      state: present
+      download_only: False
+      package_url: ""
+      package_version: "{{ software.version }}"
+      ignore_validation_warning: "{{ software.ignore_validation_warning | default(false) }}"
+      validate_after_download: False
+      <<: *ontap_login
+    ignore_errors: true
+    delegate_to: localhost
+
+    # set autosupport
+  - name: "Invoke Autosupport - MAINTENANCE END" 
+    netapp.ontap.na_ontap_autosupport_invoke:
+      autosupport_message: "MAINT=END Finishing upgrade to version {{ software_version }}"
+      <<: *ontap_login
+    delegate_to: localhost
+
+    # end maintenance in aiqum
+  - name: "End maintenance in aiqum"
+    include_tasks: "{{ playbook_dir }}/roles/aiqum/maintenance/tasks/end_one.yml" 
+    ignore_errors: true
+
+  when:
+  - software.version | default(false)

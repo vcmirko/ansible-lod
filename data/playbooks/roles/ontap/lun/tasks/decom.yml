@@ -1,0 +1,61 @@
+---
+- name: "Role - ontap/lun/decom"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+    
+    # logging
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/lun/decom','cluster',qlogname) }}"
+      l_svm: "{{ svm | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_volume: "{{ volume | to_nice_yaml(2) | indent(2,true) | do_log('','volume',qlogname) }}"
+      l_lun: "{{ lun | to_nice_yaml(2) | indent(2,true) | do_log('','lun',qlogname) }}"
+
+  - name: Get lun uuid
+    netapp.ontap.na_ontap_restit:
+      api: /storage/luns
+      method: GET
+      query:
+        location.logical_unit: "{{ lun.name}}"
+        svm.name: "{{ svm.name }}"
+      <<: *auth
+    register: lun_info
+    delegate_to: localhost
+
+  # - debug: var=lun_info
+
+  - name: "Offline lun"
+    netapp.ontap.na_ontap_restit:
+      api: /storage/luns/{{ lun_info.response.records[0].uuid }}
+      method: PATCH
+      body:
+        enabled: false
+      <<: *auth
+    delegate_to: localhost
+    when: lun_info.response.num_records > 0
+
+  - name: "Rename lun"
+    netapp.ontap.na_ontap_lun:
+      state: present
+      vserver:                 "{{ svm.name }}"   
+      flexvol_name:            "{{ volume.name }}" 
+      from_name:               "{{ lun.name }}"
+      name:                    "del_{{ lun.name }}"
+      <<: *auth
+    delegate_to: localhost
+
+  when: 
+  - volume.name | default(false)
+  - lun.name | default(false)
+  - svm.name | default(false)
+
+
+

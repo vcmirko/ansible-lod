@@ -1,0 +1,7 @@
+---
+- name: Create multiple cifs shares
+  include_tasks: "create_one.yml" 
+  loop_control:
+    loop_var: cifs_share_item
+    label: "Create cifs share [{{ cifs_share_item.name }}"
+  loop: "{{ cifs_shares }}"

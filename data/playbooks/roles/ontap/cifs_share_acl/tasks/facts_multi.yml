@@ -1,0 +1,5 @@
+---
+## Naming facts
+- name: Merge Extravars
+  ansible.builtin.set_fact:
+    cifs_share_acls : "{{ 'cifs_share_acls' | merge_lists(v=vars_local,c=qtask_child) }}"

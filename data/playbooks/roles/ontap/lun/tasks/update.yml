@@ -1,0 +1,47 @@
+---
+- name: "Role - ontap/lun/update"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging 
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/lun/update','cluster',qlogname) }}"
+      l_svm:     "{{ svm     | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_volume:  "{{ volume  | to_nice_yaml(2) | indent(2,true) | do_log('','volume',qlogname) }}"
+      l_lun:     "{{ lun     | to_nice_yaml(2) | indent(2,true) | do_log('','lun',qlogname) }}"
+
+  - name: "Modify lun {{ lun.name  }}"
+    netapp.ontap.na_ontap_lun:
+      state: present
+      vserver:                   "{{ svm.name }}"    
+      name:                      "{{ lun.name }}"
+      flexvol_name:              "{{ volume.name }}"
+      comment:                   "{{ lun.comment                           | default(omit) }}"
+      size:                      "{{ lun.size                              | default(omit) }}"
+      force_resize:              "{{ lun.force_resize                      | default(omit) }}"
+      force_remove_fenced:       "{{ lun.force_remove_fenced               | default(omit) }}"
+      os_type:                   "{{ lun.os_type                           | default(omit) }}"
+      qos_adaptive_policy_group: "{{ lun.qos_adaptive_policy_group         | default(omit) }}"
+      qos_policy_group:          "{{ lun.qos_policy_group                  | default(omit) }}"
+      qtree_name:                "{{ lun.qtree_name                       | default(omit) }}"
+      size_unit:                 "{{ lun.size_unit                        | default(omit) }}"
+      space_allocation:          "{{ lun.space_allocation                 | default(omit) }}"
+      space_reserve:             "{{ lun.space_reserve                    | default(omit) }}"
+      use_exact_size:            "{{ lun.use_exact_size                   | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+    
+  when: 
+  - volume.name | default(false)
+  - lun.name | default(false)
+  - svm.name | default(false)
+

@@ -1,0 +1,24 @@
+---
+- name: "Create volume dr 2"
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    - "vars/credentials.yml"
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+    - "vars/tests/test_volume_dr2.yml"
+  vars:
+    qlogname: "test_create_volume_dr2.create_dr"
+  roles:
+    - { role: maf/facts, qtask: credentials }  
+    - { role: maf/logic, qtask: bypass }
+    - { role: ontap/vserver_peer, qtask: facts }
+    - { role: ontap/vserver_peer, qtask: create }
+    - { role: ontap/volume, qtask: facts_multi }
+    - { role: ontap/volume, qtask: create_multi }    
+    - { role: ontap/snapmirror, qtask: facts_multi }
+    - { role: ontap/snapmirror, qtask: create_multi }   
+    - { role: aiqum/management, qtask: facts }
+    - { role: aiqum/management, qtask: rediscover }

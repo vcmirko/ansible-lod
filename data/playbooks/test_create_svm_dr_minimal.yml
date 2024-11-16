@@ -1,0 +1,96 @@
+---
+- name: "Create cluster peer"
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    # - "vars/credentials.yml"
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+    # - "vars/tests/test_svm_dr_minimal.yml"
+  vars:
+    qlogname: "test_create_svm_dr_minimal.cluster_peer"
+  roles:
+    - { role: maf/facts, qtask: credentials }  
+    - { role: maf/logic, qtask: svm_dr }
+    - { role: ontap/cluster_peer, qtask: facts }
+    - { role: ontap/cluster_peer, qtask: create }
+
+- name: "Create source Svm"
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    # - "vars/credentials.yml"
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+    # - "vars/tests/test_svm_dr_minimal.yml"
+  vars:
+    qlogname: "test_create_svm_dr_minimal.source_svm"
+  roles:
+    - { role: maf/facts, qtask: credentials }  
+    - { role: maf/logic, qtask: svm_dr }  
+    - { role: ontap/svm, qtask: facts, qchild: source }
+    - { role: ontap/svm, qtask: create, qchild: source } 
+    - { role: ontap/volume, qtask: facts_multi, qchild: source }
+    - { role: ontap/volume, qtask: create_multi, qchild: source }
+
+- name: "Create destination Svm"
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    # - "vars/credentials.yml"
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+    # - "vars/tests/test_svm_dr_minimal.yml"
+  vars:
+    qlogname: "test_create_svm_dr_minimal.destination_svm"
+  roles:
+    - { role: maf/facts, qtask: credentials }  
+    - { role: maf/logic, qtask: svm_dr }
+    - { role: ontap/svm, qtask: facts, qchild: destination }
+    - { role: ontap/svm, qtask: create, qchild: destination }
+
+- name: "Create peering and snapmirrors"
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    # - "vars/credentials.yml"
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+    # - "vars/tests/test_svm_dr_minimal.yml"
+  vars:
+    qlogname: "test_create_svm_dr_minimal.peering_snapmirrors"
+  roles:
+    - { role: maf/facts, qtask: credentials }  
+    - { role: maf/logic, qtask: svm_dr }
+    - { role: ontap/vserver_peer, qtask: facts }
+    - { role: ontap/vserver_peer, qtask: create }    
+    - { role: ontap/snapmirror, qtask: facts }
+    - { role: ontap/snapmirror, qtask: create }
+
+- name: "Rediscover aiqum"
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    # - "vars/credentials.yml"
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+    # - "vars/tests/test_svm_dr.yml"
+  vars:
+    qlogname: "test_create_svm_dr_minimal.rediscover_aiqum"
+  roles:
+    - { role: maf/facts, qtask: credentials }  
+    - { role: maf/logic, qtask: svm_dr }
+    - { role: aiqum/management, qtask: fact, qchild: source }
+    - { role: aiqum/management, qtask: rediscover, qchild: source }
+    - { role: aiqum/management, qtask: fact, qchild: destination }
+    - { role: aiqum/management, qtask: rediscover, qchild: destination }

@@ -1,0 +1,63 @@
+vars_external:
+  cluster_peer:
+  - management_ip: 172.16.56.1
+    intercluster_ips: 172.19.56.1
+    name: bb8
+  - management_ip: 172.16.57.1
+    name: r2d2
+    intercluster_ips: 172.19.57.1
+  vserver_peer:
+  - cluster: {name: bb8, management_ip: 172.16.56.1}
+    svm:     {name: svm3 }
+  - cluster: {name: r2d2, management_ip: 172.16.57.1}
+    svm:     {name: svm3_dr }    
+  snapmirror:
+    source:
+      cluster: {name: bb8, management_ip: 172.16.56.1}
+      svm:     {name: svm3}
+    destination:
+      cluster: {name: r2d2, management_ip: 172.16.57.1}
+      svm:     {name: svm3_dr}
+    identity_preservation: full
+  source:
+    cluster: 
+      name: bb8
+      management_ip: 172.16.56.1
+    svm:
+      allowed_protocols: nfs
+      services:
+        nfs:
+          allowed: true
+          enabled: true
+      name: svm3 
+      lifs:
+        - address: 172.16.96.3
+          node: bb8-01
+          port: e0c-16
+          name: data
+          netmask: 255.255.0.0
+          gateway: 172.16.0.1
+          service_policy: default-data-files
+          ipspace_name: Default
+          is_dns_update_enabled: false
+          is_auto_revert: false
+    volumes:
+      - name: vol1
+        size: 50
+        junction_path: /vol1
+        security_style: unix
+        aggregate: aggr1
+      - name: vol2
+        size: 50
+        junction_path: /vol2
+        security_style: unix
+        aggregate: aggr1
+  destination:
+    cluster: 
+      name: r2d2
+      management_ip: 172.16.57.1
+    svm:
+      name: svm3_dr
+      # comment: dr svm for svm3
+      template: svm_dr
+

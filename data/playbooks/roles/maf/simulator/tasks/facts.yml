@@ -1,0 +1,38 @@
+---
+## This is a little merging of dicts of variables to allow defaults to merge with passed parameters
+## We accomplish this by merging 2 objects
+## - vars_defaults (a file default loaded, holding dict vars_defaults, holding your default values)
+## - vars_local (a dict being passed for custom values)
+## they are used to merge together and form a final variable source
+
+- name: Merge Extravars
+  ansible.builtin.set_fact:
+    cluster   : "{{ 'cluster'   | merge_vars(vars_defaults,vars_templates,vars_local) }}"
+    nodes     : "{{ 'nodes'     | merge_lists(vars_defaults,vars_templates,vars_local)}}"
+    simulator : "{{ 'simulator' | merge_vars(vars_defaults,vars_templates,vars_local)}}"
+
+## Here we flatten all the variables
+- name: Set extravars
+  ansible.builtin.set_fact:
+    netapp_hostname                : "{{ cluster.management_ip | default(ansible_host) | default(omit) }}"
+    netapp_username                : "{{ ontap_username | default(omit) }}"
+    netapp_password                : "{{ ontap_password | default(omit) }}"
+    cluster_name                   : "{{ cluster.name }}"
+    cluster_management_ip          : "{{ cluster.management_ip  | default(ansible_host) | default(omit) }}"
+    cluster_netmask                : "{{ cluster.netmask | default(omit) }}"
+    cluster_gateway                : "{{ cluster.gateway | default(omit) }}"
+    cluster_management_port        : "{{ cluster.management_port | default(omit) }}"
+    cluster_dns_domain             : "{{ cluster.dns_domain | default(omit)}}"
+    cluster_dns_server             : "{{ cluster.dns_server | default(omit) }}"
+    cluster_location               : "{{ cluster.location | default(omit) }}"
+    cluster_timezone               : "{{ cluster.timezone | default(omit) }}"
+    cluster_license_codes          : "{{ cluster.license_codes | default(omit) }}"
+    cluster_vlans                  : "{{ cluster.vlans | default(omit) }}"
+    cluster_intercluster_port      : "{{ cluster.intercluster_port | default(omit) }}"
+    cluster_vlan_port              : "{{ cluster.vlan_port | default(omit) }}"
+    vcenter_datacenter             : "{{ simulator.vcenter_datacenter | default('') }}"
+    vcenter_cluster                : "{{ simulator.vcenter_cluster    | default('') }}"
+    node_management_ip             : "{{ nodes[0].management_ip  | default(ansible_host) | default(omit) }}"  # we grab the mgmt ip of the first node
+    node_port                      : "{{ cluster.management_port | default(omit) }}" # we assume all we use the same cluster mgmt and node mgmt port
+    node_netmask                   : "{{ cluster.netmask | default(omit) }}"   # we assume the cluster mgmt netmask and node mgmt netmask is the same
+    node_gateway                   : "{{ cluster.gateway | default(omit) }}"   # we assume the cluster mgmt gateway and node mgmt gateway is the same

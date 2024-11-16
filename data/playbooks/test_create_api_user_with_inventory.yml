@@ -1,0 +1,16 @@
+---
+- name: "Create api user with inventory"
+  hosts: ontap_clusters
+  become: false
+  gather_facts: false
+  vars_files:
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+    - "vars/empty_vars_external.yml"
+  vars:
+    qlogname: "test_create_api_user_with_inventory"
+  roles:
+    - { role: maf/logic, qtask: bypass }
+    - { role: ontap/cluster, qtask: facts_create_api_user }
+    - { role: ontap/cluster, qtask: create_api_user }

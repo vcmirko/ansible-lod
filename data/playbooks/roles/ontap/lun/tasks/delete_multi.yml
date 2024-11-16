@@ -1,0 +1,13 @@
+---
+# unfortunately, ansible doesn't allow looping roles
+# so we have a local tasks "delete_one" which includes facts & delete of the lun role
+# hence we can delete multiple luns in a loop
+
+- name: Delete multiple luns
+  # debug:
+  #   msg: "{{ lun.name }}"
+  include_tasks: "delete_one.yml" 
+  loop_control:
+    loop_var: lun_item
+    label: "Delete lun {{ lun_item.name }}"
+  loop: "{{ luns }}"

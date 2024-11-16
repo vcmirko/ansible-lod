@@ -1,0 +1,31 @@
+---
+- name: "Role - ontap/cifs_local_group/create"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/cifs_local_group/create','cluster',qlogname) }}"
+      l_svm:     "{{ svm     | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_cifs_local_group: "{{ cifs_local_group | to_nice_yaml(2) | indent(2,true) | do_log('','cifs_local_group',qlogname) }}"
+
+    ## Create cifs Local Group
+  - name: "Create cifs local group [{{ cifs_local_group.name }}]"          
+    netapp.ontap.na_ontap_cifs_local_group:
+      state: present
+      vserver: "{{ svm.name }}"
+      group: "{{ cifs_local_group.name }}"
+      <<: *auth
+    delegate_to: localhost
+  when: 
+  - cifs_local_group.name | default(false)
+  - svm.name | default(false)

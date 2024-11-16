@@ -1,0 +1,19 @@
+vars_external:
+  source:
+    cluster: 
+      name: bb8
+      management_ip: 172.16.56.1
+    svm:
+      name: svm3 
+      lifs:
+      - address: 172.16.96.3
+        name: data
+    volumes:
+      - name: vol1
+        size: 50
+      - name: vol2
+        size: 50
+  destination:
+    cluster: 
+      name: r2d2
+      management_ip: 172.16.57.1

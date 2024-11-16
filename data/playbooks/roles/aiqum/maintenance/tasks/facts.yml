@@ -1,0 +1,21 @@
+---
+## Naming facts
+- name: Merge Extravars
+  ansible.builtin.set_fact:
+    cluster: "{{ 'cluster' | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
+
+- name: Set naming facts
+  ansible.builtin.set_fact:
+    # ansible_python_interpreter:   /usr/bin/python3
+    cluster_name:                   "{{ cluster.name | default(inventory_hostname) }}"
+    cluster_ip:                     "{{ cluster.management_ip  | default(ansible_host) | default('') }}"
+
+    aiq_hostname:                   "{{ aiqum_host  | default('') }}"
+    aiq_username:                   "{{ aiqum_username  | default('') }}"
+    aiq_password:                   "{{ aiqum_password  | default('') }}"
+
+    netapp_username:                "{{ ontap_username | default('') }}"
+    netapp_password:                "{{ ontap_password | default('') }}"    
+
+
+  

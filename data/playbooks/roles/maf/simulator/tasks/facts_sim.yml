@@ -1,0 +1,157 @@
+---
+- name: Set simulator facts
+  ansible.builtin.set_fact:
+    simulator_vm_name              : "{{ cluster.name }}"      # we assume the vm will be the cluster name
+    simulator_vm_datastore         : "{{ simulator.vm_datastore         | default('')}}"
+    simulator_vm_disk_provisioning : "{{ simulator.vm_disk_provisioning | default('')}}"
+    simulator_vlan_network         : "{{ simulator.vlan_network         | default('')}}"
+    simulator_data_network         : "{{ simulator.data_network         | default('')}}"
+    simulator_cluster_network      : "{{ simulator.cluster_network      | default('')}}"
+    simulator_vdevinit             : "{{ simulator.vdevinit             | default('')}}"
+    simulator_vm_num_cpus          : "{{ simulator.vm_num_cpus          | default(4) }}"
+    simulator_vm_memory_mb         : "{{ simulator.vm_memory_mb         | default(8192) }}"
+    simulator_vm_num_nics          : "{{ simulator.vm_num_nics          | default(4) }}"
+    simulator_console_muted        : "{{ simulator.simulated_console_muted | default(false) }}"
+    simulator_bootargs             : "{{ simulator.bootargs             | default([]) }}"
+    simulator_sys_serial_number    : "{{ simulator.sys_serial_number    | default('') }}"
+    simulator_disk_model           : "{{ simulator.disk_model           | default('') }}"
+    simulator_node_setup_delay     : "{{ simulator.node_setup_delay     | default(60) }}"
+    simulator_cluster_setup_delay  : "{{ simulator.cluster_setup_delay  | default(150) }}"
+    simulator_ovf_path             : "{{ simulator.ovf_path             | default('') }}"
+    simulator_ovf_file             : "{{ simulator.ovf_file             | default('') }}"
+    simulator_nvram_sysid          : "{{ simulator.nvram_sysid          | default('') }}"    
+
+# Generate a random nvram_sysid 
+- name: generate sysid
+  set_fact:
+    simulator_nvram_sysid: "4082{{ 9 | random(start=0) }}{{ 9 | random(start=0) }}{{ 9 | random(start=0) }}{{ 9 | random(start=0) }}07" #the two current options are 408236507, or 4034389062
+  when: simulator_nvram_sysid == ""
+
+# Processing disk variables.
+# the vsim uses a variable called vdevinit to define its initial disk population
+# values are passed in the format of triples (disk_type:disk_qty:shelf[,...])
+# this section manipulates a set of inputs to parse vdevinit (by default)
+# or allow disk sizes to be passed in human readable form.  
+
+# these are lookup tables
+# mapping common values to closest matching disk type
+- name: disk tables
+  set_fact:
+    simulator_size_table: {
+      '0' : '',
+      '500': '35',
+      '1000': '23',
+      '1024': '23',
+      '2000': '30',
+      '2048': '30',
+      '4000': '31',
+      '4096': '31',
+      '8192': '36', 
+      '9216': '36',
+      '9000': '36'
+    }
+    simulator_type_table: {
+      '0' : '',
+      '35': '500',
+      '23': '1000',
+      '30': '2000',
+      '31': '4000',
+      '36': '9000'      
+    }
+
+- name: set simulator shelf disk size
+  set_fact:
+    simulator_shelf0_disk_size         : "{{ simulator.shelf0_disk_size | default(0) | int }}"
+    simulator_shelf1_disk_size         : "{{ simulator.shelf1_disk_size | default(0) | int }}"
+    simulator_shelf2_disk_size         : "{{ simulator.shelf2_disk_size | default(0) | int }}"
+    simulator_shelf3_disk_size         : "{{ simulator.shelf3_disk_size | default(0) | int }}"
+
+# override vdevinit if any capacities are specifieed
+- name: check for capacity overrides
+  set_fact:
+    simulator_vdevinit: ""
+  when: >
+    ((simulator_shelf0_disk_size + 
+    simulator_shelf1_disk_size +
+    simulator_shelf2_disk_size +
+    simulator_shelf3_disk_size) | int) > 0
+
+# process vdevinit into component parts
+- name: parse vdevinit
+  set_fact:
+    simulator_shelf0_type:    '{{  (simulator_vdevinit.split(",")[0] | default("::0")).split(":")[0] | default("")}}'  
+    simulator_shelf0_qty:     '{{  (simulator_vdevinit.split(",")[0] | default("::0")).split(":")[1] | default("")}}' 
+    simulator_shelf0_shelf:   '{{  (simulator_vdevinit.split(",")[0] | default("::0")).split(":")[2] | default("")}}'   
+    simulator_shelf1_type:    '{{  (simulator_vdevinit.split(",")[1] | default("::1")).split(":")[0] | default("")}}'  
+    simulator_shelf1_qty:     '{{  (simulator_vdevinit.split(",")[1] | default("::1")).split(":")[1] | default("")}}' 
+    simulator_shelf1_shelf:   '{{  (simulator_vdevinit.split(",")[1] | default("::1")).split(":")[2] | default("")}}'      
+    simulator_shelf2_type:    '{{  (simulator_vdevinit.split(",")[2] | default("::2")).split(":")[0] | default("")}}'  
+    simulator_shelf2_qty:     '{{  (simulator_vdevinit.split(",")[2] | default("::2")).split(":")[1] | default("")}}' 
+    simulator_shelf2_shelf:   '{{  (simulator_vdevinit.split(",")[2] | default("::2")).split(":")[2] | default("")}}'  
+    simulator_shelf3_type:    '{{  (simulator_vdevinit.split(",")[3] | default("::3")).split(":")[0] | default("")}}'  
+    simulator_shelf3_qty:     '{{  (simulator_vdevinit.split(",")[3] | default("::3")).split(":")[1] | default("")}}' 
+    simulator_shelf3_shelf:   '{{  (simulator_vdevinit.split(",")[3] | default("::3")).split(":")[2] | default("")}}'   
+
+- name: parse shelfx_disk_type
+  set_fact:
+    simulator_shelf0_type: "{{ simulator.shelf0_disk_type | default(simulator_shelf0_type,true) }}"
+    simulator_shelf1_type: "{{ simulator.shelf1_disk_type | default(simulator_shelf1_type,true) }}"
+    simulator_shelf2_type: "{{ simulator.shelf2_disk_type | default(simulator_shelf2_type,true) }}"
+    simulator_shelf3_type: "{{ simulator.shelf3_disk_type | default(simulator_shelf3_type,true) }}"
+
+- name: parse shelfx_disk_size
+  set_fact:
+    simulator_shelf0_size: "{{ simulator_shelf0_disk_size | default(simulator_type_table[simulator_shelf0_type] | default(''),true) }}"
+    simulator_shelf1_size: "{{ simulator_shelf1_disk_size | default(simulator_type_table[simulator_shelf1_type] | default(''),true) }}"
+    simulator_shelf2_size: "{{ simulator_shelf2_disk_size | default(simulator_type_table[simulator_shelf2_type] | default(''),true) }}"
+    simulator_shelf3_size: "{{ simulator_shelf3_disk_size | default(simulator_type_table[simulator_shelf3_type] | default(''),true) }}"
+
+- name: lookup remaining disk_types 
+  set_fact:
+    shelf0_type: "{{ simulator_shelf0_type | default(simulator_size_table[simulator_shelf0_size] | default(''),true) }}"
+    shelf1_type: "{{ simulator_shelf1_type | default(simulator_size_table[simulator_shelf1_size] | default(''),true) }}"
+    shelf2_type: "{{ simulator_shelf2_type | default(simulator_size_table[simulator_shelf2_size] | default(''),true) }}"
+    shelf3_type: "{{ simulator_shelf3_type | default(simulator_size_table[simulator_shelf3_size] | default(''),true) }}"
+
+- name: parse shelfx_disk_count
+  set_fact:
+    shelf0_qty: "{{ simulator_shelf0_disk_count|default(simulator_shelf0_qty) }}"
+    shelf1_qty: "{{ simulator_shelf1_disk_count|default(simulator_shelf1_qty) }}"
+    shelf2_qty: "{{ simulator_shelf2_disk_count|default(simulator_shelf2_qty) }}"
+    shelf3_qty: "{{ simulator_shelf3_disk_count|default(simulator_shelf3_qty) }}"
+
+# - name: disk configuration
+#   debug:
+#     msg: 
+#       - "vdevinit: {{simulator_vdevinit}}"
+#       - "shelf0: size: {{simulator_shelf0_size}}, type: {{simulator_shelf0_type}}, qty: {{simulator_shelf0_qty}}"
+#       - "shelf1: size: {{simulator_shelf1_size}}, type: {{simulator_shelf1_type}}, qty: {{simulator_shelf1_qty}}"
+#       - "shelf2: size: {{simulator_shelf2_size}}, type: {{simulator_shelf2_type}}, qty: {{simulator_shelf2_qty}}"
+#       - "shelf3: size: {{simulator_shelf3_size}}, type: {{simulator_shelf3_type}}, qty: {{simulator_shelf3_qty}}"      
+
+# reassemble vdevinit
+- name: assemble vdevinit shelf0
+  set_fact:
+    simulator_vdevinit: "{{ simulator_shelf0_type }}:{{ simulator_shelf0_qty|default(14,true) }}:0"
+  when: simulator_shelf0_type|default("") != ""
+
+- name: assemble vdevinit shelf1
+  set_fact:
+    simulator_vdevinit: "{{ simulator_vdevinit }},{{ simulator_shelf1_type }}:{{ simulator_shelf1_qty|default(14,true) }}:1"
+  when: simulator_shelf1_type|default("") != ""
+
+- name: assemble vdevinit shelf2
+  set_fact:
+    simulator_vdevinit: "{{ simulator_vdevinit }},{{ simulator_shelf2_type }}:{{ simulator_shelf2_qty|default(14,true) }}:2"
+  when: simulator_shelf2_type|default("") != ""
+
+- name: assemble vdevinit shelf3
+  set_fact:
+    simulator_vdevinit: "{{ simulator_vdevinit }},{{ simulator_shelf3_type }}:{{ simulator_shelf3_qty|default(14,true) }}:3"
+  when: simulator_shelf3_type|default("") != ""
+
+# - name: final vdevinit
+#   debug:
+#     msg: 
+#       - "vdevinit: {{simulator_vdevinit}}"
+# - meta: end_host

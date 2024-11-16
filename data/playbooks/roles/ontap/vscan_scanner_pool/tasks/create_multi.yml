@@ -1,0 +1,13 @@
+---
+# unfortunately, ansible doesn't allow looping roles
+# so we have a local tasks "create_one" which includes facts & create of the scanner_pool role
+# hence we can create multiple scanner_pools in a loop
+
+# - debug: var=qtask_child
+
+- name: Create multiple scanner_pools
+  include_tasks: "create_one.yml" 
+  loop_control:
+    loop_var: vscan_scanner_pool_item
+    label: "Creating scanner_pool {{ vscan_scanner_pool_item.name }}"
+  loop: "{{ vscan_scanner_pools }}"

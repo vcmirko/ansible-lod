@@ -1,0 +1,39 @@
+---
+- name: "Role - ontap/cifs_share_acl/create"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+      task_action: "{{ 'Create' if cifs_share_acl.state == 'present' else 'Delete' }}"
+
+  # logging
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/cifs_share_acl/create','cluster',qlogname) }}"
+      l_svm: "{{ svm | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_cifs_share_acl: "{{ cifs_share_acl | to_nice_yaml(2) | indent(2,true) | do_log('','cifs_share_acl',qlogname) }}"
+
+    ## Create Cifs Share acl
+  - name: "{{ task_action}} Cifs Share ACL [{{ cifs_share_acl.share_name }}] for [{{ cifs_share_acl.user_or_group }}] with [{{ cifs_share_acl.permission }}]"        
+    netapp.ontap.na_ontap_cifs_acl:
+      state                   : "{{ cifs_share_acl.state }}"
+      share_name              : "{{ cifs_share_acl.share_name }}"
+      vserver                 : "{{ svm.name }}"
+      user_or_group           : "{{ cifs_share_acl.user_or_group }}"
+      permission              : "{{ cifs_share_acl.permission }}"
+      type                    : "{{ cifs_share_acl.type }}"
+      <<: *auth
+    delegate_to: localhost
+  when: 
+  - cifs_share_acl.share_name | default(false)
+  - cifs_share_acl.user_or_group | default(false)
+  - cifs_share_acl.permission | default(false)
+  - cifs_share_acl.type | default(false)
+  - svm.name | default(false)
+  - cifs_share_acl.state | default(false)

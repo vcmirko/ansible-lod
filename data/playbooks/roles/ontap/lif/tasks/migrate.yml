@@ -1,0 +1,33 @@
+---
+- name: "Role - ontap/lif/migrate"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/lif/migrate','cluster',qlogname) }}"
+      l_svm: "{{ svm | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_lif: "{{ lif | to_nice_yaml(2) | indent(2,true) | do_log('','lif',qlogname) }}"
+
+  - name: "migrate lif {{ lif.name }}"               
+    netapp.ontap.na_ontap_interface:
+      state                  : present
+      vserver                : "{{ svm.name | default(omit) }}"
+      name                   : "{{ lif.name }}"
+      current_node           : "{{ lif.node    | default(omit) }}"
+      current_port           : "{{ lif.port    | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+  
+  when: 
+  - svm.name | default(false)
+  - lif.name | default(false)

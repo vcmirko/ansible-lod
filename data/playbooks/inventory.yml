@@ -1,0 +1,15 @@
+---
+ontap_clusters: 
+  hosts:
+    cluster1:
+      ansible_host: 192.168.0.101
+    r2d2:
+      ansible_host: 192.168.0.102
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    ontap_username: admin
+    ontap_password: Netapp1!
+    aiqum_host: aiqum.demo.netapp.com
+    aiqum_username: admin
+    aiqum_password: Netapp1!
+ 

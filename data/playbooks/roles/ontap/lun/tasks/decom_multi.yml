@@ -1,0 +1,13 @@
+---
+# unfortunately, ansible doesn't allow looping roles
+# so we have a local tasks "decom_one" which includes facts & decom of the lun role
+# hence we can decom multiple luns in a loop
+
+- name: Decom multiple luns
+  # debug:
+  #   msg: "{{ lun.name }}"
+  include_tasks: "decom.yml" 
+  loop_control:
+    loop_var: lun_item
+    label: "Decom lun {{ lun_item.name }}"
+  loop: "{{ luns }}"

@@ -1,0 +1,262 @@
+---
+- name: "Role - ontap/svm/create"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_cluster:    "{{ cluster    | to_nice_yaml(2) | indent(2,true) | do_log('ontap/svm/create','cluster',qlogname) }}"
+      l_svm:        "{{ svm        | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+
+    ## Create svm
+  - name: "Create Svm [{{ svm.name }}]"      
+    netapp.ontap.na_ontap_svm:
+      state            : present
+      name             : "{{ svm.name }}"
+      allowed_protocols: "{{ svm.allowed_protocols | default(omit) }}"
+      snapshot_policy  : "{{ svm.snapshot_policy   | default(omit)}}"
+      language         : "{{ svm.language          | default(omit) }}"
+      comment          : "{{ svm.comment           | default(omit) }}"
+      max_volumes      : "{{ svm.max_volumes       | default(omit) }}"
+      subtype          : "{{ svm.subtype           | default(omit) }}"
+      ipspace          : "{{ ipspace.name          | default('Default') }}"
+      <<: *auth
+    delegate_to: localhost
+
+    ## Delegate aggregates
+  - name: "Get aggr list"
+    netapp.ontap.na_ontap_rest_info:
+      gather_subset:
+        - "storage/aggregates"
+      use_python_keys:          true
+      <<: *auth
+    register: aggr_info
+    delegate_to: localhost
+    when: 
+    - svm.set_aggr_list | default(false)  
+    - svm.subtype | default('default') == 'default'
+
+    ## Delegate aggregates
+    ## comment this part if you don't like aggregate delegation
+    ## or use a flag or sorts to enable/disable this part
+  - name: "Set aggregate list [{{ svm.name }}]"      
+    netapp.ontap.na_ontap_svm:
+      state            : present
+      name             : "{{ svm.name }}"
+      aggr_list        : "{{ aggr_info.ontap_info.storage_aggregates.records | map(attribute='name') | flatten }}"
+      <<: *auth
+    delegate_to: localhost
+    when: 
+    - svm.set_aggr_list | default(false)
+    - svm.subtype | default('default') == 'default'
+
+  # rename root volume
+  - name: "Move and rename root volume [{{ svm.name }}]"
+    netapp.ontap.na_ontap_volume:
+      state                           : present
+      name                            : "{{ svm.root_volume.name }}"
+      from_name                       : "{{ svm.name }}_root"
+      vserver                         : "{{ svm.name }}"
+      <<: *auth
+    delegate_to: localhost
+    when: 
+    - svm.root_volume.name | default(false)  
+
+    ## Set svm options
+  - name: "Set SVM Options [{{ svm.name }}]" 
+    na_ontap_svm_options:
+      state  : present
+      vserver: "{{ svm.name }}"
+      name   : "{{ option.name }}"
+      value  : "{{ option.value }}"
+      <<: *auth
+    delegate_to: localhost
+    loop: "{{ svm.options | default([]) }}"
+    loop_control:
+      loop_var: option
+      label: "{{ option.name + ' -> ' + option.value}}"
+    when:
+    - svm.subtype | default('default') == 'default'    
+
+    ## Create lifs
+    ## We call the create_one.yml task from the lif role
+    ## All objects like ipspace/svm/cluster are already set and merged in this parent role
+    ## We just need to set the lif_item as loop variable
+  - name: "Create Lifs [{{ svm.name }}]"
+    include_tasks: "{{ playbook_dir }}/roles/ontap/lif/tasks/create_one.yml"
+    loop: "{{ svm.lifs | default([]) | selectattr('name', 'defined') | list }}"
+    loop_control:
+      loop_var: lif_item
+      label: "{{ lif_item.name + ' -> ' + lif_item.address | default('auto-assign') }}"
+    # ignore_errors: true
+    when:
+    - svm.subtype | default('default') == 'default'
+
+    ## Create default route
+  - name: "create default route [{{ svm.name }}]"
+    netapp.ontap.na_ontap_net_routes:
+      state      : present
+      vserver    : "{{ svm.name }}"
+      destination: "0.0.0.0/0"
+      gateway    : "{{ item.gateway }}"
+      <<: *auth
+    delegate_to: localhost
+    # add a filter to the loop, only loop where gateway is defined
+    loop: "{{ svm.lifs | default([]) | list | selectattr('gateway', 'defined') | list }}"
+    loop_control:
+      label: "{{ item.name + ' -> ' + item.gateway  }}"
+    when:
+    - svm.subtype | default('default') == 'default'  
+
+  # get the svm uuid for further operations
+  - name: Get vserver uuid
+    netapp.ontap.na_ontap_restit:
+      api: /svm/svms
+      method: GET
+      query:
+        name: "{{ svm.name }}"
+      <<: *auth
+    delegate_to: localhost
+    register: svm_info
+    when: 
+    - svm.subtype | default('default') == 'default'
+
+  - name: "Set other svm parameters (using restit) [{{ svm.name }}]"
+    netapp.ontap.na_ontap_restit:
+      api: /svm/svms/{{ svm_info.response.records[0].uuid }}
+      method: PATCH
+      body:
+        max_volumes: "{{ svm_max_volumes | default(omit) }}"
+        # storage_limit: "{{ svm.storage_limit | default(omit) }}"                                 # enable if version 9.13
+        # storage_limit_threshold_alert: "{{ svm.storage_limit_threshold_alert | default(omit) }}" # enable if version 9.13
+        anti_ransomware_default_volume_state: "{{ svm.anti_ransomware_default_volume_state | default(omit) }}"
+        is_space_reporting_logical : "{{ svm.is_space_reporting_logical | default(omit) }}"
+        is_space_enforcement_logical : "{{ svm.is_space_enforcement_logical | default(omit) }}"      
+      <<: *auth
+    delegate_to: localhost
+    when: 
+    - svm_info.response.num_records | default(0) > 0
+    - svm.subtype | default('default') == 'default'
+
+  - name: "Set other svm parameters (using rest_cli) [{{ svm.name }}]"
+    netapp.ontap.na_ontap_rest_cli:
+      command: 'vserver'
+      verb: 'PATCH'
+      params: 
+        vserver: '{{ svm.name }}'
+      body: 
+        volume_delete_retention_hours: "{{ svm.volume_delete_retention_hours | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+    when: 
+    - svm.volume_delete_retention_hours | default(false)
+    - svm.subtype | default('default') == 'default'   
+
+    ## Create dns
+    ## We call the create.yml task from the dns role
+    ## All objects like dns/svm/cluster are already set and merged in this parent role
+  - name: "create dns [{{ svm.name }}]"
+    include_tasks: "{{ playbook_dir }}/roles/ontap/dns/tasks/create.yml"
+    when: 
+    - dns | default(false)
+    - svm.subtype | default('default') == 'default'
+
+    ## Enable Cifs
+    ## We call the create.yml task from the cifs role
+    ## All objects like cifs/svm/cluster are already set and merged in this parent role
+  - name: "Enable cifs [{{ svm.name }}]"      
+    include_tasks: "{{ playbook_dir }}/roles/ontap/cifs/tasks/create.yml"
+    when: 
+    - cifs.name | default(false)
+    - ((svm.services | default({})).cifs | default({})).allowed | default(false)
+    - svm.subtype | default('default') == 'default'
+    ignore_errors: false
+
+  # create domain tunnel
+  - name: "Create Domain Tunnel [{{ svm.name }}]"
+    netapp.ontap.na_ontap_domain_tunnel:
+      state: present
+      vserver: "{{ svm.name }}"
+      <<: *auth
+    delegate_to: localhost
+    when: 
+    - svm.domain_tunnel.enabled | default(false)
+    - svm.subtype | default('default') == 'default'
+
+  #################################################################
+  # enable this part if your scanner pool is not cluster wide
+  #################################################################
+    ## enable scannerpool
+    ## We call the create_one.yml task from the vscan_scanner_pool role
+    ## All objects like svm/cluster are already set and merged in this parent role
+    ## We just need to set the vscan_scanner_pool_item as loop variable
+
+  # - name: "Set vscan scanner pools [{{ svm.name }}]"
+  #   include_tasks: "{{ playbook_dir }}/roles/ontap/vscan_scanner_pool/tasks/create_one.yml"
+  #   loop: "{{ vscan_scanner_pools }}"
+  #   loop_control:
+  #     loop_var: vscan_scanner_pool_item
+  #     label: "Setting vscan scanner pool {{ vscan_scanner_pool_item.scanner_pool }}"
+  #   when: 
+  #     - vscan_scanner_pools | default(false)
+  #     - svm.subtype | default('default') == 'default'
+
+    ## Set vscan (only enable if cifs is enabled)
+  - name: "Set vscan [{{ svm.name }}]"  
+    netapp.ontap.na_ontap_vscan:
+      enable:  "{{ svm.vscan_enable | default(false) }}"
+      vserver: "{{ svm.name }}"
+      <<: *auth  
+    delegate_to: localhost
+    when:
+    - svm.vscan_enable | default(false)
+    - cifs.name | default(false)  
+    - ((svm.services | default({})).cifs | default({})).allowed | default(false)
+    - svm.subtype | default('default') == 'default'
+
+    ## Enable NFS
+    ## We call the create.yml task from the nfs role
+    ## All objects like nfs/svm/cluster are already set and merged in this parent role
+  - name: "Enable nfs [{{ svm.name }}]"      
+    include_tasks: "{{ playbook_dir }}/roles/ontap/nfs/tasks/create.yml"
+    when : 
+    - svm.services.nfs.allowed | default(false)
+    - svm.services.nfs.enabled | default(false)
+    - svm.subtype | default('default') == 'default'
+    # ignore_errors: true  
+
+    ## Enable iscsi
+    ## We call the create.yml task from the iscsi role
+    ## All objects like iscsi/svm/cluster are already set and merged in this parent role
+  - name: "Enable iscsi [{{ svm.name }}]"
+    include_tasks: "{{ playbook_dir }}/roles/ontap/iscsi/tasks/create.yml"
+    when : 
+    - svm.services.iscsi.allowed | default(false)
+    - svm.subtype | default('default') == 'default'
+
+  # enable if you have s3 license and want to remove the s3 protocol
+
+  # - name: "Remove s3 from allowed protocols [{{ svm.name }}]"
+  #   netapp.ontap.na_ontap_rest_cli:
+  #     command: 'vserver/remove-protocols'
+  #     verb: 'POST'
+  #     body: 
+  #       vserver: '{{ svm.name }}'
+  #       protocols: 
+  #       - s3
+  #     <<: *auth
+  #   when: 
+  #   - not (svm.services.s3.enabled | default(false))
+  #   delegate_to: localhost
+
+  when:
+  - svm.name | default(false)

@@ -1,0 +1,28 @@
+---
+- name: "Role - ontap/aiqum/maintenance_end"
+  block:
+  - set_fact:
+      no_log: true
+      auth: &auth
+        hostname: "{{ aiq_hostname }}"
+        username: "{{ aiq_username }}"
+        password: "{{ aiq_password }}"
+        validate_certs: no
+        https: True
+
+    # logging
+  - set_fact:
+      l_cluster: "{{ cluster_name | to_nice_yaml(2) | indent(2,true) | do_log('ontap/aiqum/maintenance_end','cluster',qlogname) }}"
+
+  - name: End maintenance
+    na_aiqum_maintenance:
+      cluster_name: "{{ cluster_name }}"
+      state: absent
+      <<: *auth
+    delegate_to: localhost
+    
+  when:
+  - cluster_name | default(false)
+  - aiq_hostname | default(false)
+  - aiq_username | default(false)
+  - aiq_password | default(false)

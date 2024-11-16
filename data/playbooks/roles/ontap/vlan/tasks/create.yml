@@ -1,0 +1,63 @@
+---
+- name: "Role - ontap/vlan/create"
+  block:
+  - set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        use_rest: always
+    no_log: true
+
+  # logging
+  - set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/vlan/create','cluster',qlogname) }}"
+      l_svm:     "{{ svm     | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_vlan:    "{{ vlan    | to_nice_yaml(2) | indent(2,true) | do_log('','vlan',qlogname) }}"
+
+  - name: "Create VLANs"            
+    netapp.ontap.na_ontap_net_vlan:
+      state           : present
+      vlanid          : "{{ vlan.tag  }}"
+      parent_interface: "{{ vlan.port }}"
+      node            : "{{ vlan.node }}"
+      broadcast_domain: "{{ vlan.broadcast_domain | default(omit) }}"
+      ipspace         : "{{ vlan.ipspace          | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+
+  - name: Initialize ports list
+    set_fact:
+      vlan_ports: []
+
+  - name: Accumulate ports in the list
+    set_fact:
+      vlan_ports: "{{ vlan_ports + [vlan.node ~ ':' ~ vlan.port ~ '-' ~ vlan.tag] }}"
+    loop: "{{ cluster.nodes }}"
+    loop_control:
+      loop_var: node
+      label: "Adding vlan port {{ vlan.node }}:{{ vlan.port }}-{{ vlan.tag }} to {{ vlan.broadcast_domain }}"
+    when:
+    - vlan.broadcast_domain | default(false)
+
+  - name: Add VLAN ports to broadcast domain
+    netapp.ontap.na_ontap_broadcast_domain:
+      state  : present
+      name   : "{{ vlan.broadcast_domain }}"
+      ipspace: "{{ vlan.ipspace }}"
+      ports  : "{{ vlan.ports }}"
+      <<: *auth
+    delegate_to: localhost
+    when:
+    - vlan.broadcast_domain | default(false)
+    - vlan.ipspace | default(false)
+  when:
+  - vlan.tag | default(false)
+  - vlan.port | default(false)
+  - vlan.node | default(false)
+  - svm.name | default(false)  
+  - cluster.nodes | default([]) | length > 0
+  

@@ -1,0 +1,8 @@
+vars_external:
+  cluster:
+    name: r2d2
+    management_ip: 172.16.57.1
+  nodes:
+    - management_ip: 172.16.57.2
+      intercluster_ip: 172.19.57.1
+      name: r2d2-01

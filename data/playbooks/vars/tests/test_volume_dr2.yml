@@ -1,0 +1,33 @@
+vars_external:
+  cluster:
+    name: bb8
+    management_ip: 172.16.56.1
+  svm:
+    name: svm1
+  volumes:
+  - name: vol3
+    template: volume_dr
+  - name: vol4
+    template: volume_dr
+  vserver_peer:
+  - cluster: {name: bb8, management_ip: 172.16.56.1}
+    svm:     {name: svm1 }
+  - cluster: {name: r2d2, management_ip: 172.16.57.1}
+    svm:     {name: svm2 }    
+  snapmirrors:
+  - source:
+      cluster: {name: r2d2, management_ip: 172.16.57.1}
+      svm:     {name: svm2}
+      volume:  {name: vol3}
+    destination:
+      cluster: {name: bb8, management_ip: 172.16.56.1}
+      svm:     {name: svm1}
+      volume:  {name: vol3}
+  - source:
+      cluster: {name: r2d2, management_ip: 172.16.57.1}
+      svm:     {name: svm2}
+      volume:  {name: vol4}
+    destination:
+      cluster: {name: bb8, management_ip: 172.16.56.1}
+      svm:     {name: svm1}
+      volume:  {name: vol4}     

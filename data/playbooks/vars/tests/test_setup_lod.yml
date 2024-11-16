@@ -1,0 +1,13 @@
+vars_external:
+  cluster1:
+    cluster:
+      name: cluster1
+      management_ip: 192.168.0.101
+    subnet:
+      ip_ranges: 192.168.0.160-192.168.0.169
+  cluster2:
+    cluster:
+      name: cluster2
+      management_ip: 192.168.0.102
+    subnet:
+      ip_ranges: 192.168.0.180-192.168.0.189

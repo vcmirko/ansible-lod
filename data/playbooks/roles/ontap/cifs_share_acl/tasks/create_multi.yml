@@ -1,0 +1,8 @@
+
+- name: Create multiple cifs_share_acls
+  include_tasks: "create_one.yml" 
+  loop_control:
+    loop_var: cifs_share_acl_item
+    label: "cifs_share_acl {{ cifs_share_acl_item.user_or_group }} => {{ cifs_share_acl_item.share_name }} [{{ cifs_share_acl_item.state }}]"
+  loop: "{{ cifs_share_acls }}"
+  when: cifs_share_acls | default(false)
