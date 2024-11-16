@@ -20,7 +20,7 @@ vars_defaults:
     name: "demo-lab"
     subnet: "192.168.0.0/24"
     gateway: "192.168.0.1"
-    broadcast_domain: "e0c"
+    broadcast_domain: "Default"
     ip_ranges:
       - "192.168.0.160-192.168.0.169"
     ipspace: "Default"
@@ -38,6 +38,9 @@ vars_defaults:
       min_throughput_iops: 0
       max_throughput_mbps: 0
       min_throughput_mbps: 0
+  lif:
+    port: e0c
+    node: cluster1-01
   lun:
     size_unit: gb
   svm:  
