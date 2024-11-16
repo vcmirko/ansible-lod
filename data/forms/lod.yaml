@@ -2,6 +2,10 @@
   type: ansible
   playbook: lod_init_af.yaml
   description: Initialize Ansible Forms for Lab On Demand
+  help: | 
+    This form initializes Ansible Forms for Lab On Demand. It creates the necessary credentials to connect to ONTAP and AIQUM.   
+    It will use the loopback user and credential, that were created with the powershell setup script.
+  showHelp: true
   roles:
     - admin
   categories:
@@ -17,6 +21,12 @@
 - name: Setup LOD
   type: ansible
   playbook: test_setup_lod.yml
+  description: Setup Lab On Demand
+  help: |
+    This form sets up Lab On Demand.  
+    It creates the necessary subnets and registers the clusters with AIQUM.  
+    In this case, it will use the credentials created with the `Initialize AF for LOD` form.
+  showHelp: true
   description: ""
   roles:
     - public

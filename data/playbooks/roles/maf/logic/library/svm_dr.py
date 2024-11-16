@@ -57,10 +57,13 @@ def run_module():
         # create cluster peer object
         cluster_peer = []
         source_cluster = source["cluster"]
-        source_cluster["intercluster_ips"] = source["cluster"]["management_ip"].replace(".16.", ".19.")
+
+        # in lod, we can calculate the intercluster ips, based on the management ip
+        # it's a bit of a hack, but it works.  We could have also looked them up by rest api
+        source_cluster["intercluster_ips"] = source["cluster"]["management_ip"].replace(".101", ".121").replace(".102", ".123")
         cluster_peer.append(source_cluster)
         destination_cluster = destination["cluster"]
-        destination_cluster["intercluster_ips"] = destination["cluster"]["management_ip"].replace(".16.", ".19.")
+        destination_cluster["intercluster_ips"] = destination["cluster"]["management_ip"].replace(".101", ".121").replace(".102", ".123")
         cluster_peer.append(destination_cluster)
 
         # complete svm lifs
