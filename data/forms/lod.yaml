@@ -27,7 +27,6 @@
     It creates the necessary subnets and registers the clusters with AIQUM.  
     In this case, it will use the credentials created with the `Initialize AF for LOD` form.
   showHelp: true
-  description: ""
   roles:
     - public
   categories:
