@@ -1,77 +1,165 @@
-name: Create svm
-type: ansible
-playbook: test_create_lod_svm.yml
-description: ""
-roles:
-  - public
-categories: 
-- MAF
-tileClass: has-background-info-light
-icon: bullseye
-credentials:
-  ontap: ontap_rest
-  aiqum: aiqum_rest 
-fields:
-  - name: cluster
-    label: cluster
-    group: Resource
-    type: enum
-    default: __auto__
-    expression: fn.fnRestBasic('get','https://$(AIQUM_HOST)/api/datacenter/cluster/clusters','','aiqum_rest','[.records[] | {"name":.name,"management_ip":.management_ip} ]')
-    columns:
-      - name
-      - management_ip
-    required: true
-    line: resource
-    outputObject: true
-    model: vars_external.cluster
-  - name: svm
-    type: text
-    default: ""
-    group: Svm
-    line: svm
-    label: Svm name
-    required: true
-    validIfNot:
-      field: svm_exists
-      description: The svm already exists, use a unique name
-    model: vars_external.svm.name
-  - name: lif_name
-    label: Lif name
-    type: text
-    default: data
-    required: true
-    group: Svm
-    line: svm
-    model: vars_external.svm.lifs[0].name
-  - name: svm_exists
-    type: local
-    expression: |
-      (
-        (svms=[],svm='')=>{ 
-          return svms.includes(svm)
-        }
-      )($(existing_svms),'$(svm)')
-  - name: existing_svms
-    type: expression
-    hide: true
-    noOutput: true
-    expression: fn.fnRestBasic('get','https://$(cluster.management_ip)/api/svm/svms','','aiqum_rest','[.records[] | .name ]')
-  - name: volumes
-    type: table
-    label: Volumes
-    group: Svm
-    line: volumes
-    required: true
-    model: vars_external.volumes
-    tableFields:
-      - name: name
-        type: text
-        label: Name
-      - name: size
-        type: number
-        label: Size (gb)
-        default: 1
-        minValue: 1
-        maxValue: 100
-source: maf.yml
+- name: Create svm
+  type: ansible
+  playbook: test_create_lod_svm.yml
+  description: ""
+  roles:
+    - public
+  categories: 
+  - MAF
+  tileClass: has-background-info-light
+  icon: bullseye
+  credentials:
+    ontap: ontap_rest
+    aiqum: aiqum_rest 
+  fields:
+    - name: cluster
+      label: cluster
+      group: Resource
+      type: enum
+      default: __auto__
+      expression: fn.fnRestBasic('get','https://$(AIQUM_HOST)/api/datacenter/cluster/clusters','','aiqum_rest','[.records[] | {"name":.name,"management_ip":.management_ip} ]')
+      columns:
+        - name
+        - management_ip
+      required: true
+      line: resource
+      outputObject: true
+      model: vars_external.cluster
+    - name: svm
+      type: text
+      default: ""
+      group: Svm
+      line: svm
+      label: Svm name
+      required: true
+      validIfNot:
+        field: svm_exists
+        description: The svm already exists, use a unique name
+      model: vars_external.svm.name
+    - name: lif_name
+      label: Lif name
+      type: text
+      default: data
+      required: true
+      group: Svm
+      line: svm
+      model: vars_external.svm.lifs[0].name
+    - name: svm_exists
+      type: local
+      expression: |
+        (
+          (svms=[],svm='')=>{ 
+            return svms.includes(svm)
+          }
+        )($(existing_svms),'$(svm)')
+    - name: existing_svms
+      type: expression
+      hide: true
+      noOutput: true
+      expression: fn.fnRestBasic('get','https://$(cluster.management_ip)/api/svm/svms','','aiqum_rest','[.records[] | .name ]')
+    - name: volumes
+      type: table
+      label: Volumes
+      group: Svm
+      line: volumes
+      required: true
+      model: vars_external.volumes
+      tableFields:
+        - name: name
+          type: text
+          label: Name
+        - name: size
+          type: number
+          label: Size (gb)
+          default: 1
+          minValue: 1
+          maxValue: 100
+- name: SVM DR
+  type: ansible
+  playbook: test_create_svm_dr_minimal_alt.yml
+  description: ""
+  roles:
+    - public
+  categories:
+    - MAF
+  tileClass: has-background-info-light
+  icon: bullseye
+  credentials:
+    ontap: ontap_rest
+    aiqum: aiqum_rest
+  fields:
+    - name: cluster_source
+      label: Source cluster
+      group: Resource
+      type: enum
+      default: __auto__
+      expression: fn.fnRestBasic('get','https://$(AIQUM_HOST)/api/datacenter/cluster/clusters','','aiqum_rest','[.records[] | {"name":.name,"management_ip":.management_ip} ]')
+      columns:
+        - name
+        - management_ip
+      required: true
+      line: resource
+      outputObject: true
+      model: vars_external.source.cluster
+    - name: cluster_dest
+      label: Destination cluster
+      group: Resource
+      type: enum
+      default: __auto__
+      expression: fn.fnRestBasic('get','https://$(AIQUM_HOST)/api/datacenter/cluster/clusters?name=!$(cluster_source.name)','','aiqum_rest','[.records[] | {"name":.name,"management_ip":.management_ip} ]')
+      columns:
+        - name
+        - management_ip
+      required: true
+      line: resource
+      outputObject: true
+      model: vars_external.destination.cluster
+    - name: svm
+      type: text
+      default: ""
+      group: Svm
+      line: svm
+      label: Svm name
+      required: true
+      validIfNot:
+        field: svm_exists
+        description: The svm already exists, use a unique name
+      model: vars_external.source.svm.name
+    - name: lif_name
+      label: Lif name
+      type: text
+      default: data
+      required: true
+      group: Svm
+      line: svm
+      model: vars_external.source.svm.lifs[0].name
+    - name: svm_exists
+      type: local
+      expression: |
+        (
+          (svms=[],svm='')=>{ 
+            return svms.includes(svm)
+          }
+        )($(existing_svms),'$(svm)')
+    - name: existing_svms
+      type: expression
+      hide: true
+      noOutput: true
+      expression: fn.fnRestBasic('get','https://$(cluster_source.management_ip)/api/svm/svms','','aiqum_rest','[.records[] | .name ]')
+    - name: volumes
+      type: table
+      label: Volumes
+      group: Svm
+      line: volumes
+      required: true
+      model: vars_external.source.volumes
+      tableFields:
+        - name: name
+          type: text
+          label: Name
+        - name: size
+          type: number
+          label: Size (gb)
+          default: 50
+          minValue: 50
+          maxValue: 100
