@@ -17,8 +17,7 @@ fields:
     group: Resource
     type: enum
     default: __auto__
-    expression: fn.fnRestBasic('get','https://$(AIQUM_HOST)/api/datacenter/cluster/clusters','','aiqum_rest','[.records[]
-      | {"name":.name,"management_ip":.management_ip} ]')
+    expression: fn.fnRestBasic('get','https://$(AIQUM_HOST)/api/datacenter/cluster/clusters','','aiqum_rest','[.records[] | {"name":.name,"management_ip":.management_ip} ]')
     columns:
       - name
       - management_ip

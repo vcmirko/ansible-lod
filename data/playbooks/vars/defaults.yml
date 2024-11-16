@@ -40,7 +40,6 @@ vars_defaults:
       min_throughput_mbps: 0
   lif:
     port: e0c
-    node: cluster1-01
   lun:
     size_unit: gb
   svm:  
