@@ -40,6 +40,7 @@ vars_defaults:
       min_throughput_mbps: 0
   lif:
     port: e0c
+    subnet: demo-lab
   lun:
     size_unit: gb
   svm:  
