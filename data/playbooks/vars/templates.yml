@@ -36,10 +36,7 @@ vars_templates:
         - SeTcbPrivilege      
   nas_nfs: &nas_nfs
     lif:
-      port: e0c-16
       name: data
-      netmask: 255.255.0.0
-      gateway: 172.16.0.1
       service_policy: default-data-files
       ipspace_name: Default
       is_dns_update_enabled: false
