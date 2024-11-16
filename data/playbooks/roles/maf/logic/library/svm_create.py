@@ -49,7 +49,7 @@ def run_module():
     try:
 
         # validate input
-        validate_input([cluser, svm, volumes])
+        validate_input([cluster, svm, volumes])
 
         # set template name
         svm["template"] = "nas_nfs"
