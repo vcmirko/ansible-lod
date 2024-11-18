@@ -1,14 +1,12 @@
 ---
-- name: "Create volume"
+- name: "Create lod volume from template"
   hosts: localhost
   become: false
   gather_facts: false
   vars_files:
-    - "vars/credentials.yml"
     - "vars/defaults.yml"
     - "vars/templates.yml"
     - "vars/overrides.yml"
-    - "vars/tests/test_volume.yml"
   vars:
     qlogname: "test_create_volume"
   roles:
