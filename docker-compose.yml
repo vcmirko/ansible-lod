@@ -8,8 +8,8 @@ services:
     restart: unless-stopped
     ports:
       # Mount host port to docker internal port
-      - $SMTP_LOCAL_PORT:$SMTP_DOCKER_PORT
-      - $SMTP_LOCAL_WEB_PORT:$SMTP_DOCKER_WEB_PORT
+      - $SMTP_LOCAL_PORT:1025
+      - $SMTP_WEB_LOCAL_PORT:1080
   # MySql Server
   mysqldb:
     image: docker.io/mysql:8.1
