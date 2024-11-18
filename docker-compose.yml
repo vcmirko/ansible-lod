@@ -1,6 +1,15 @@
 version: '3.0'
 
 services:
+  # Fake mail server
+  mailserver:
+    image: docker.io/haravich/fake-smtp-server
+    container_name: af_mail
+    restart: unless-stopped
+    ports:
+      # Mount host port to docker internal port
+      - $SMTP_LOCAL_PORT:$SMTP_DOCKER_PORT
+      - $SMTP_LOCAL_WEB_PORT:$SMTP_DOCKER_WEB_PORT
   # MySql Server
   mysqldb:
     image: docker.io/mysql:8.1
