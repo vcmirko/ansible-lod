@@ -34,10 +34,15 @@ Write-Host "Bookmark added successfully."
 $explanationToShow = @"
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-> ssh to the redhat server, and execute the following commands:
-> Use putty to connect to rhel1.demo.netapp.com
-> username: root
-> password: Netapp1!
+
+
+ssh to the redhat server, and execute the following commands:
+Use putty to connect to rhel1.demo.netapp.com
+
+username: root
+password: Netapp1!
+
+
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # disable selinux
@@ -183,6 +188,7 @@ if ($loginResponse.token) {
 }
 
 $dummy = Read-Host "Press any key to continue"
-
-
+$dummy = Read-Host "Open chrome browser and use the bookmark created called 'Ansible Forms' to access the application"
+$dummy = Read-Host "Press any key to continue"
+$dummy = Read-Host "Continue the setup from AnsibleForms, see readme from github repository"
 
