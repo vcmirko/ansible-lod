@@ -4,7 +4,10 @@
   description: Initialize Ansible Forms for Lab On Demand
   help: | 
     This form initializes Ansible Forms for Lab On Demand. It creates the necessary credentials to connect to ONTAP and AIQUM.   
-    It will use the loopback user and credential, that were created with the powershell setup script.
+    It will use the loopback user and credential, that were created with the powershell setup script.  
+      
+    Why, you ask?  Just to show it's possible to automate the setup of Ansible Forms as well.  And in the playbook you immediately have the example.    
+    Check out the playbook how it's done.  Also the automation powershell script that created the loopback user and credential, is a good example.  
   showHelp: true
   roles:
     - admin
@@ -17,6 +20,8 @@
   fields: 
   - name: password
     type: password
+    label: "Password for ontap and aiqum"
+    help: "Use 'show extravars' to see what the default password is, it should look familiar"
     default: Netapp1!
 - name: Setup LOD
   type: ansible
@@ -25,7 +30,10 @@
   help: |
     This form sets up Lab On Demand.  
     It creates the necessary subnets and registers the clusters with AIQUM.  
-    In this case, it will use the credentials created with the `Initialize AF for LOD` form.
+    In this case, it will use the credentials to connect, created with the `Initialize AF for LOD` form.  
+      
+    The subnets will allow 10 IP addresses for each cluster, to create svm's, so you don't need to worry about IP addresses.
+    By adding the 2 demo clusters, `cluster1` and `cluster2`, they will be accessible from AIQUM as a resource.
   showHelp: true
   roles:
     - public

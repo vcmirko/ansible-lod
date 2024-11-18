@@ -163,3 +163,68 @@
           default: 50
           minValue: 50
           maxValue: 100
+- name: Create volume from template
+  type: ansible
+  playbook: test_create_lod_volume_template.yml
+  showHelp: true
+  help: |
+    This form will create a volume into an svm, but using a template.  
+    By using the template, you can automatically push a whole bunch of settings.
+  description: ""
+  roles:
+    - public
+  categories:
+    - MAF
+  tileClass: has-background-info-light
+  icon: bullseye
+  credentials:
+    ontap: ontap_rest
+    aiqum: aiqum_rest
+  fields:
+    - name: cluster
+      label: Cluster
+      type: enum
+      default: __auto__
+      expression: fn.fnRestBasic('get','https://$(AIQUM_HOST)/api/datacenter/cluster/clusters','','aiqum_rest','[.records[]
+        | {"name":.name,"management_ip":.management_ip} ]')
+      columns:
+        - name
+        - management_ip
+      required: true
+      line: resource
+      outputObject: true
+      model: vars_external.cluster
+    - name: svm
+      type: enum
+      line: resource
+      required: true
+      default: __auto__
+      label: Svm
+      expression: fn.fnRestBasic('get','https://$(cluster.management_ip)/api/svm/svms','','aiqum_rest','[.records[]
+        | .name ]')
+    - name: volume
+      type: text
+      label: Volume
+      required: true
+      regex:
+        expression: "^vol_[a-z0-9_].*$"
+        description: Volume must start with vol_ and must be alfanumeric
+      model: vars_external.volume.name
+      line: volume
+    - name: size
+      type: number
+      label: Size (GB)
+      required: true
+      minValue: 5
+      default: 5
+      model: vars_external.volume.size
+      line: volume
+    - name: templates
+      type: enum
+      line: volume
+      required: true
+      default: __auto__
+      label: Volume Templates
+      expression: fn.fnReadYamlFile('/app/dist/persistent/playbooks/vars/templates.yml','.vars_templates | to_entries  | map(select(.value | has("volume"))) | map(.key)')
+      model: vars_external.volume.template
+

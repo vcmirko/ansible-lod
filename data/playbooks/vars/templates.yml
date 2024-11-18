@@ -139,3 +139,14 @@ vars_templates:
   volume_dr:
     volume:
       type: dp
+  volume_with_qtrees:
+    volume:
+      security_style: unix
+      size_unit: gb
+      qtrees:
+      - name: qtree1
+        security_style: unix
+        unix_permissions: 777
+      - name: qtree2
+        security_style: unix
+        unix_permissions: 777
