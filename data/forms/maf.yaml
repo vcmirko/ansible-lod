@@ -185,8 +185,7 @@
       label: Cluster
       type: enum
       default: __auto__
-      expression: fn.fnRestBasic('get','https://$(AIQUM_HOST)/api/datacenter/cluster/clusters','','aiqum_rest','[.records[]
-        | {"name":.name,"management_ip":.management_ip} ]')
+      expression: fn.fnRestBasic('get','https://$(AIQUM_HOST)/api/datacenter/cluster/clusters','','aiqum_rest','[.records[] | {"name":.name,"management_ip":.management_ip} ]')
       columns:
         - name
         - management_ip
@@ -200,8 +199,8 @@
       required: true
       default: __auto__
       label: Svm
-      expression: fn.fnRestBasic('get','https://$(cluster.management_ip)/api/svm/svms','','aiqum_rest','[.records[]
-        | .name ]')
+      expression: fn.fnRestBasic('get','https://$(cluster.management_ip)/api/svm/svms','','aiqum_rest','[.records[] | .name ]')
+      model: vars_external.svm.name
     - name: volume
       type: text
       label: Volume
