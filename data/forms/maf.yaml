@@ -226,4 +226,42 @@
       label: Volume Templates
       expression: fn.fnReadYamlFile('/app/dist/persistent/playbooks/vars/templates.yml','.vars_templates | to_entries  | map(select(.value | has("volume"))) | map(.key)')
       model: vars_external.volume.template
+- name: Delete Svm
+  type: ansible
+  playbook: test_delete_lod_svm.yml
+  showHelp: true
+  help: |
+    This form will delete an svm
+  description: ""
+  roles:
+    - public
+  categories:
+    - MAF
+  tileClass: has-background-danger-light
+  icon: trash
+  credentials:
+    ontap: ontap_rest
+    aiqum: aiqum_rest
+  fields:
+    - name: cluster
+      label: Cluster
+      type: enum
+      default: __auto__
+      expression: fn.fnRestBasic('get','https://$(AIQUM_HOST)/api/datacenter/cluster/clusters','','aiqum_rest','[.records[] | {"name":.name,"management_ip":.management_ip} ]')
+      columns:
+        - name
+        - management_ip
+      required: true
+      line: resource
+      outputObject: true
+      model: vars_external.cluster
+    - name: svm
+      type: enum
+      line: resource
+      required: true
+      default: __auto__
+      label: Svm
+      expression: fn.fnRestBasic('get','https://$(cluster.management_ip)/api/svm/svms','','aiqum_rest','[.records[]  | .name ]')
+      model: vars_external.svm.name
+
 
