@@ -244,7 +244,7 @@
     message: |
       You are about to remove the svm $(vars_external.svm.name) from the cluster $(vars_external.cluster.name).<br>
       This action is irreversible.<br><br>
-      The action with requested by $(ansible_user.username).
+      The action with requested by <strong>'$(ansibleforms_user.username)'</strong>.
     roles:
     - admin
     notifications:
