@@ -239,16 +239,6 @@
     - MAF
   tileClass: has-background-danger-light
   icon: trash
-  approval:
-    title: You are about to remove svm $(vars_external.svm.name)
-    message: |
-      You are about to remove the svm <strong>$(vars_external.svm.name)</strong> from the cluster <strong>$(vars_external.cluster.name)</strong>.<br>
-      This action is irreversible.<br><br>
-      The action was requested by <strong>$(ansibleforms_user.username)</strong>.
-    roles:
-    - admin
-    notifications:
-    - approvar@demo.netapp.com
   credentials:
     ontap: ontap_rest
     aiqum: aiqum_rest

@@ -1,6 +1,4 @@
 ## Naming facts
-- debug: var=aiqum_host
-
 - svm_delete:
     vars_external : "{{ vars_external }}"
     aiqum_host    : "{{ aiqum_host }}"
