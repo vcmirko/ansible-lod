@@ -28,11 +28,17 @@
           Content-Type: application/json
         body: |
           {
-            "name": "ontap_rest",
-            "user": "admin",
-            "password": "{{ password }}",
-            "description": "Ontap connection"
-          }
+              "name": "ontap_rest",
+              "user": "admin",
+              "password": "{{ password }}",
+              "host": "",
+              "port": null,
+              "description": "Ontap connection",
+              "secure": null,
+              "db_type": null,
+              "db_name": null,
+              "is_database": 0
+          }       
         status_code: 200
         validate_certs: no  # Disable certificate validation
       when: auth_result.status == 200
@@ -50,11 +56,17 @@
           Content-Type: application/json
         body: |
           {
-            "name": "aiqum_rest",
-            "user": "admin",
-            "password": "{{ password }}",
-            "description": "Ontap connection"
-          }
+              "name": "aiqum_rest",
+              "user": "admin",
+              "password": "{{ password }}",
+              "host": "aiqum.demo.netapp.com",
+              "port": null,
+              "description": "Aiqum connection",
+              "secure": null,
+              "db_type": null,
+              "db_name": null,
+              "is_database": 0
+          }   
         status_code: 200
         validate_certs: no  # Disable certificate validation
       when: auth_result.status == 200
