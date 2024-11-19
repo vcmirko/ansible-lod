@@ -14,7 +14,7 @@ vars_defaults:
     - "demo.netapp.com\\Domain Admins"    
   security_certificate:
     days: 3650
-    expiry_days: -1
+    expiry_days: 3650
   dns:
     domains: demo.netapp.com
     servers: 192.168.0.253
