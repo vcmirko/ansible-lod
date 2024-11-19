@@ -10,7 +10,6 @@ from ansible.module_utils.basic import AnsibleModule
 import re
 import requests
 import urllib3
-import mysql.connector
 
 # Disable SSL certificate warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
