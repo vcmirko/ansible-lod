@@ -183,6 +183,37 @@ if ($loginResponse.token) {
         Write-Host "Failed to create the credential."
     }
 
+    $settingsData = @{
+        "mail_server" = "rhel1.demo.netapp.com"
+        "mail_port" = 25
+        "mail_secure" = 0
+        "mail_username" = ""
+        "mail_password" = ""
+        "mail_from" = "rhel1@demo.netapp.com"
+        "url" = "https://rhel1.demo.netapp.com"
+        "forms_yaml" = ""
+        "enableFormsYamlInDatabase" = $false
+    }
+
+    # Convert the settings data to JSON
+    $settingsDataJson = $settingsData | ConvertTo-Json
+
+    # Define the API URL for updating the settings
+    $apiUrl = "https://rhel1.demo.netapp.com/api/v1/settings/"
+
+    # Make the HTTP PUT request to update the settings using the access token
+    $response = Invoke-RestMethod -Uri $apiUrl -Method Put -Headers @{
+        "Authorization" = "Bearer $accessToken"
+    } -ContentType "application/json" -Body $settingsDataJson
+
+    # Check the response
+    if ($response) {
+        Write-Host "Settings updated successfully."
+    } else {
+        Write-Host "Failed to update the settings."
+    }
+
+
 } else {
     Write-Host "Login failed. Unable to obtain an access token."
 }
