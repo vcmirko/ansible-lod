@@ -20,8 +20,18 @@ $newBookmark = @{
     "url" = "https://rhel1.demo.netapp.com/#/"
 }
 
+$newBookmark2 = @{
+    "date_added" = (Get-Date).Ticks
+    "guid" = [System.Guid]::NewGuid().ToString()
+    "id" = [System.Guid]::NewGuid().ToString()
+    "name" = "Mail Server"
+    "type" = "url"
+    "url" = "http://rhel1.demo.netapp.com"
+}
+
 # Add the new bookmark to the "bookmark_bar" children
 $jsonData.roots.bookmark_bar.children += $newBookmark
+$jsonData.roots.bookmark_bar.children += $newBookmark2
 
 # Convert the updated JSON data back to a string
 $updatedData = $jsonData | ConvertTo-Json -Depth 5
