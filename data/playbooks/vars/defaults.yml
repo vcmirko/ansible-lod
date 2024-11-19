@@ -11,7 +11,10 @@ vars_defaults:
   cifs_local_group:
     name: "BUILTIN\\Administrators"
     members: 
-    - "demo.netapp.com\\Domain Admins"       
+    - "demo.netapp.com\\Domain Admins"    
+  security_certificate:
+    days: 3650
+    expiry_days: 1000
   dns:
     domains: demo.netapp.com
     servers: 192.168.0.253
