@@ -242,9 +242,9 @@
   approval:
     title: You are about to remove svm $(vars_external.svm.name)
     message: |
-      You are about to remove the svm $(vars_external.svm.name) from the cluster $(vars_external.cluster.name).<br>
+      You are about to remove the svm <strong>$(vars_external.svm.name)</strong> from the cluster <strong>$(vars_external.cluster.name)</strong>.<br>
       This action is irreversible.<br><br>
-      The action with requested by <strong>'$(ansibleforms_user.username)'</strong>.
+      The action was requested by <strong>$(ansibleforms_user.username)</strong>.
     roles:
     - admin
     notifications:
