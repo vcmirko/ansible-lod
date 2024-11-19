@@ -197,7 +197,7 @@ def run_module():
         cert_filepath  = dict(type='str', required=False, default=''),
         https          = dict(type='bool', required=False, default=True),
         validate_certs = dict(type='bool', required=False, default=False),
-        use_rest       = dict(type='bool', required=False, default=False),
+        use_rest       = dict(type='str', required=False, default='always'),
         expiry_days    = dict(type='int', required=False, default=365),
         days           = dict(type='int', required=False, default=3650),
         debug          = dict(type='bool', required=False, default=False)
