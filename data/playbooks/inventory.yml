@@ -3,7 +3,7 @@ ontap_clusters:
   hosts:
     cluster1:
       ansible_host: 192.168.0.101
-    r2d2:
+    cluster2:
       ansible_host: 192.168.0.102
   vars:
     ansible_python_interpreter: /usr/bin/python3

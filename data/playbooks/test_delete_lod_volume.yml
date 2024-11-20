@@ -1,0 +1,18 @@
+---
+- name: "Delete Lod Volume"
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+  vars:
+    qlogname: "test_delete_lod_volume"
+  roles:
+    - { role: maf/facts, qtask: credentials }  
+    - { role: maf/logic, qtask: svm_delete}
+    - { role: ontap/volume, qtask: facts }
+    - { role: ontap/volume, qtask: delete }    
+    - { role: aiqum/management, qtask: facts }
+    - { role: aiqum/management, qtask: rediscover }

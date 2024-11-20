@@ -26,6 +26,9 @@
 - name: Setup LOD
   type: ansible
   playbook: test_setup_lod.yml
+  credentials:
+    ontap: ontap_rest
+    aiqum: aiqum_rest
   description: Setup Lab On Demand
   help: |
     This form sets up Lab On Demand.  

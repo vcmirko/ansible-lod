@@ -263,5 +263,49 @@
       label: Svm
       expression: fn.fnRestBasic('get','https://$(cluster.management_ip)/api/svm/svms','','aiqum_rest','[.records[]  | .name ]')
       model: vars_external.svm.name
-
+- name: Delete Volume
+  type: ansible
+  playbook: test_delete_lod_volume.yml
+  showHelp: true
+  help: |
+    This form will delete a volume
+  description: ""
+  roles:
+    - public
+  categories:
+    - MAF
+  tileClass: has-background-danger-light
+  icon: trash
+  credentials:
+    ontap: ontap_rest
+    aiqum: aiqum_rest
+  fields:
+    - name: cluster
+      label: Cluster
+      type: enum
+      default: __auto__
+      expression: fn.fnRestBasic('get','https://$(AIQUM_HOST)/api/datacenter/cluster/clusters','','aiqum_rest','[.records[] | {"name":.name,"management_ip":.management_ip} ]')
+      columns:
+        - name
+        - management_ip
+      required: true
+      line: resource
+      outputObject: true
+      model: vars_external.cluster
+    - name: svm
+      type: enum
+      line: resource
+      required: true
+      default: __auto__
+      label: Svm
+      expression: fn.fnRestBasic('get','https://$(cluster.management_ip)/api/svm/svms','','aiqum_rest','[.records[]  | .name ]')
+      model: vars_external.svm.name
+    - name: volume
+      type: enum
+      line: volume
+      required: true
+      default: __auto__
+      label: Volume
+      expression: fn.fnRestBasic('get','https://$(cluster.management_ip)/api/volume/volumes?svm.name=$(svm)','','aiqum_rest','[.records[]  | .name ]')
+      model: vars_external.volume.name
 
