@@ -8,6 +8,7 @@ __metaclass__ = type
 from ansible.module_utils.basic import AnsibleModule
 
 import csv
+import json
 
 summary=[]
 result = {}
