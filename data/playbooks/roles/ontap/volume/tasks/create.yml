@@ -190,8 +190,6 @@
       <<: *auth
     delegate_to: localhost
     register: volume_info
-    when:
-    - not ansible_check_mode
 
   # set anti-ransomware state
   - name: "Set anti-ransomware state [{{ volume.name }}]"
@@ -204,9 +202,8 @@
       <<: *auth
     delegate_to: localhost      
     when: 
-    - volume_info.response.num_records > 0
+    - volume_info.response.num_records | default(0) > 0
     - volume.anti_ransomware_state | default(false)
-    - not ansible_check_mode
 
   # set read alloc / no rest support
   - name: "Set read-alloc [{{ volume.name }}]"
