@@ -27,10 +27,6 @@ def parse_csv(file_path):
     with open(file_path, mode='r', newline='') as file:
         reader = csv.DictReader(file)
         
-        # Skip the first 3 lines
-        for _ in range(3):
-            next(reader)
-        
         # Convert the remaining rows to a list of dictionaries
         data = [row for row in reader]
     
