@@ -58,6 +58,16 @@ def run_module():
     file_path = '/app/dist/persistent/playbooks/uploads/Epic Sizing_Cleveland Clinic_2020_v4(LUNs).csv'
     parsed_data = parse_csv(file_path)
 
+    # from parsed_data, loop every row.
+    # if aggr, vol_size and max is empty, take the value from previous row
+    for i in range(len(parsed_data)):
+        if not parsed_data[i]['aggr']:
+            parsed_data[i]['aggr'] = parsed_data[i-1]['aggr']
+        if not parsed_data[i]['vol_size']:
+            parsed_data[i]['vol_size'] = parsed_data[i-1]['vol_size']
+        if not parsed_data[i]['max']:
+            parsed_data[i]['max'] = parsed_data[i-1]['max']
+
     # convert parsed data to json
     parsed_data_json = json.dumps(parsed_data)
     log(parsed_data_json)
