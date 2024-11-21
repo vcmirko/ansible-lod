@@ -63,8 +63,8 @@ def run_module():
     for i in range(len(parsed_data)):
         if not parsed_data[i]['aggr']:
             parsed_data[i]['aggr'] = parsed_data[i-1]['aggr']
-        if not parsed_data[i]['vol_size']:
-            parsed_data[i]['vol_size'] = parsed_data[i-1]['vol_size']
+        if not parsed_data[i]['vol-size']:
+            parsed_data[i]['vol-size'] = parsed_data[i-1]['vol-size']
         if not parsed_data[i]['max']:
             parsed_data[i]['max'] = parsed_data[i-1]['max']
 
