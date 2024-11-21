@@ -32,7 +32,9 @@
       <<: *auth
     delegate_to: localhost
     register: rediscover_operation
-    when: cluster_obj.json.records | length | default(0) > 0
+    when: 
+    - not ansible_check_mode
+    - (cluster_obj.json | default({})).records | default([]) | length > 0
 
   - name: Wait for operation
     uri:
