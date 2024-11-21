@@ -108,7 +108,7 @@ def run_module():
                     'aggregate': {
                         'name': parsed_data[i]['aggr']
                     },
-                    'space_guarantee': parsed_data[i]['space-guarantee'],
+                    'space_guarantee': parsed_data[i]['Space Guarantee'],
                     'size': int(parsed_data[i]['vol-size']),
                     # volume.volume_autosize.maximum_size
                     'volume_autosize': {
@@ -120,7 +120,7 @@ def run_module():
                         'enabled': parsed_data[i]['autodelete'] == 'true'
                     },
                     'snapshot_policy': {
-                        'name': parsed_data[i]['snap-policy']
+                        'name': parsed_data[i]['snap policy']
                     },
                     'luns': []
                 }
