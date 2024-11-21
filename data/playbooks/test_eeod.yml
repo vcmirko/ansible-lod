@@ -1,0 +1,17 @@
+---
+- name: "Setup eeod"
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+
+  vars:
+    vars_external: {}
+    qlogname: "test_setup_eeod.create_day1"
+  roles:
+    - { role: maf/facts, qtask: credentials }  
+    - { role: eeod/logic, qtask: parse_csv }
+

@@ -1,0 +1,16 @@
+- parse_csv:
+    vars_external : "{{ vars_external }}"
+  delegate_to: localhost
+  register: logic_result
+
+- set_fact:
+    vars_local : "{{ logic_result.vars }}"
+    qlogname : "{{ qlogname | default('',true) }}"
+
+- set_fact:
+    qlogname: "{{ vars_external | to_nice_yaml(2) | indent(2,true) | do_log('Running logic parse_csv','vars_external',qlogname) }}"
+
+# => parse_csving the logic, just passing the data through, so no need to log the outcome
+
+- set_fact:
+    qlogname: "{{ vars_local | to_nice_yaml(2) | indent(2,true) | do_log('After logic parse_csv','vars_local',qlogname) }}"
