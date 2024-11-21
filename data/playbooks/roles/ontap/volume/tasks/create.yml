@@ -189,6 +189,8 @@
       <<: *auth
     delegate_to: localhost
     register: volume_info
+    when:
+    - not ansible_check_mode
 
   # set anti-ransomware state
   - name: "Set anti-ransomware state [{{ volume.name }}]"
@@ -255,7 +257,7 @@
     loop: "{{ volume.qtrees | default([]) }}" 
     when: 
     - volume.qtrees | default(false)
-    
+
 
     ## Create luns
     ## We execute create_one.yml from the lun role
