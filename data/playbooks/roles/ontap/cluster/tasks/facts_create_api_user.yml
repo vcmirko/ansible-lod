@@ -22,6 +22,8 @@
     cluster_api_certificate_folder               : "{{ vars_defaults.config.api_certificate_folder      | default('api_certificates') }}"
     netapp_api_certificate_base                  : "{{ playbook_dir }}/{{ vars_defaults.config.api_certificate_folder | default('api_certificates') }}/{{ cluster.name | default(inventory_hostname) }}___{{ vars_defaults.config.api_username | default('api_user') }}"        
 
+
+
 - name: Set naming facts
   set_fact:
     cluster_api_key_filepath    : "{{ netapp_api_certificate_base }}.key"
