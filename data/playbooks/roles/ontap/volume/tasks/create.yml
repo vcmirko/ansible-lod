@@ -1,4 +1,5 @@
 ---
+- debug: var=ansible_check_mode
 - name : "Role ontap/volume/create"
   block:
   - set_fact:
