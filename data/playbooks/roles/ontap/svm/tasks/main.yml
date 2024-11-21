@@ -8,4 +8,4 @@
 
     qtask_suffix: "{{ qsuffix | default('') }}"
     qtask_child: "{{ qchild | default('') }}"
-    name_mapping_item:
+    svm_item:

@@ -258,5 +258,17 @@
   #   - not (svm.services.s3.enabled | default(false))
   #   delegate_to: localhost
 
+    ## Create volumes
+    ## We execute create_one.yml from the volume role
+    ## svm, cluster are already processed in this master role, we just need to set the volume_item as loopvar
+  - name: "Create volumes on [{{ svm.name }}]"     
+    include_tasks: "{{ playbook_dir }}/roles/ontap/volume/tasks/create_one.yml"
+    loop_control:
+      loop_var: volume_item
+      label: "Creating volume {{ volume_item.name }}"
+    loop: "{{ svm.volumes | default([]) }}" 
+    when: 
+    - svm.volumes | default(false)
+
   when:
   - svm.name | default(false)

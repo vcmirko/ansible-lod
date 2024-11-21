@@ -6,7 +6,7 @@
     cifs               : "{{ 'cifs'    | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
     dns                : "{{ 'dns'     | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
     cluster            : "{{ 'cluster' | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
-    svm                : "{{ 'svm'     | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
+    svm                : "{{ 'svm'     | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,l=svm_item,o=vars_overrides,c=qtask_child) }}"
     # below is special
     # we need a list, so we merge the lists, but we have a dict in vars_local that has a template name, hence we need to set has_template=True
     vscan_scanner_pools: "{{ 'vscan_scanner_pools' | merge_lists(d=vars_defaults,t=vars_templates,v=vars_local,has_template=True,c=qtask_child) }}"

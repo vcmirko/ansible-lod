@@ -43,6 +43,8 @@
         # nodes_to_exclude         : 
     register: aggr_lookup
     delegate_to: localhost
+    when:
+    - not (volume.aggregate.name | default(true))
 
   # create the volume
   - name: "Create volume [{{ volume.name }}]"
@@ -52,7 +54,7 @@
       vserver:                 "{{ svm.name }}"    
       name:                    "{{ volume.name }}"
       is_infinite: False
-      aggregate_name                  : "{{ aggr_lookup.aggregate.name    | default(omit) }}"
+      aggregate_name                  : "{{ volume.aggregate.name         | aggr_lookup.aggregate.name    | default(omit) }}"
       size                            : "{{ volume.size                   | default(omit) }}"
       size_unit                       : "{{ volume.size_unit              | default(omit) }}"
       space_guarantee                 : "{{ volume.space_guarantee        | default(omit) }}"
