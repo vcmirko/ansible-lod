@@ -1,19 +1,20 @@
-# ontap / dns
+# Tasks Summary
 
-<description>>
+## create.yml
+This file supports the following properties:
 
-## tasks
+### cluster
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the cluster.                   |
 
-- <action> : <action_description>
-- <action> : <action_description>
+### svm
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the SVM.                       |
 
-## Input
-
-- <input>
-- <input>
-
-## execution
-
-**<action>** :
-
-<action_description>
+### dns
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **domain**     | The DNS domain name.                       |
+| **nameservers**| A list of DNS nameservers.                 |

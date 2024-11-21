@@ -1,21 +1,27 @@
-# ontap / cifs_privilege
+# Tasks Summary
 
-This role is used to create a cifs privilege on an svm.
+## create.yml
+This file supports the following properties:
 
-## tasks
+### cluster
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the cluster.                   |
 
-- create : create a cifs privilege on an svm (required credentials : ontap)
+### svm
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the SVM.                       |
 
-## Input
+### cifs_privilege
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the CIFS privilege.            |
+| **privileges** | A list of privileges assigned to the CIFS user. |
 
-- cluster.management_ip
-- svm.name
-- cifs_privilege.name
-- cifs_privilege.privileges
+### privilege
+This dictionary is used within the `cifs_privilege.privileges` list.
 
-## execution
-
-**create** :
-
-- rest call to : protocols/cifs/users-and-groups/privileges
-
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the privilege.                 |

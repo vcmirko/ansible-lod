@@ -1,25 +1,39 @@
-# ontap / cifs_local_group
+# Tasks Summary
 
-This role is used to create a local group on an svm.
+## add.yml
+This file supports the following properties:
 
-## tasks
+### cluster
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the cluster.                   |
 
-- create : create a cifs local group on an svm (required credentials : ontap)
-- add : add a user to a cifs local group to an svm (required credentials : ontap)
+### svm
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the SVM.                       |
 
-## Input
+### cifs_local_group
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the CIFS local group.          |
+| **members**    | The members of the CIFS local group.       |
 
-- cluster.management_ip
-- svm.name
-- cifs_local_group.name
-- cifs_local_group.members
+## create.yml
+This file supports the following properties:
 
-## execution
+### cluster
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the cluster.                   |
 
-**create** :
+### svm
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the SVM.                       |
 
-- na_ontap_cifs_local_group
+### cifs_local_group
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the CIFS local group.          |
 
-**add** :
-
-- na_ontap_cifs_local_group_member

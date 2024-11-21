@@ -306,6 +306,6 @@
       required: true
       default: __auto__
       label: Volume
-      expression: fn.fnRestBasic('get','https://$(cluster.management_ip)/api/volume/volumes?svm.name=$(svm)','','aiqum_rest','[.records[]  | .name ]')
+      expression: fn.fnRestBasic('get','https://$(cluster.management_ip)/api/storage/volumes?svm.name=$(svm)','','aiqum_rest','[.records[]  | .name ]')
       model: vars_external.volume.name
 

@@ -13,16 +13,11 @@ This file supports the following properties:
 |----------------|--------------------------------------------|
 | **name**       | The name of the SVM.                       |
 
-### cifs_local_user
-| Property           | Description                                |
-|--------------------|--------------------------------------------|
-| **name**           | The name of the CIFS local user.           |
-| **password**       | The password for the CIFS local user.      |
-| **full_name**      | The full name of the CIFS local user.      |
-| **description**    | The description of the CIFS local user.    |
-| **account_disabled**| Whether the account is disabled.          |
-
-### cifs_local_group
+### cifs_share_acl
 | Property       | Description                                |
 |----------------|--------------------------------------------|
-| **name**       | The name of the CIFS local group.          |
+| **share_name** | The name of the CIFS share.                |
+| **user_or_group** | The user or group for the ACL.          |
+| **permission** | The permission level for the ACL.          |
+| **type**       | The type of the ACL (e.g., allow, deny).   |
+| **state**      | The state of the ACL (e.g., present, absent). |

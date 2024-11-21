@@ -44,7 +44,9 @@
       body   : {'oplock_mode': '{{ qtree.oplocks }}'}
       <<: *auth
     delegate_to: localhost
-    when: qtree.oplocks | default(false) 
+    when: 
+    - qtree.oplocks | default(false) 
+    - not ansible_check_mode
 
   when:
   - svm.name | default(false)

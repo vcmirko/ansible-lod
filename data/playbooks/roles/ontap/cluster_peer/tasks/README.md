@@ -1,27 +1,26 @@
-# ontap / cluster_peer
+# Tasks Summary
 
-This role is used to create cluster peer relationships.
+## create.yml
+This file supports the following properties:
 
-## tasks
+### cluster
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the cluster.                   |
 
-- create : create a cluster peer relationship (required credentials : ontap)
+### svm
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the SVM.                       |
 
-## Input
+### cluster_peer
+This is a 2-item list where the first entry is the source cluster and the second entry is the destination cluster.
 
-- cluster_peer[0].management_ip
-- cluster_peer[0].intercluster_ips
-- cluster_peer[0].name
-- cluster_peer[1].name
-- cluster_peer[1].intercluster_ips
-- cluster_peer[1].management_ip
-
-## Notes
-
-
-The cluster_peer variable is a list of 2 dictionaries. Each dictionary contains the following keys:
-
-- management_ip : the management IP of the cluster
-- intercluster_ips : the intercluster LIFs of the cluster
-- name : the name of the cluster
-
-The order is not relevant, the first dictionary can be the local cluster or the remote cluster.
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the peer cluster.              |
+| **intercluster_ips** | The intercluster IPs of the peer cluster. |
+| **management_ip** | The management IP of the peer cluster.  |
+| **username**   | The username for the peer cluster.         |
+| **password**   | The password for the peer cluster.         |
+| **passphrase** | The passphrase for the peer cluster.       |

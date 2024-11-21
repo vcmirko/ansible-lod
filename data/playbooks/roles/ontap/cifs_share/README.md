@@ -1,41 +1,45 @@
-# ontap / cifs_share
+# Tasks Summary
 
-This role is used to create a cifs share on an svm.
+## create.yml
+This file supports the following properties:
 
-## tasks
+### cluster
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the cluster.                   |
 
-- create : create a cifs share on an svm (required credentials : ontap)
+### svm
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **name**       | The name of the SVM.                       |
 
-## Input
+### cifs_share
+| Property                   | Description                                |
+|----------------------------|--------------------------------------------|
+| **name**                   | The name of the CIFS share.                |
+| **path**                   | The path of the CIFS share.                |
+| **comment**                | The comment for the CIFS share.            |
+| **access_based_enumeration**| Whether access-based enumeration is enabled. |
+| **show_snapshot**          | Whether to show snapshots.                 |
+| **show_previous_versions** | Whether to show previous versions.         |
+| **oplocks**                | Whether opportunistic locking is enabled.  |
+| **home_directory**         | Whether the share is a home directory.     |
+| **change_notify**          | The change notify setting.                 |
+| **encryption**             | Whether encryption is enabled.             |
+| **namespace_caching**      | Whether namespace caching is enabled.      |
+| **continuously_available** | Whether the share is continuously available. |
+| **cifs_browsable**         | Whether the share is browsable.            |
+| **allow_unencrypted_access**| Whether to allow unencrypted access.      |
+| **unix_symlink**           | Whether Unix symlink is enabled.           |
+| **vscan_profile**          | The Vscan profile for the CIFS share.      |
+| **acls**                   | A list of ACLs for the CIFS share.         |
 
-- cluster.management_ip
-- svm.name
-- cifs_share.path
-- cifs_share.name
-- cifs_share.comment
-- cifs_share.access_based_enumeration
-- cifs_share.show_snapshot
-- cifs_share.show_previous_versions
-- cifs_share.oplocks
-- cifs_share.home_directory
-- cifs_share.change_notify
-- cifs_share.encryption
-- cifs_share.namespace_caching
-- cifs_share.continuously_available
-- cifs_share.browsable
-- cifs_share.allow_unencrypted_access
-- cifs_share.unix_symlink
-- cifs_share.file_security_permissions
-- cifs_share.file_security_permissions_acls
-- cifs_share.acls
+### acl
+This dictionary is used within the `cifs_share.acls` list.
 
-## execution
-
-**create** :
-
-While creating a cifs share, we allow to also add multiple share permissions and ntfs permissions.  
-
-- na_ontap_cifs
-- na_ontap_cifs_acl
-- na_ontap_file_security_permissions
-- na_ontap_file_security_permissions_acl
+| Property       | Description                                |
+|----------------|--------------------------------------------|
+| **state**      | The state of the ACL (e.g., present, absent). |
+| **user_or_group** | The user or group for the ACL.          |
+| **permission** | The permission level for the ACL.          |
+| **acl_type**   | The type of the ACL (e.g., allow, deny).   |
