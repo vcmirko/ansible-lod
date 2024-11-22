@@ -163,6 +163,37 @@
           default: 50
           minValue: 50
           maxValue: 100
+- name: Create epic luns
+  type: ansible
+  check: true
+  playbook: test_eeod.yml
+  showHelp: true
+  help: |
+    This form will create a volume into an svm, but using a template.  
+    By using the template, you can automatically push a whole bunch of settings.
+  description: ""
+  roles:
+    - public
+  categories:
+    - MAF
+  tileClass: has-background-info-light
+  icon: bullseye
+  credentials:
+    ontap: ontap_rest
+    aiqum: aiqum_rest
+  fields:
+    - name: cluster
+      label: Cluster
+      type: enum
+      default: __auto__
+      expression: fn.fnRestBasic('get','https://$(AIQUM_HOST)/api/datacenter/cluster/clusters','','aiqum_rest','[.records[] | {"name":.name,"management_ip":.management_ip} ]')
+      columns:
+        - name
+        - management_ip
+      required: true
+      line: resource
+      outputObject: true
+      model: vars_external.cluster
 - name: Create volume from template
   type: ansible
   check: true
