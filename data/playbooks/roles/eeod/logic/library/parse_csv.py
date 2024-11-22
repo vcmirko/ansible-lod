@@ -57,7 +57,7 @@ def run_module():
         # remove empty headers
         # keep only 20 first columns
 
-        with open(filepath, mode='r', newline='') as file:
+        with open(file_path, mode='r', newline='') as file:
             csv_reader = csv.reader(file)
             data = []
             for row in csv_reader:
