@@ -69,6 +69,7 @@ def run_module():
         data = data[1:]
         data = [dict(zip(headers[7:], row[7:22])) for row in data]
 
+        # for now, only take the first 10 rows
 
         volumes = []
         volume = None
@@ -94,7 +95,7 @@ def run_module():
                         # volume.volume_autosize.maximum_size
                         'volume_autosize': {
                             'mode': data[i]['mode'],
-                            'max': int(data[i]['max'])
+                            'maximum_size': int(data[i]['max'])
                         },
                         'fractional_reserve': data[i]['reserve'],
                         'snapshot_autodelete': {
