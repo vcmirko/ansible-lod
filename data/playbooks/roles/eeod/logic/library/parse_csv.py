@@ -24,23 +24,6 @@ def log(t):
     global summary
     summary.append(t)
 
-def parse_csv(file_path):
-
-    # Open the CSV file
-    with open(file_path, mode='r', newline='') as file:
-        csv_reader = csv.reader(file)
-        data = []
-        for row in csv_reader:
-            data.append(row)
-
-    # drop the first 3 lines
-    data = data[3:]
-    headers = data[0]
-    data = data[1:]
-    data = [dict(zip(headers[7:], row[7:22])) for row in data]
-
-    return data
-
 # main code
 def run_module():
     # define available arguments/parameters a user can pass to the module
@@ -68,21 +51,33 @@ def run_module():
     try:
 
         file_path = '/app/dist/persistent/playbooks/uploads/Epic Sizing_Cleveland Clinic_2020_v4(LUNs).csv'
-        parsed_data = parse_csv(file_path)
 
-        # log the parsed data as json
-        parsed_data_json = json.dumps(parsed_data)
-        log(parsed_data_json)
+        # open the file
+        # remove first 3 lines
+        # remove empty headers
+        # keep only 20 first columns
+
+        with open(filepath, mode='r', newline='') as file:
+            csv_reader = csv.reader(file)
+            data = []
+            for row in csv_reader:
+                data.append(row)
+
+        # drop the first 3 lines
+        data = data[3:]
+        headers = data[0]
+        data = data[1:]
+        data = [dict(zip(headers[7:], row[7:22])) for row in data]
+
 
         volumes = []
         volume = None
-        for i in range(len(parsed_data)):
+        for i in range(len(data)):
             # an aggr is given, we start a new volume dictionary
             
-            if not parsed_data[i]['lun']:
+            if data[i]['lun']:
 
-
-                if parsed_data[i]['aggr']:
+                if data[i]['aggr']:
 
 
                     # add the previous volume to the volumes list
@@ -90,47 +85,43 @@ def run_module():
                         volumes.append(volume)
 
                     volume = {
-                        'volume': parsed_data[i]['volume'],
+                        'volume': data[i]['volume'],
                         'aggregate': {
-                            'name': parsed_data[i]['aggr']
+                            'name': data[i]['aggr']
                         },
-                        'space_guarantee': parsed_data[i]['Space Guarantee'],
-                        'size': int(parsed_data[i]['vol-size']),
+                        'space_guarantee': data[i]['Space Guarantee'],
+                        'size': int(data[i]['vol-size']),
                         # volume.volume_autosize.maximum_size
                         'volume_autosize': {
-                            'mode': parsed_data[i]['mode'],
-                            'max': int(parsed_data[i]['max'])
+                            'mode': data[i]['mode'],
+                            'max': int(data[i]['max'])
                         },
-                        'fractional_reserve': parsed_data[i]['reserve'],
+                        'fractional_reserve': data[i]['reserve'],
                         'snapshot_autodelete': {
-                            'enabled': parsed_data[i]['autodelete'] == 'true'
+                            'enabled': data[i]['autodelete'] == 'true'
                         },
                         'snapshot_policy': {
-                            'name': parsed_data[i]['snap policy']
+                            'name': data[i]['snap policy']
                         },
                         'luns': []
                     }
                     
                 lun = {
-                    'name': parsed_data[i]['lun'],
-                    'size': int(parsed_data[i]['lun-size']),
-                    'os_type': parsed_data[i]['OS'],
+                    'name': data[i]['lun'],
+                    'size': int(data[i]['lun-size']),
+                    'os_type': data[i]['OS'],
                     'igroups': []
                 }
-                lun['igroups'].append(parsed_data[i]['igroup'])
+                lun['igroups'].append(data[i]['igroup'])
                 volume['luns'].append(lun)
+
 
         # add the last volume to the volumes list
         volumes.append(volume)
 
-     
-
-        # convert parsed data to json
-        parsed_data_json = json.dumps(parsed_data)
-        log(parsed_data_json)
 
         ve['svm'] = {
-            'name': parsed_data[0]['SVM']
+            'name': data[0]['SVM']
         }
         ve['volumes'] = volumes
 
