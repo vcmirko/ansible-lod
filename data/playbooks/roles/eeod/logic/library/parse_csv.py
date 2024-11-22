@@ -79,43 +79,47 @@ def run_module():
         for i in range(len(parsed_data)):
             # an aggr is given, we start a new volume dictionary
             
-            if parsed_data[i]['aggr']:
+            if not parsed_data[i]['lun']:
 
-                # add the previous volume to the volumes list
-                if volume:
-                    volumes.append(volume)
 
-                volume = {
-                    'volume': parsed_data[i]['volume'],
-                    'aggregate': {
-                        'name': parsed_data[i]['aggr']
-                    },
-                    'space_guarantee': parsed_data[i]['Space Guarantee'],
-                    'size': int(parsed_data[i]['vol-size']),
-                    # volume.volume_autosize.maximum_size
-                    'volume_autosize': {
-                        'mode': parsed_data[i]['mode'],
-                        'max': int(parsed_data[i]['max'])
-                    },
-                    'fractional_reserve': parsed_data[i]['reserve'],
-                    'snapshot_autodelete': {
-                        'enabled': parsed_data[i]['autodelete'] == 'true'
-                    },
-                    'snapshot_policy': {
-                        'name': parsed_data[i]['snap policy']
-                    },
-                    'luns': []
+                if parsed_data[i]['aggr']:
+
+
+                    # add the previous volume to the volumes list
+                    if volume:
+                        volumes.append(volume)
+
+                    volume = {
+                        'volume': parsed_data[i]['volume'],
+                        'aggregate': {
+                            'name': parsed_data[i]['aggr']
+                        },
+                        'space_guarantee': parsed_data[i]['Space Guarantee'],
+                        'size': int(parsed_data[i]['vol-size']),
+                        # volume.volume_autosize.maximum_size
+                        'volume_autosize': {
+                            'mode': parsed_data[i]['mode'],
+                            'max': int(parsed_data[i]['max'])
+                        },
+                        'fractional_reserve': parsed_data[i]['reserve'],
+                        'snapshot_autodelete': {
+                            'enabled': parsed_data[i]['autodelete'] == 'true'
+                        },
+                        'snapshot_policy': {
+                            'name': parsed_data[i]['snap policy']
+                        },
+                        'luns': []
+                    }
+                    
+                lun = {
+                    'name': parsed_data[i]['lun'],
+                    'size': int(parsed_data[i]['lun-size']),
+                    'os_type': parsed_data[i]['OS'],
+                    'igroups': []
                 }
-                
-            lun = {
-                'name': parsed_data[i]['lun'],
-                'size': int(parsed_data[i]['lun-size']),
-                'os_type': parsed_data[i]['OS'],
-                'igroups': []
-            }
-            lun['igroups'].append(parsed_data[i]['igroup'])
-            volume['luns'].append(lun)
-        
+                lun['igroups'].append(parsed_data[i]['igroup'])
+                volume['luns'].append(lun)
+
         # add the last volume to the volumes list
         volumes.append(volume)
 
