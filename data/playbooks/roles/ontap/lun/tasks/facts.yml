@@ -5,7 +5,7 @@
     # note in volume, l = lun_item => the lun role implements multiple => lun_item is the loop item, which is merged too.
     # because it is undefined when running single => you must default it.
     lun    : "{{ 'lun'         | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,l=lun_item,o=vars_overrides,c=qtask_child,s=qtask_suffix) }}"
-    volume : "{{ 'volume'      | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
+    volume : "{{ 'volume'      | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,l=volume_item,o=vars_overrides,c=qtask_child) }}"
     svm    : "{{ 'svm'         | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
     cluster: "{{ 'cluster'     | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
 
