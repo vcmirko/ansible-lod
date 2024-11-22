@@ -35,15 +35,9 @@ def parse_csv(file_path):
 
     # drop the first 3 lines
     data = data[3:]
-
-    # the problem now it that the csv data has sometimes empty headers
-    # we need to remove those
     headers = data[0]
     data = data[1:]
-
-    # remove empty headers
-    headers = [h for h in headers if h]
-    data = [{headers[i]: row[i] for i in range(len(headers))} for row in data]
+    data = [dict(zip(headers[7:], row[7:22])) for row in data]
 
     return data
 
