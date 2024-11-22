@@ -110,7 +110,7 @@ def run_module():
                 lun = {
                     'name': data[i]['lun'],
                     'size': int(data[i]['lun-size']),
-                    'space_reserve': data[i]['reserve'],
+                    'space_reserve': data[i]['reserve']!="disabled",
                     'os_type': data[i]['OS'],
                     'igroups': []
                 }
