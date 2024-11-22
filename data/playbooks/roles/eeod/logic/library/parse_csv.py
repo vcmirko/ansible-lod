@@ -98,7 +98,6 @@ def run_module():
                             'mode': data[i]['mode'],
                             'maximum_size': f"{data[i]['max']}g"
                         },
-                        'fractional_reserve': data[i]['reserve'],
                         'snapshot_autodelete': {
                             'enabled': data[i]['autodelete'] == 'true'
                         },
@@ -111,6 +110,7 @@ def run_module():
                 lun = {
                     'name': data[i]['lun'],
                     'size': int(data[i]['lun-size']),
+                    'space_reserve': data[i]['reserve'],
                     'os_type': data[i]['OS'],
                     'igroups': []
                 }

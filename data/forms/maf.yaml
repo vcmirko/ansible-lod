@@ -149,7 +149,6 @@
           maxValue: 100
 - name: Create epic luns
   type: ansible
-  check: true
   playbook: test_eeod.yml
   showHelp: true
   help: |
