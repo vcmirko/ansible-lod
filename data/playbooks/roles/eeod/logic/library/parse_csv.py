@@ -70,6 +70,7 @@ def run_module():
         data = [dict(zip(headers[7:], row[7:22])) for row in data]
 
         # for now, only take the first 10 rows
+        data = data[:10]
 
         volumes = []
         volume = None
