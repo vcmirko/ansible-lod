@@ -131,8 +131,8 @@ def run_module():
                 'os_type': parsed_data[i]['OS'],
                 'igroups': []
             }
-            lun.igroups.append(parsed_data[i]['igroup'])
-            volume.luns.append(lun)
+            lun['igroups'].append(parsed_data[i]['igroup'])
+            volume['luns'].append(lun)
         
         # add the last volume to the volumes list
         volumes.append(volume)
