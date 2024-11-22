@@ -25,12 +25,30 @@ def log(t):
     summary.append(t)
 
 def parse_csv(file_path):
+
+    # first we need to trim the file
+    # we drop the first 3 lines
+    # then drop 7 columns
+    # then keep 15 columns and drop the rest
+
+    # keep the rest in some sort of memory file
+
+    # Open the CSV file
     with open(file_path, mode='r', newline='') as file:
-        reader = csv.DictReader(file)
-        
-        # Convert the remaining rows to a list of dictionaries
-        data = [row for row in reader]
-    
+        csv_reader = csv.reader(file)
+        data = []
+        for row in csv_reader:
+            data.append(row)
+
+    # drop the first 3 lines
+    data = data[3:]
+
+    # drop 7 columns
+    data = [row[7:] for row in data]
+
+    # keep 15 columns and drop the rest
+    data = [row[:15] for row in data]
+
     return data
 
 # main code
@@ -62,37 +80,11 @@ def run_module():
         file_path = '/app/dist/persistent/playbooks/uploads/Epic Sizing_Cleveland Clinic_2020_v4(LUNs).csv'
         parsed_data = parse_csv(file_path)
 
-        volumes = []
+        # log the parsed data as json
+        parsed_data_json = json.dumps(parsed_data)
+        log(parsed_data_json)
 
-    #   aggregate_name                  : "{{ aggr_lookup.aggregate.name    | default(omit) }}"
-    #   size                            : "{{ volume.size                   | default(omit) }}"
-    #   size_unit                       : "{{ volume.size_unit              | default(omit) }}"
-    #   space_guarantee                 : "{{ volume.space_guarantee        | default(omit) }}"
-    #   percent_snapshot_space          : "{{ volume.percent_snapshot_space | default(omit) }}"
-    #   wait_for_completion             : "{{ volume.wait_for_completion    | default(omit) }}"
-    #   junction_path                   : "{{ volume.junction_path          | default(omit) }}"
-    #   language                        : "{{ volume.language               | default(omit) }}"
-    #   comment                         : "{{ volume.comment                | default(omit) }}"
-    #   type                            : "{{ volume.type                   | default(omit) }}"
-    # # atime_update                    : "{{ volume.atime_update           | default(omit) }}" # bad rest implementation
-    #   compression                     : "{{ volume.compression            | default(omit) }}"
-    #   encrypt                         : "{{ volume.encrypt                | default(omit) }}"
-    #   group_id                        : "{{ volume.group_id               | default(omit) }}"
-    #   inline_compression              : "{{ volume.inline_compression     | default(omit) }}"
-    #   size_change_threshold           : "{{ volume.size_change_threshold  | default(omit) }}"
-    #   unix_permissions                : "{{ volume.unix_permissions       | default(omit) }}"
-    #   user_id                         : "{{ volume.user_id                | default(omit) }}"
-    #   volume_security_style           : "{{ volume.security_style         | default(omit) }}"
-    #   snaplock                        : "{{ volume.snaplock               | default(omit) }}"
-    #   volume_space_logical_reporting  : "{{ volume.logical_space_reporting | default(omit) }}"
-    #   volume_space_logical_enforcement: "{{ volume.logical_space_enforcement | default(omit) }}"
-    #   efficiency_policy               : "{{ volume.efficiency_policy.name        | default(omit) }}"
-    #   export_policy                   : "{{ volume.export_policy.name            | default(omit) }}"
-    #   snapshot_policy                 : "{{ volume.snapshot_policy.name          | default(omit) }}"
-    #   tiering_policy                  : "{{ volume.tiering_policy.name           | default(omit) }}"
-    #   qos_policy_group                : "{{ volume.qos_policy_group.name         | default(omit) }}"
-    # delegate_to: localhost
-    # volume.snapshot_autodelete.enabled 
+        volumes = []
         volume = None
         for i in range(len(parsed_data)):
             # an aggr is given, we start a new volume dictionary
@@ -143,7 +135,9 @@ def run_module():
         parsed_data_json = json.dumps(parsed_data)
         log(parsed_data_json)
 
-        ve['svm'] = parsed_data[0]['SVM']
+        ve['svm'] = {
+            'name': parsed_data[0]['SVM']
+        }
         ve['volumes'] = volumes
 
     except Exception as e:
