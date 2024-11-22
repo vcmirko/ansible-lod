@@ -44,7 +44,7 @@
     register: aggr_lookup
     delegate_to: localhost
     when:
-    - not (volume.aggregate.name | default(true))
+    - volume.aggregate.name | default(false) | not
 
   # create the volume
   - name: "Create volume [{{ volume.name }}]"
