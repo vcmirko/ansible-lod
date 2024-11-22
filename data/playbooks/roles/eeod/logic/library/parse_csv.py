@@ -26,13 +26,6 @@ def log(t):
 
 def parse_csv(file_path):
 
-    # first we need to trim the file
-    # we drop the first 3 lines
-    # then drop 7 columns
-    # then keep 15 columns and drop the rest
-
-    # keep the rest in some sort of memory file
-
     # Open the CSV file
     with open(file_path, mode='r', newline='') as file:
         csv_reader = csv.reader(file)
@@ -43,11 +36,14 @@ def parse_csv(file_path):
     # drop the first 3 lines
     data = data[3:]
 
-    # drop 7 columns
-    data = [row[7:] for row in data]
+    # the problem now it that the csv data has sometimes empty headers
+    # we need to remove those
+    headers = data[0]
+    data = data[1:]
 
-    # keep 15 columns and drop the rest
-    data = [row[:15] for row in data]
+    # remove empty headers
+    headers = [h for h in headers if h]
+    data = [{headers[i]: row[i] for i in range(len(headers))} for row in data]
 
     return data
 
