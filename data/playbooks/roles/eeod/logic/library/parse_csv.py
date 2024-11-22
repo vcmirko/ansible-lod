@@ -86,7 +86,7 @@ def run_module():
                         volumes.append(volume)
 
                     volume = {
-                        'volume': data[i]['volume'],
+                        'name': data[i]['volume'],
                         'aggregate': {
                             'name': data[i]['aggr']
                         },
