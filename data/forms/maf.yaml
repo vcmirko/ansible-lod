@@ -57,23 +57,7 @@
       hide: true
       noOutput: true
       expression: fn.fnRestBasic('get','https://$(cluster.management_ip)/api/svm/svms','','aiqum_rest','[.records[] | .name ]')
-    - name: volumes
-      type: table
-      label: Volumes
-      group: Svm
-      line: volumes
-      required: true
-      model: vars_external.volumes
-      tableFields:
-        - name: name
-          type: text
-          label: Name
-        - name: size
-          type: number
-          label: Size (gb)
-          default: 1
-          minValue: 1
-          maxValue: 100
+
 - name: SVM DR
   type: ansible
   playbook: test_create_svm_dr_minimal_alt.yml

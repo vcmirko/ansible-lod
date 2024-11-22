@@ -96,7 +96,7 @@ def run_module():
                         # volume.volume_autosize.maximum_size
                         'volume_autosize': {
                             'mode': data[i]['mode'],
-                            'maximum_size': int(data[i]['max'])
+                            'maximum_size': f"{data[i]['max']}g"
                         },
                         'fractional_reserve': data[i]['reserve'],
                         'snapshot_autodelete': {
