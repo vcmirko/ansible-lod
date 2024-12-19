@@ -1,7 +1,9 @@
 ---
 - name: "Role - ontap/cifs_share_acl/create"
   block:
-  - set_fact:
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
       auth: &auth
         hostname: "{{ auth_rest.hostname | default(omit) }}"
         username: "{{ auth_rest.username | default(omit) }}"
@@ -10,11 +12,11 @@
         cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
         validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
         use_rest: always
-    no_log: true
       task_action: "{{ 'Create' if cifs_share_acl.state == 'present' else 'Delete' }}"
 
   # logging
-  - set_fact:
+  - name: Logging
+    set_fact:
       l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/cifs_share_acl/create','cluster',qlogname) }}"
       l_svm: "{{ svm | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
       l_cifs_share_acl: "{{ cifs_share_acl | to_nice_yaml(2) | indent(2,true) | do_log('','cifs_share_acl',qlogname) }}"

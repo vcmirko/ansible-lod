@@ -1,5 +1,7 @@
 ---
-- set_fact:
+- name: Set authentication facts
+  no_log: true
+  set_fact:
     vcenter_auth: &vcenter_auth
       hostname: '{{ vcenter_host }}'
       username: '{{ vcenter_username }}'

@@ -1,0 +1,11 @@
+---
+- name: Role awx/job/concurrent_launch
+  block:
+  - name: Launch Job Template for Each Host
+    awx.awx.job_launch:
+      name: "{{ vars_awx_concurrent_item.template_name }}"
+      extra_vars:
+        vars_external: "{{ vars_awx_concurrent_item }}"
+  when:
+  - awx_concurrent.list | default(false)
+  

@@ -1,7 +1,9 @@
 ---
 - name: "Role - ontap/qos_policy_group/create"
   block:
-  - set_fact:
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
       auth: &auth
         hostname: "{{ auth_rest.hostname | default(omit) }}"
         username: "{{ auth_rest.username | default(omit) }}"
@@ -10,11 +12,11 @@
         cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
         validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
         use_rest: always
-    no_log: true
     when: qos_policy_group.name | default(false)
 
   # logging
-  - set_fact:
+  - name: Logging
+    set_fact:
       l_cluster:               "{{ cluster              | to_nice_yaml(2) | indent(2,true) | do_log('ontap/qos_policy_group/create','cluster',qlogname) }}"
       l_svm:                   "{{ svm                  | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
       l_qos_policy_group:      "{{ qos_policy_group     | to_nice_yaml(2) | indent(2,true) | do_log('','qos_policy_group',qlogname) }}"

@@ -1,5 +1,5 @@
 ---
-- name: "Role - ontap/software_update/download"
+- name: "Role - ontap/software_update/remove"
   block:
   - name: Set authentication facts
     no_log: true
@@ -10,27 +10,25 @@
         password: "{{ auth_rest.password | default(omit) }}"
         key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
         cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
-        validate_certs: "{{ auth_rest_validate_certs | default(false) }}"
+        validate_certs: "{{ auth_rest.validate_certs | default(false) }}"
+        https: "{{ auth_rest.https | default(true) }}"
         use_rest: always
 
   # logging
   - name: Logging
     set_fact:
-      l_cluster:    "{{ cluster    | to_nice_yaml(2) | indent(2,true) | do_log('ontap/software/download','cluster',qlogname) }}"
+      l_cluster:    "{{ cluster    | to_nice_yaml(2) | indent(2,true) | do_log('ontap/software/remove','cluster',qlogname) }}"
       l_software:   "{{ software   | to_nice_yaml(2) | indent(2,true) | do_log('','software',qlogname) }}"
 
     ## download image
-  - name: "Downloading software on [{{ netapp_hostname | default('none') }}]" 
+  - name: "Removing software on [{{ netapp_hostname | default('none') }}]" 
     na_ontap_software_update:
-      state: present
-      download_only: True
-      package_url: "{{ software.baseurl }}/{{ software.filename }}"
-      package_version: "na"
-      validate_after_download: False
+      state: absent
+      package_version: "{{ software.version }}"
       <<: *auth
     ignore_errors: true
     delegate_to: localhost
 
   when: 
-  - software.filename | default(false)
-  - software.baseurl | default(false)
+  - software.version | default(false)
+  

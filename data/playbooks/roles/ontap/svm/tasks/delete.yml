@@ -5,7 +5,9 @@
 # you must also pass the list "clusters"
 # it should be a list of dics having the 'name' and 'management_ip' of each cluster
 ############################################
-- set_fact:
+- name: Set authentication facts
+  no_log: true
+  set_fact:
     auth: &auth
       hostname: "{{ auth_rest.hostname | default(omit) }}"
       username: "{{ auth_rest.username | default(omit) }}"
@@ -31,7 +33,8 @@
 - name: "Role - ontap/svm/delete"
   block:
   # logging
-  - set_fact:
+  - name: Logging
+    set_fact:
       l_cluster:    "{{ cluster    | to_nice_yaml(2) | indent(2,true) | do_log('ontap/svm/delete','cluster',qlogname) }}"
       l_svm:        "{{ svm        | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
 
@@ -60,7 +63,8 @@
     register: peer_info_out
 
   # merge sm_info_out into sm_info
-  - set_fact:
+  - name: Set peer list
+    set_fact:
       peer_list: "{{ peer_info.ontap_info.svm_peers.records + peer_info_out.ontap_info.svm_peers.records }}"
 
   - name: Flatten remote cluster names from peer relations

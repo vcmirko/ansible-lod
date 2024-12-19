@@ -1,7 +1,9 @@
 ---
 - name: "Role - ontap/sofware/update"
   block:
-  - set_fact:
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
       ontap_login: &ontap_login
         hostname: "{{ auth_rest.hostname | default(omit) }}"
         username: "{{ auth_rest.username | default(omit) }}"
@@ -13,12 +15,14 @@
         use_rest: always
 
   # logging
-  - set_fact:
+  - name: Logging
+    set_fact:
       l_cluster:    "{{ cluster    | to_nice_yaml(2) | indent(2,true) | do_log('ontap/software/update','cluster',qlogname) }}"
       l_software:   "{{ software   | to_nice_yaml(2) | indent(2,true) | do_log('','software',qlogname) }}"
 
   # set the maintenance hours
-  - set_fact:
+  - name: Set maintenance hours
+    set_fact:
       aiqum_ontap_maintenance_hours: 4
 
     # enable maintenance in aiqum
@@ -44,8 +48,8 @@
     na_ontap_interface:
       interface_name: "{{ lif.name }}"
       vserver: "{{ lif.svm.name | default(omit) }}"
-      home_node: "{{ lif.location.home_node.name | default(omit) }}"
-      home_port: "{{ lif.location.home_port.name | default(omit) }}"
+      current_node: "{{ lif.location.home_node.name | default(omit) }}"
+      current_port: "{{ lif.location.home_port.name | default(omit) }}"
       <<: *ontap_login
     delegate_to: localhost
     loop: "{{ lif_info.ontap_info.network_ip_interfaces.records | list }}"
@@ -78,7 +82,7 @@
     # set autosupport
   - name: "Invoke Autosupport - MAINTENANCE END" 
     netapp.ontap.na_ontap_autosupport_invoke:
-      autosupport_message: "MAINT=END Finishing upgrade to version {{ software_version }}"
+      autosupport_message: "MAINT=END Finishing upgrade to version {{ software.version }}"
       <<: *ontap_login
     delegate_to: localhost
 

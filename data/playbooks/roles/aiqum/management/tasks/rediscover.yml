@@ -1,8 +1,9 @@
 ---
 - name: "Role - ontap/aiqum/rediscover"
   block:
-  - set_fact:
-      no_log: true
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
       auth: &auth
         user: "{{ aiq_username }}"
         password: "{{ aiq_password }}"
@@ -12,7 +13,8 @@
         body_format: json   
 
     # logging
-  - set_fact:
+  - name: Logging
+    set_fact:
       l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/aiqum/rediscover','cluster',qlogname) }}"   
 
   - name: Get CLUSTER in Aiqum

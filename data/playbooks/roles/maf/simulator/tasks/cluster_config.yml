@@ -2,8 +2,9 @@
 # set auth dict, to be reused everywhere
 - name: "Role - ontap/simulator/cluster_config"
   block:
-  - set_fact:
-      no_log: true
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
       auth: &auth
         hostname: "{{ netapp_hostname }}"
         username: "{{ netapp_username }}"

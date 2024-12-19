@@ -3,8 +3,9 @@
   # so this task will require the ontap credentials to be passed
 - name: "Role - ontap/cluster/create_api_user.yml"
   block:
-  - set_fact:
-      no_log: true
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
       auth: &auth
         hostname      : "{{ netapp_hostname }}"
         username      : "{{ netapp_username }}"
@@ -21,7 +22,8 @@
         validate_certs: false
 
     # logging
-  - set_fact:
+  - name: Logging
+    set_fact:
       l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/cluster/create_api_user','cluster',qlogname) }}"
 
   - name: check if the certificate exists

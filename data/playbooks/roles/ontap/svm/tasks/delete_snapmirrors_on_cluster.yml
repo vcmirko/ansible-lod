@@ -5,8 +5,9 @@
     set_fact:
       remote_cluster_info: "{{ clusters | selectattr('name', 'equalto', remote_cluster) | first }}"
 
-  - set_fact:
-      no_log: true
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
       auth: &auth
         hostname: "{{ remote_cluster_info.management_ip }}"
         username: "{{ auth_rest.username | default(omit) }}"

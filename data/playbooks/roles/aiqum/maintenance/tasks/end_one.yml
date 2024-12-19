@@ -1,2 +1,3 @@
-- include_tasks: "facts.yml"
-- include_tasks: "end.yml"
+---
+- include_tasks: "{{ playbook_dir}}/roles/aiqum/maintenance/tasks/facts.yml"
+- include_tasks: "{{ playbook_dir}}/roles/aiqum/maintenance/tasks/end.yml"

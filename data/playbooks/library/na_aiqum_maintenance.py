@@ -156,31 +156,46 @@ def start_maintenance(cluster_name, hours):
 
 
 def end_maintenance(cluster_name):
-    cluster = get_cluster(cluster_name)
-    
-    if not cluster:
-        return None
 
-    maintenance_window = cluster.get("maintenance_window")
-    
-    if not maintenance_window:
-        return None
+    import time
 
-    log("{} -> ending maintenance".format(cluster_name))
-    id = cluster["id"]
-    maintenance_id = maintenance_window["id"]
-    current_time = datetime.now()
-    start_time = end_time = current_time.strftime("%Y-%m-%dT%H:%M:%S%z")
-    log("start_time: {}".format(start_time))
-    log("end_time: {}".format(end_time))
-    body = {
-        "datasourceId": id,
-        "startTime": start_time,
-        "endTime": end_time,
-        "windowId": maintenance_id,
-    }
-    
-    return put_rest(f"/api/management-server/admin/datasources/{id}/maintenance-windows/{maintenance_id}", body)
+    # start loop
+    done = False
+    while not done:
+
+        time.sleep(5)
+
+        cluster = get_cluster(cluster_name)
+        
+        if not cluster:
+            return None
+
+        maintenance_window = cluster.get("maintenance_window")
+        
+        if not maintenance_window:
+            done = True
+
+        else:
+
+            log("{} -> ending maintenance".format(cluster_name))
+            id = cluster["id"]
+            maintenance_id = maintenance_window["id"]
+            current_time = datetime.now()
+            start_time = end_time = current_time.strftime("%Y-%m-%dT%H:%M:%S%z")
+            log("start_time: {}".format(start_time))
+            log("end_time: {}".format(end_time))
+            body = {
+                "datasourceId": id,
+                "startTime": start_time,
+                "endTime": end_time,
+                "windowId": maintenance_id,
+            }
+            
+            result = put_rest(f"/api/management-server/admin/datasources/{id}/maintenance-windows/{maintenance_id}", body)
+            log(result)
+
+    # return last result
+    return result
 
 
 # main code

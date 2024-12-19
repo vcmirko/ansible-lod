@@ -1,0 +1,47 @@
+---
+- name: "Role - ontap/software_update/firmware_update"
+  block:
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest.validate_certs | default(false) }}"
+        https: "{{ auth_rest.https | default(true) }}"
+        use_rest: always
+
+  # logging
+  - name: Logging
+    set_fact:
+      l_cluster:    "{{ cluster    | to_nice_yaml(2) | indent(2,true) | do_log('ontap/software/firmware_update','cluster',qlogname) }}"
+      l_software:   "{{ software   | to_nice_yaml(2) | indent(2,true) | do_log('','software',qlogname) }}"
+
+  ## download all.zip
+- name: "Update disk fw" 
+  na_ontap_firmware_upgrade:
+    package_url: "{{ software.baseurl }}/all.zip"
+    <<: *auth
+  ignore_errors: yes
+  delegate_to: localhost
+
+  ## download all_shelf_fw.zip
+- name: "Update shelf fw" 
+  na_ontap_firmware_upgrade:
+    package_url: "{{ software.baseurl }}/all_shelf_fw.zip"
+    <<: *auth
+  ignore_errors: yes
+  delegate_to: localhost
+
+- debug:
+    msg: Disk and Shelf Firmware update is a background process in ONTAP. To check
+      the status of the firmware update, run 'storage disk firmware show-update-status'
+      and 'system node run -node * -command sysconfig -v' commands on the conroller
+      shell.
+
+  when: 
+  - software.baseurl | default(false)
+

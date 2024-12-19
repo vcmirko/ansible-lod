@@ -1,7 +1,9 @@
 # ---
 # - name: "Role - <collection_name>/<role_name>/<action>"
 #   block:
-#   - set_fact:
+#   - name: Set authentication facts
+#     no_log: true
+#     set_fact:
 #       auth: &auth
 #         hostname: "{{ auth_rest.hostname | default(omit) }}"
 #         username: "{{ auth_rest.username | default(omit) }}"
@@ -11,10 +13,10 @@
 #         validate_certs: "{{ auth_rest.validate_certs | default(false) }}"
 #         https: "{{ auth_rest.https | default(true) }}"
 #         use_rest: always
-#     no_log: true
 
 #   #logging
-#   - set_fact:
+#   - name: Logging
+#     set_fact:
 #       l_<action>: "{{ <role_name> | to_nice_yaml(2) | indent(2,true) | do_log('<collection_name>/<role_name>/<action>','<role_name>',qlogname) }}"
 
 #   - name: "<action> <role_name> {{ <role_name>.name }}"               
