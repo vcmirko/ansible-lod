@@ -108,7 +108,7 @@ add-type @"
 $loginApiUrl = "https://rhel1.demo.netapp.com/api/v1/auth/login"
 
 # Define your basic authentication credentials
-$basicAuth = "YWRtaW46QW5zaWJsZUZvcm1zITEyMw=="
+$basicAuth = "YWRtaW46TmV0YXBwMSE="
 
 # loop until the token is acquired
 

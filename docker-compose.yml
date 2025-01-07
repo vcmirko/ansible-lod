@@ -36,7 +36,7 @@ services:
     # Only start after MySql
     depends_on:
       - mysqldb
-    image: docker.io/ansibleguy/ansibleforms:latest
+    image: docker.io/ansibleguy/ansibleforms:beta
     container_name: af_app
     restart: unless-stopped
     ports:
@@ -52,6 +52,8 @@ services:
       - DB_PASSWORD=$MYSQLDB_PASSWORD
       - DB_PORT=$MYSQLDB_DOCKER_PORT
       - PORT=$WEBAPP_DOCKER_PORT
+      - ADMIN_USERNAME=$ADMIN_USERNAME
+      - ADMIN_PASSWORD=$ADMIN_PASSWORD
       - REGEX_FILTER_JOB_OUTPUT=Set naming facts|Merge Extravars|include_tasks|info|debug|set_fact|assert
       # adding python path to add our custom persistent lib location
       - PYTHONPATH=/usr/lib/python311.zip:/usr/lib/python3.11:/usr/lib/python3.11/lib-dynload:/usr/lib/python3.11/site-packages:/app/dist/persistent/python/lib      

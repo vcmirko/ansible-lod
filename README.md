@@ -30,7 +30,7 @@ Use chrome, a bookmark should be created called AnsibleForm
 
 Login with :
 user : admin
-password : AnsibleForms!123
+password : => your classic LOD password
 
 ### Find the 2 forms and run them (under LOD category)
 
