@@ -1,0 +1,21 @@
+- name: Role - cyberark/pam/authentication
+  block:
+  - name: Authenticate to CyberArk PAM
+    # no_log: true
+    uri:
+      url: "https://{{ pam.hostname }}/PasswordVault/api/Auth/cyberark/Logon"
+      method: POST
+      validate_certs: false
+      body_format: json
+      body:
+        username: "{{ pam_username }}"
+        password: "{{ pam_password }}"
+        concurrentSession: true
+      use_proxy: false
+    delegate_to: localhost
+    connection: local
+    register: pam_token
+
+- name: PAM authentication failure?
+  fail: msg="Unable to authenticate to PAM. API return code:{{ pam_token.status }} ErrCode:{{ pam_token.json.ErrorCode }} ErrMessage:{{ pam_token.json.ErrorMessage }}."
+  when: pam_token is failed

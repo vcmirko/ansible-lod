@@ -1,0 +1,42 @@
+- name: Role - cyberark/pam/account_add
+  block:
+  - debug:
+      msg: "Adding new PAM account: {{ pam_account.name }}, System: {{ pam_account.hostname }}, FQDN: {{ pam_account.fqdn }}, Safe: {{ pam_account.safe_name }}, Policy: {{ pam_account.policy_name }}"
+
+  - name: Add new account
+    no_log: true
+    uri:
+      url: "https://{{ pam.hostname }}/PasswordVault/api/Accounts"
+      method: POST
+      validate_certs: false
+      status_code: [200, 201]
+      headers:
+        Authorization: "{{ pam_token.json }}"
+        Content-Type: application/json
+      body_format: json
+      body: 
+        name: "{{ pam_account.name }}"
+        address: "{{ pam_account.fqdn }}"
+        userName: "{{ pam_account.username }}"
+        platformId: "{{ pam_account.policy_name }}"
+        safeName: "{{ pam_account.safe_name }}"
+        secretType: "password"
+        secret: "{{ pam_account.password }}"
+        platformAccountProperties: {}
+        secretManagement: {}
+        #  automaticManagementEnabled: "true"
+        #  manualManagementReason: ""
+        remoteMachinesAccess: {}
+        #  remoteMachines: ""
+        #  accessRestrictedToRemoteMachines: "true"
+      use_proxy: false
+    delegate_to: localhost
+    connection: local
+    register: add_account_output
+  rescue:
+  - name: Failed with error
+    ansible.builtin.fail:
+      msg: "{{ add_account_output }}"    
+  when:
+  - pam_account.name | default(false)
+  - pam_account.policy_name | default(false)

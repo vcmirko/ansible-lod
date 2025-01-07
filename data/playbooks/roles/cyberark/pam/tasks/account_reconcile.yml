@@ -1,0 +1,31 @@
+- name: Role - cyberark/pam/account_reconcile
+  block:
+  - name: Reconcile existing account
+    no_log: true
+    uri:
+      url: "https://{{ pam.hostname }}/PasswordVault/api/Accounts/{{ pam_account.id }}/{{ pam_reconcile_action | default('reconcile')}}"
+      method: POST
+      validate_certs: false
+      status_code: [200, 204]
+      headers:
+        Authorization: "{{ pam_token.json }}"
+        Content-Type: application/json
+    delegate_to: localhost
+    connection: local
+    register: actionresult
+    ignore_errors: true
+
+  # - name: Update status in the database
+  #   community.mysql.mysql_query:
+  #     login_host: "mysql-reporting.gi-p02.rb-dcs.bosch.com"
+  #     login_port: 3306
+  #     login_user: "{{ automation_mysql_username }}"
+  #     login_password: "{{ automation_mysql_password }}"
+  #     login_db: "pam"
+  #     query: "UPDATE account SET status='in_progress' WHERE pamid='{{ pam_account.id }}'"
+  #   register: sql_result
+  #   when: actionresult is succeeded
+  #   ignore_errors: true
+  # when:
+  # - pam_account.id | default(false)
+  # - pam.hostname | default(false)

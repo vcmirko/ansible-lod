@@ -1,0 +1,12 @@
+---
+## Naming facts
+- name: Merge Extravars
+  # get the infoblox object
+  ansible.builtin.set_fact:
+    infoblox : "{{ 'infoblox' | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child,s=qtask_suffix) }}"
+
+# - debug: var=infoblox
+
+  # reset request result
+- ansible.builtin.set_fact:
+    infoblox_request:

@@ -1,0 +1,17 @@
+- name: Role - cyberark/pam/account_delete
+  block:
+  - name: Remove existing account
+    # no_log: true
+    uri:
+      url: "https://{{ pam.hostname }}/PasswordVault/api/Accounts/{{ pam_account.id }}"
+      method: DELETE
+      validate_certs: false
+      status_code: [200, 204]
+      headers:
+        Authorization: "{{ pam_token.json }}"
+        Content-Type: application/json
+    delegate_to: localhost
+    connection: local
+  when:
+  - pam_account.id | default(false)
+  - pam.hostname | default(false)

@@ -48,30 +48,38 @@ def run_module():
     try:
 
         if not awx_concurrent:
-            raise Exception("Missing required property awx_concurrent")
-        
-        # the awx_concurrent is a dict with 3 properties:
-        # - template_name => the awx template we need to run concurrently
-        # - list => the list of items to iterate over
-        # - list_name => the name of the list item
-
-        # the goal is to build a list with a copy of the vars_external dict, but with the list item added and the awx_concurrent dict removed
+            raise Exception("Missing required property 'awx_concurrent'")
 
         # first we need to get the list of items
-        list_items = ve.get(awx_concurrent['list'], None)
+        list_items = awx_concurrent.get('list', None)
+
         if not list_items:
-            raise Exception(f"Missing required property {awx_concurrent['list']}")
+            raise Exception(f"Missing required property 'list'")
+
+        list_name = awx_concurrent.get('list_name', None)
+
+        if not list_name:
+            raise Exception(f"Missing required property 'list_name'")
         
-        # then we need to build the list
-        list_name = awx_concurrent['list_name']
+        list_label = awx_concurrent.get('list_label', None)
+
+        if not list_label:
+            raise Exception(f"Missing required property 'list_label'")
+
         for item in list_items:
+
             ve_copy = ve.copy()
             ve_copy[list_name] = item
+            ve_copy['awx'] = {}
+            ve_copy['awx']['name'] = awx_concurrent['template_name']
+            ve_copy['awx']['concurrent_label'] = item[awx_concurrent['list_label']]
+            # can be extended with more awx parts 
             list.append(ve_copy)
             # remove the awx_concurrent dict
             ve_copy.pop('awx_concurrent', None)
 
     except Exception as e:
+        print("Error happened")
         log(repr(e))
         err = str(e)
 

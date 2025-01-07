@@ -1,0 +1,49 @@
+---
+###############################################
+# Call Infoblox to register new DNS record
+#   In some cases the Infoblox host is not reachable 
+#   finishing the request with the timeout, therefore
+#   we fail the play completely with human readable message.
+#   In this situation the complete workflow has to be restarted.
+###############################################
+
+- name: Register DNS address with Infoblox A-record
+  infoblox.nios_modules.nios_a_record:
+    state:       present
+    name:        "{{ new_short_hostname }}.{{ input_dns_domain }}"
+    ipv4:        "{{ new_free_ip_addr }}"
+    provider:
+      host:      "{{ cmdb_infoblox_hostname }}"
+      username:  "{{ infoblox_username }}"
+      password:  "{{ infoblox_password }}"
+  connection:    local
+  ignore_errors: True
+  register:      a_record_response
+
+# We fail workflow if previous task has failed
+- ansible.builtin.fail:
+    msg: "Connection ERROR has occured when creating A-record with Infoblox, please delete created IP interface and try again in 2 minutes!"
+  when: a_record_response.failed
+
+# Otherwise, if the A-record initial call didn't fail we continue to requesting the corresponding PTR record 
+- name: Register DNS address with Infoblox PTR-record
+  infoblox.nios_modules.nios_ptr_record:
+    state:       present
+    ptrdname:    "{{ new_short_hostname }}.{{ input_dns_domain }}"
+    ipv4:        "{{ new_free_ip_addr }}"
+    provider:
+      host:      "{{ cmdb_infoblox_hostname }}"
+      username:  "{{ infoblox_username }}"
+      password:  "{{ infoblox_password }}"
+  connection:    local
+  ignore_errors: True
+  register:      ptr_record_response
+
+# We fail the workflow if PTR registration has failed
+- ansible.builtin.fail:
+    msg: 
+      - "Connection ERROR has occured when creating PTR-record with Infoblox, but A-record requstration was successfull"
+      - "Created IP interface and Infoblox record may require manual clean-up"
+      - "Please try again after clean-up"
+  when: ptr_record_response.failed
+...

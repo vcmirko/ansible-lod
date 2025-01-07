@@ -1,0 +1,9 @@
+---
+# - debug: var=qtask_child
+
+- name: Add multiple accounts
+  include_tasks: "account_add_one.yml" 
+  loop_control:
+    loop_var: pam_account_item
+    label: "Adding pam_account {{ pam_account.name }}"
+  loop: "{{ pam_accounts }}"

@@ -159,7 +159,7 @@ def end_maintenance(cluster_name):
 
     import time
 
-    # start loop
+    # start loop, remove all maintenance windows
     done = False
     while not done:
 
@@ -196,7 +196,6 @@ def end_maintenance(cluster_name):
 
     # return last result
     return result
-
 
 # main code
 def run_module():

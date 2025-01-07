@@ -1,0 +1,17 @@
+---
+## Naming facts
+- name: Merge Extravars
+  # dns_item, svm_item and cluster_item are used here, as dns can be called from the svm role
+  ansible.builtin.set_fact:
+    pam_account : "{{ 'pam_account' | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,l=pam_account_item,o=vars_overrides,c=qtask_child,s=qtask_suffix) }}"
+    pam         : "{{ 'pam'         | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child,s=qtask_suffix) }}"
+
+- ansible.builtin.set_fact:
+    pam_reconcile_action : "{{ 'reconcile' if '_win_' in pam_account.safename | lower else 'change' }}"
+  when:
+  - pam_account.safename | default(false)
+
+# get token
+- include_tasks: "{{ playbook_dir}}/roles/cyberark/pam/tasks/authenticate.yml"
+
+

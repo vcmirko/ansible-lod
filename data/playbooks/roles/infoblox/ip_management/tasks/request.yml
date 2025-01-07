@@ -1,0 +1,123 @@
+---
+
+- name: "Role - infoblox/ip_management/request"
+  block:
+  ######################################################
+  # Free IP address lookup
+  ######################################################
+
+  - name: Find Ip Address if non is given
+    block:
+    - name: "Retrieve next Free IP from given network {{ infoblox.network }} (Infoblox)"
+      ansible.builtin.set_fact:
+        new_free_ip_addr_requested: "{{ lookup('infoblox.nios_modules.nios_next_ip', infoblox.network, 
+                                    provider={'host': infoblox.hostname, 'username': infoblox_username, 'password': infoblox_password}) }}"
+      ignore_errors: True
+      register: ip_request_response
+
+    - ansible.builtin.fail:
+        msg: "Connection ERROR has occured while requesting new FREE IP with Infoblox, please retry in 2 minutes!"
+      when: ip_request_response.failed
+
+    - ansible.builtin.fail:
+        msg: "Infoblox has returned incomplete data for the new IP address requested! Please check input data or retry later"
+      when: new_free_ip_addr_requested | length == 0
+
+    # - name: "New FREE IP returned debug"
+    #   ansible.builtin.debug: 
+    #     msg: "New FREE IP retrieved: {{ new_free_ip_addr_requested }}"
+
+    # we check if IP address returned is a well formatted IP address, no other conformity test included
+    - name: Validate new free IP requested 
+      ansible.builtin.set_fact:
+        new_free_ip_addr: "{{ new_free_ip_addr_requested[0] }}"
+      when: new_free_ip_addr_requested[0] | ansible.utils.ipaddr
+
+    # we fail the complete workflow if we don't like how IP address looks 
+    - ansible.builtin.fail:
+        msg: "New free IP address requested is incorrectly fomatted, received: {{ new_free_ip_addr_requested[0] }}"
+      when: not (new_free_ip_addr_requested[0] | ansible.utils.ipaddr)
+    when:
+    - not ((infoblox.pre_registered | default(false)) or (infoblox.ip_address | default(false)))
+
+  - name: Find pre-registered ip
+    block:
+    - name: fetch the default dns view
+      ansible.builtin.set_fact:
+        registered_host_requested: "{{ lookup('infoblox.nios_modules.nios_lookup', 'record:host', filter={'name': infoblox.fqdn},
+          provider={'host': infoblox.hostname, 'username': infoblox_username, 'password': infoblox_password}) }}"
+      ignore_errors: True
+      register: ip_request_response
+
+    - ansible.builtin.fail:
+        msg: "Connection ERROR has occured while requesting registered host with Infoblox, please retry in 2 minutes!"
+      when: ip_request_response.failed
+
+    - ansible.builtin.fail:
+        msg: "Infoblox has returned incomplete data for the registered host requested! Please check input data or retry later"
+      when: registered_host_requested | length == 0
+
+    # - name: "Registered host debug"
+    #   ansible.builtin.debug: 
+    #     msg: "Registered host retrieved: {{ registered_host_requested }}"
+
+    # we check if IP address returned is a well formatted IP address, no other conformity test included
+    - name: Validate first ip of host requested 
+      ansible.builtin.set_fact:
+        registered_ip_addr: "{{ registered_host_requested.ipv4addrs[0].ipv4addr }}"
+      when: registered_host_requested.ipv4addrs[0].ipv4addr | ansible.utils.ipaddr
+
+    # we fail the complete workflow if we don't like how IP address looks 
+    - ansible.builtin.fail:
+        msg: "First IP address of registered host requested is incorrectly fomatted, received: {{ registered_host_requested.ipv4addrs[0].ipv4addr }}"
+      when: not (registered_host_requested.ipv4addrs[0].ipv4addr | ansible.utils.ipaddr)
+    when:
+    - infoblox.pre_registered | default(false)
+    - infoblox.fqdn | default(false)
+
+  ######################################################
+  # Network settings lookup
+  ######################################################
+  - name: "Retrieve net info from DCHP for given network {{ infoblox.network }} (Infoblox)"
+    ansible.builtin.set_fact:
+      dhcp_network_data: "{{ lookup('nios', 'network', filter={'network': infoblox.network}, return_fields=['options'], 
+                                  provider={'host': infoblox.hostname, 'username': infoblox_username, 'password': infoblox_password}) }}"
+
+  # - name: Debug returned basic network data returned for the requested IP range
+  #   ansible.builtin.debug: 
+  #     msg: 
+  #       - " Name servers: {{ dhcp_network_data.options | selectattr('name','==', 'domain-name-servers') }}"
+  #       - " Domain name: {{ dhcp_network_data.options | selectattr('name','==', 'domain-name') }}"
+  #       - " Gateway: {{ dhcp_network_data.options | selectattr('name','==', 'routers') }}"
+
+  # fail if data returned is not complete
+  - name: Validating data returned by nfoblox for DNS servers, domain or gateway information
+    ansible.builtin.fail:
+      msg: "Infoblox has returned incomplete basic network data (DNS servers, domain or gateway). Please check input data, Infoblox or retry later"
+    when: 
+      - (dhcp_network_data.options | selectattr('name','==', 'domain-name-servers') | list | length == 0) or
+        (dhcp_network_data.options | selectattr('name','==', 'domain-name')         | list | length == 0) or 
+        (dhcp_network_data.options | selectattr('name','==', 'routers')             | list | length == 0)
+
+  # exctracting valuable information that may be used for other tasks      
+  - name: "Setting basic network facts - NDS server list, domain and gateway from data provided in the Infoblox response"
+    ansible.builtin.set_fact:
+      res_dns_servers: "{{ ((dhcp_network_data.options | selectattr('name','==', 'domain-name-servers'))[0].value).split(',') }}"
+      res_dns_domain:  "{{ (dhcp_network_data.options  | selectattr('name','==', 'domain-name'))[0].value }}"
+      res_gateway:     "{{ (dhcp_network_data.options  | selectattr('name','==', 'routers'))[0].value }}"
+      res_address:     "{{ new_free_ip_addr | default(registered_ip_addr) | default(infoblox.ip_address) | default(none) }}" # fall back with given ip
+      res_netmask:     "{{ infoblox.network | ansible.utils.ipaddr('netmask') }}"
+
+  - name: Make dict from result
+    ansible.builtin.set_fact:
+      infoblox_request: "{{ {'dns_servers':res_dns_servers,'dns_domain':res_dns_domain,'gateway':res_gateway,'address':res_address,'netmask':res_netmask} }}"
+
+  when:
+  - infoblox.hostname | default(false)
+  - infoblox.network  | default(false)
+
+- name: Fail if no ip was found
+  ansible.builtin.fail:
+    msg: "No ip address was passed or could be found"
+  when:
+  - not (infoblox_request.address | default(false))

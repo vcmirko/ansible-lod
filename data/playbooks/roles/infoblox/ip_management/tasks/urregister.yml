@@ -1,0 +1,46 @@
+---
+###############################################
+# Call Infoblox to unregister DNS record
+#   In some cases the Infoblox host is not reachable 
+#   finishing the request with the timeout, therefore
+#   we fail the play completely with human readable message.
+#   In this situation the complete workflow has to be restarted.
+#
+# Unregistration operation behaves similar to register.yml 
+###############################################
+- name: Unregister IP address from Infoblox A-records
+  infoblox.nios_modules.nios_a_record:
+    state:       absent
+    name:        "{{ new_short_hostname }}.{{ input_dns_domain }}"
+    ipv4:        "{{ ip_addr }}"
+    provider:
+      host:     "{{ cmdb_infoblox_hostname }}"
+      username: "{{ infoblox_username }}"
+      password: "{{ infoblox_password }}"
+  connection: local
+  ignore_errors: True
+  register:      a_record_response
+
+- ansible.builtin.fail:
+    msg: "Connection ERROR has occured when deleting A-record with Infoblox, please try again in 2 minutes or delete records manually!"
+  when: a_record_response.failed
+
+- name: Unregister DNS address with Infoblox PTR-record
+  infoblox.nios_modules.nios_ptr_record:
+    state:       absent
+    ptrdname:    "{{ new_short_hostname }}.{{ input_dns_domain }}"
+    ipv4:        "{{ ip_addr }}"
+    provider:
+      host:      "{{ cmdb_infoblox_hostname }}"
+      username:  "{{ infoblox_username }}"
+      password:  "{{ infoblox_password }}"
+  connection:    local
+  ignore_errors: True
+  register:      ptr_record_response
+
+- ansible.builtin.fail:
+    msg: 
+      - "Connection ERROR has occured while deleting PTR-record with Infoblox"
+      - "Please try again in 2 minutes or delete records manually"
+  when: ptr_record_response.failed
+...
