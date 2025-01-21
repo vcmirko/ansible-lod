@@ -1,11 +1,27 @@
 ---
 - name: Role awx/job/concurrent_launch
   block:
-  - name: Launch Job Template for Each Host
+  - name: Process the awx_concurrent object
+    awx_concurrent_loop:
+      vars_external: "{{ vars_external }}"
+    register: awx_concurrent_loop_result
+
+  - name: Get awx_concurrent result
+    set_fact:
+      awx_concurrent_items: "{{awx_concurrent_loop_result.vars}}"
+
+  - name: Launch Job Template for Each Item Concurrently
     awx.awx.job_launch:
-      name: "{{ vars_awx_concurrent_item.template_name }}"
+      name: "{{ awx_concurrent_item.awx.name }}"
+      controller_host: "{{ awx_hostname }}"
+      controller_username : "{{ awx_username }}"
+      controller_password : "{{ awx_password }}"
+      validate_certs: false
       extra_vars:
-        vars_external: "{{ vars_awx_concurrent_item }}"
-  when:
-  - awx_concurrent.list | default(false)
-  
+        vars_external: "{{ awx_concurrent_item }}"
+    loop: "{{ awx_concurrent_items | default([]) }}"
+    loop_control:
+      loop_var: awx_concurrent_item
+      label: "Launching awx template '{{ awx_concurrent_item.awx.name }}' for '{{ awx_concurrent_item.awx.concurrent_label }}'"
+
+

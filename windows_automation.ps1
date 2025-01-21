@@ -143,7 +143,7 @@ if ($loginResponse.token) {
     # Define the user data
     $userData = @{
         "username" = "loopback"
-        "password" = "Netapp12!"
+        "password" = "Netapp1!"
         "email" = ""
         "group_id" = 1
     }
@@ -175,7 +175,7 @@ if ($loginResponse.token) {
         "port" = 443
         "host" = "localhost"
         "description" = "Loopback credential for self-automation"
-        "password" = "Netapp12!"
+        "password" = "Netapp1!"
     }
 
     # Convert the credential data to JSON

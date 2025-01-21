@@ -52,6 +52,28 @@
         expiry_time: "P{{ cluster.ca_cert_expiry_days | default(3650) }}DT"     
       delegate_to: localhost
 
+      # disable/enable client authentication - sometimes needed and in this case, making sure client auth is on
+    - name: disable client authentication
+      netapp.ontap.na_ontap_rest_cli:
+        <<: *auth
+        command: security/ssl
+        verb: PATCH
+        params: 
+          vserver: "{{ cluster.name | default(inventory_hostname) }}"
+        body:
+          client_enabled: false
+      delegate_to: localhost
+    - name: enable client authentication
+      netapp.ontap.na_ontap_rest_cli:
+        <<: *auth
+        command: security/ssl
+        verb: PATCH
+        params: 
+          vserver: "{{ cluster.name | default(inventory_hostname) }}"
+        body:
+          client_enabled: true
+      delegate_to: localhost      
+
       # get the root ca certificate and check if it is created
     - name: get the root ca certificate
       netapp.ontap.na_ontap_rest_info:
@@ -78,7 +100,7 @@
         command: /security/certificate/generate-csr
         verb: POST
         body:
-          common_name: "{{ cluster_api_username }}"
+          common_name: "{{ cluster_api_username }}" 
         <<: *auth
       register: csr_output
       delegate_to: localhost
@@ -172,4 +194,5 @@
         name: "{{ cluster_api_username }}"
     register: api_user_info
     delegate_to: localhost
-
+    retries: 2
+    delay: 3
