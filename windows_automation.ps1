@@ -1,6 +1,14 @@
-$keyboard = Read-Host "What keyboard layout do you want ? ex. nl-BE" 
-Write-Host "Setting keyboard to Belgian" -ForegroundColor Magenta
-powershell -command "Set-WinUserLanguageList -Force '$keyboard'"
+
+$keyboardLayouts = @("nl-BE", "en-US", "de-DE")
+for($i = 0; $i -lt $keyboardLayouts.Length; $i++) {
+    Write-Host "$($i + 1). $($keyboardLayouts[$i])"
+}
+do{
+    $keyboard = Read-Host "What keyboard layout do you want ? " # 
+    $keyboardLayout = $keyboardLayouts[$keyboard - 1]
+} while($keyboard -eq "" -or $keyboard -lt 1 -or $keyboard -gt $keyboardLayouts.Length)
+Write-Host "Setting keyboard to $keyboardLayout" -ForegroundColor Magenta
+powershell -command "Set-WinUserLanguageList -Force '$keyboardLayout'"
 Write-Host "Keyboard set!"
 
 Write-Host "Creating bookmark for Ansible Forms" -ForegroundColor Magenta
