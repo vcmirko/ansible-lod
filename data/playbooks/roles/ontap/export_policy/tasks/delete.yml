@@ -1,0 +1,35 @@
+---
+- name: "Role - ontap/export_policy/delete"
+  block:
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest.validate_certs | default(false) }}"
+        https: "{{ auth_rest.https | default(false) }}"
+        use_rest: always
+
+  # logging
+  - name: Logging
+    set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/export_policy/delete','cluster',qlogname) }}"
+      l_svm: "{{ svm | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_export_policy: "{{ export_policy | to_nice_yaml(2) | indent(2,true) | do_log('','export_policy',qlogname) }}"
+
+    ## Delete Export Policy
+  - name: "Delete Export Policy"          
+    netapp.ontap.na_ontap_export_policy:
+      state: absent
+      vserver: "{{ svm.name }}"
+      name: "{{ export_policy.name }}"
+      <<: *auth
+    delegate_to: localhost
+
+  when: 
+  - svm.name | default(false)
+  - export_policy.name | default(false) 

@@ -1,0 +1,38 @@
+---
+- name: "Role - ontap/quota_policy/set"
+  block:
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest.validate_certs | default(false) }}"
+        https: "{{ auth_rest.https | default(false) }}"
+        use_rest: always
+
+    # logging
+  - name: Logging
+    set_fact:
+      l_cluster:               "{{ cluster              | to_nice_yaml(2) | indent(2,true) | do_log('ontap/quota_policy/set','cluster',qlogname) }}"
+      l_svm:                   "{{ svm                  | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_quota_policy:          "{{ quota_policy                | to_nice_yaml(2) | indent(2,true) | do_log('','quota_policy',qlogname) }}"
+
+  - name: "Set Quota Policy {{ quota_policy.name }}"
+    netapp.ontap.na_ontap_rest_cli:
+      command: "vserver"
+      verb: PATCH
+      body: 
+        quota_policy: "{{ quota_policy.name }}"
+      params:
+        vserver: "{{ svm.name }}"
+      <<: *auth
+    delegate_to: localhost
+
+
+  when: 
+  - quota_policy.name | default(false)
+  - svm.name | default(false)

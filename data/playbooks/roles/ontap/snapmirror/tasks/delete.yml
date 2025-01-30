@@ -34,10 +34,10 @@
     when:
       - snapmirror.destination.volume.name | default(false)
       - snapmirror.source.volume.name | default(false)
+    ignore_errors: yes
 
-  - name: "Removing snapmirror {{ volume1_name }} -/-> {{ volume2_name }}"  
+  - name: "Removing snapmirror {{ snapmirror.source.svm.name + ':' + snapmirror.source.volume.name | default('') }} -/-> {{ snapmirror.destination.svm.name + ':' + snapmirror.destination.volume.name | default('') }}"  
     netapp.ontap.na_ontap_snapmirror:
-      use_rest                    : always
       state                       : absent
       source_endpoint             : 
         cluster                   : "{{ snapmirror.source.cluster.name }}"
@@ -49,3 +49,5 @@
     delegate_to: localhost
   when:
   - snapmirror | default(false)
+  - snapmirror.source.svm.name | default(false)
+  - snapmirror.destination.svm.name | default(false)

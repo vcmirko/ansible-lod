@@ -37,7 +37,7 @@
       rule_index: "{{ item.rule_index }}"
       vserver: "{{ svm.name }}"
       <<: *auth
-    loop: "{{ export_policy.rules | default([]) | selectattr('is_deleted_item', 'defined') | selectattr('is_deleted_item','equalto',True) | selectattr('rule_index','defined') | list }}"
+    loop: "{{ export_policy.rules | default([]) | keep_deleted_export_policy_rules | list }}" # based on state=absent or is_deleted_item=true, or force_delete_on_first_match=true
     loop_control:
       label: "{{ (item.rule_index | string) + ' -> ' + item.client_match  }}"
     delegate_to: localhost
@@ -53,9 +53,11 @@
       rw_rule: "{{ item.rw_rule }}"
       protocol: "{{ item.protocol }}"
       super_user_security: "{{ item.super_user_security }}"
-      # anonymous_user_id: 65534
-      # allow_suid: true
-      # ntfs_unix_security: ignore
+      anonymous_user_id: "{{ item.anonymous_user_id | default(omit) }}"
+      allow_suid: "{{ item.allow_suid | default(omit) }}"
+      chown_mode: "{{ item.chown_mode | default(omit) }}"
+      ntfs_unix_security: "{{ item.ntfs_unix_security | default(omit) }}"
+      allow_device_creation: "{{ item.allow_device_creation | default(omit) }}"
       <<: *auth
     loop: "{{ export_policy.rules | default([]) | selectattr('is_new_item', 'undefined') | selectattr('is_deleted_item','undefined') | selectattr('rule_index','defined') | list }}"
     loop_control:
@@ -72,9 +74,11 @@
       rw_rule: "{{ item.rw_rule }}"
       protocol: "{{ item.protocol }}"
       super_user_security: "{{ item.super_user_security }}"
-      # anonymous_user_id: 65534
-      # allow_suid: true
-      # ntfs_unix_security: ignore
+      anonymous_user_id: "{{ item.anonymous_user_id | default(omit) }}"
+      allow_suid: "{{ item.allow_suid | default(omit) }}"
+      chown_mode: "{{ item.chown_mode | default(omit) }}"
+      ntfs_unix_security: "{{ item.ntfs_unix_security | default(omit) }}"
+      allow_device_creation: "{{ item.allow_device_creation | default(omit) }}"
       <<: *auth
     loop: "{{ export_policy.rules | default([]) | selectattr('rule_index', 'undefined') | list }}"
     loop_control:

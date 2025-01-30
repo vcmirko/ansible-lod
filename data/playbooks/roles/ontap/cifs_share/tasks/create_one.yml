@@ -1,2 +1,2 @@
-- include_tasks: "facts.yml"
-- include_tasks: "create.yml"
+- include_tasks: "{{ playbook_dir}}/roles/ontap/cifs_share/tasks/facts.yml"
+- include_tasks: "{{ playbook_dir}}/roles/ontap/cifs_share/tasks/create.yml"

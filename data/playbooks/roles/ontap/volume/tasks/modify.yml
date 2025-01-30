@@ -1,5 +1,5 @@
 ---
-- name : "Role ontap/volume/create"
+- name : "Role ontap/volume/modify"
   block:
   - name: Set authentication facts
     no_log: true
@@ -17,51 +17,18 @@
   # logging
   - name: Logging
     set_fact:
-      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/volume/create','cluster',qlogname) }}"
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/volume/modify','cluster',qlogname) }}"
       l_svm:     "{{ svm     | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
       l_volume:  "{{ volume  | to_nice_yaml(2) | indent(2,true) | do_log('','volume',qlogname) }}"
 
-  # get best aggregate
-  - name: "Find best aggregate [{{ volume.name }}]" 
-    get_best_aggregate:
-        <<: *auth
-        volume_name              : "{{ volume.name }}"
-        svm_name                 : "{{ svm.name }}"
-        debug                    : True
-        size_mb                  : "{{ volume.size | default(0) }}"
-        weight_volume_count      : 0
-        weight_used_pct          : 0
-        weight_provisioned_pct   : 0
-        weight_available_space   : 1
-        # threshold_volume_count   : 
-        # threshold_used_pct       : 
-        # threshold_provisioned_pct: 10000000
-        # threshold_available_space: 
-        # exclude_name_regex       : 
-        # include_name_regex       : "^{{ volume.aggregate_include_name_regex | default('.*') }}$"
-        # exclude_node_regex       : 
-        include_node_regex         : "{{ volume.aggregate_include_node_regex | default('.*') }}"
-        # names_to_exclude         :
-        # nodes_to_exclude         : 
-    register: aggr_lookup
-    delegate_to: localhost
-    when:
-    - volume.aggregate.name is not defined
-
-  # create the volume
-  - name: "Create volume [{{ volume.name }}]"
+  # modify the volume
+  - name: "modify volume [{{ volume.name }}]"
     netapp.ontap.na_ontap_volume:
       <<: *auth  
       state: present
       vserver:                 "{{ svm.name }}"    
       name:                    "{{ volume.name }}"
-      is_infinite: False
-      aggregate_name                  : "{{ volume.aggregate.name         | default(aggr_lookup.aggregate.name)    | default(omit) }}"
-      size                            : "{{ volume.size                   | default(omit) }}"
-      size_unit                       : "{{ volume.size_unit              | default(omit) }}"
-      space_guarantee                 : "{{ volume.space_guarantee        | default(omit) }}"
-      percent_snapshot_space          : "{{ volume.percent_snapshot_space | default(omit) }}"
-      wait_for_completion             : "{{ volume.wait_for_completion    | default(omit) }}"
+      junction_path                   : "{{ volume.junction_path          | default(omit) }}"
       language                        : "{{ volume.language               | default(omit) }}"
       comment                         : "{{ volume.comment                | default(omit) }}"
       type                            : "{{ volume.type                   | default(omit) }}"
@@ -84,19 +51,6 @@
       qos_policy_group                : "{{ volume.qos_policy_group.name          | default(omit) }}"
       qos_adaptive_policy_group       : "{{ volume.qos_adaptive_policy_group.name | default(omit) }}"
     delegate_to: localhost
-
-  # create the volume
-  - name: "Mount volume [{{ volume.name }}]"
-    netapp.ontap.na_ontap_volume:
-      <<: *auth  
-      state: present
-      vserver:                 "{{ svm.name }}"    
-      name:                    "{{ volume.name }}"
-      junction_path:           "{{ volume.junction_path | default(omit) }}"
-    delegate_to: localhost
-    ignore_errors: yes # ignore if volume is type DP    
-    when: 
-    - volume.junction_path | default(false)
 
   # set effeciency
   - name: "Set efficiency [{{ volume.name }}]"
@@ -261,30 +215,6 @@
     - volume.atime_update | default(false)
     - not ansible_check_mode
 
-    ## Create qtrees
-    ## We execute create_one.yml from the qtree role
-    ## svm, cluster are already processed in this master role, we just need to set the qtree_item as loopvar
-  - name: "Create qtrees [{{ volume.name }}]"     
-    include_tasks: "{{ playbook_dir }}/roles/ontap/qtree/tasks/create_one.yml"
-    loop_control:
-      loop_var: qtree_item
-      label: "Creating qtree {{ qtree_item.name }}"
-    loop: "{{ volume.qtrees | default([]) }}" 
-    when: 
-    - volume.qtrees | default(false)
-
-
-    ## Create luns
-    ## We execute create_one.yml from the lun role
-    ## svm, cluster are already processed in this master role, we just need to set the lun_item as loopvar
-  - name: "Create luns [{{ volume.name }}]"    
-    include_tasks: "{{ playbook_dir }}/roles/ontap/lun/tasks/create_one.yml"
-    loop_control:
-      loop_var: lun_item
-      label: "Creating lun {{ lun_item.name }}"
-    loop: "{{ volume.luns | default([]) }}"  
-    when: 
-    - volume.luns | default(false)   
   when:  
   - volume.name | default(false)
   - svm.name | default(false)    

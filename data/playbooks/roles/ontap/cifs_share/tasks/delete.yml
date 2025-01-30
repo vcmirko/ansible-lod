@@ -1,0 +1,35 @@
+---
+- name: "Role - ontap/cifs_share/delete"
+  block:
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest.validate_certs | default(false) }}"
+        https: "{{ auth_rest.https | default(false) }}"
+        use_rest: always
+
+  # logging
+  - name: Logging
+    set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/cifs_share/delete','cluster',qlogname) }}"
+      l_svm: "{{ svm | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_cifs_share: "{{ cifs_share | to_nice_yaml(2) | indent(2,true) | do_log('','cifs_share',qlogname) }}"
+
+    ## Delete Cifs Share
+  - name: "Delete Cifs Share [{{ cifs_share.name | default('none') }}]"     
+    netapp.ontap.na_ontap_cifs:
+      state                   : absent
+      share_name              : "{{ cifs_share.name }}"
+      vserver                 : "{{ svm.name }}"
+      <<: *auth
+    delegate_to: localhost
+
+  when: 
+  - cifs_share.name | default(false) 
+  - svm.name | default(false)

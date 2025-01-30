@@ -7,7 +7,8 @@ class FilterModule(object):
         return {
             'auth_pw':self.auth_rest,
             'auth_cert':self.auth_cert,
-            'auth_rest':self.auth_rest
+            'auth_rest':self.auth_rest,
+            'keep_deleted_export_policy_rules':self.keep_deleted_export_policy_rules
         }
     
     def auth_rest(self,hostname,username,password="",cert_base="",use_cert=False,https=True,validate_certs=False):
@@ -39,3 +40,11 @@ class FilterModule(object):
             "https":https,
             "validate_certs":validate_certs
         }
+
+
+    def keep_deleted_export_policy_rules(self, rules=[]):
+        # only keep items that have is_deleted_item set to True or have state set to absent
+        rules_to_delete = [rule for rule in rules if rule.get("is_deleted_item",False) or rule.get("state","") == "absent"]
+        # next filter more : if property force_delete_on_first_match is set to True OR rule_index (= number) exists as a property ("rule_index" in rule)
+        rules_to_delete = [rule for rule in rules_to_delete if rule.get("force_delete_on_first_match",False) or ("rule_index" in rule)]
+        return rules_to_delete

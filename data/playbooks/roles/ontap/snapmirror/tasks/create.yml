@@ -41,5 +41,6 @@
       - snapmirror_result.failed 
       - "'Another transfer is in progress.' not in snapmirror_result.msg"
   when:
-  - snapmirror | default(false)
+  - snapmirror.source.svm.name | default(false)
+  - snapmirror.destination.svm.name | default(false)
   

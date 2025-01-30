@@ -22,7 +22,7 @@
       l_cifs_share: "{{ cifs_share | to_nice_yaml(2) | indent(2,true) | do_log('','cifs_share',qlogname) }}"
 
     ## Create Cifs Share
-  - name: "Create Cifs Share [{{ cifs_share.name | default('none') }}]"        
+  - name: "Create Cifs Share [{{ cifs_share.name | default('none') }}]"     
     netapp.ontap.na_ontap_cifs:
       state                   : present
       share_name              : "{{ cifs_share.name }}"
@@ -85,6 +85,7 @@
       loop_var: acl
       label: "Setting {{ acl.state}} -> {{ acl.permission }} for {{ acl.user_or_group }} on {{ cifs_share.name }}"
     when: 
+    - cifs_share.name | default(false)
     - cifs_share.acls | default(false)
 
     ## Set Cifs Share file security permissions

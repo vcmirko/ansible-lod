@@ -1,5 +1,5 @@
 ---
-- name: "Role - ontap/volume/rename"
+- name: "Role - ontap/volume/resize"
   block:
   - name: Set authentication facts
     no_log: true
@@ -17,20 +17,22 @@
   # logging
   - name: Logging
     set_fact:
-      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/volume/rename','cluster',qlogname) }}"
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/volume/resize','cluster',qlogname) }}"
       l_svm:     "{{ svm     | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
       l_volume:  "{{ volume  | to_nice_yaml(2) | indent(2,true) | do_log('','volume',qlogname) }}"  
 
-  - name: "Rename volume [{{ volume.name }}]"
+  - name: "resize volume [{{ volume.name }}]"
     netapp.ontap.na_ontap_volume:
       state: present
       vserver:                 "{{ svm.name }}"    
-      from_name:               "{{ volume.old_name | volume.from_name | default(omit) }}"
+      size:                    "{{ volume.size | default(omit) }}"
+      size_unit:               "{{ volume.size_unit | default(omit) }}"
       name:                    "{{ volume.name }}"
       <<: *auth
     delegate_to: localhost
   when:
   - volume.name | default(false)
   - svm.name | default(false)    
+  - volume.size | default(false)
 
 
