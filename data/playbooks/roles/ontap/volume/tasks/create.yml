@@ -56,27 +56,31 @@
       vserver:                 "{{ svm.name }}"    
       name:                    "{{ volume.name }}"
       is_infinite: False
-      aggregate_name                  : "{{ volume.aggregate.name         | default(aggr_lookup.aggregate.name)    | default(omit) }}"
-      size                            : "{{ volume.size                   | default(omit) }}"
-      size_unit                       : "{{ volume.size_unit              | default(omit) }}"
-      space_guarantee                 : "{{ volume.space_guarantee        | default(omit) }}"
-      percent_snapshot_space          : "{{ volume.percent_snapshot_space | default(omit) }}"
-      wait_for_completion             : "{{ volume.wait_for_completion    | default(omit) }}"
-      language                        : "{{ volume.language               | default(omit) }}"
-      comment                         : "{{ volume.comment                | default(omit) }}"
-      type                            : "{{ volume.type                   | default(omit) }}"
-    # atime_update                    : "{{ volume.atime_update           | default(omit) }}" # bad rest implementation
-      compression                     : "{{ volume.compression            | default(omit) }}"
-      encrypt                         : "{{ volume.encrypt                | default(omit) }}"
-      group_id                        : "{{ volume.group_id               | default(omit) }}"
-      inline_compression              : "{{ volume.inline_compression     | default(omit) }}"
-      size_change_threshold           : "{{ volume.size_change_threshold  | default(omit) }}"
-      unix_permissions                : "{{ volume.unix_permissions       | default(omit) }}"
-      user_id                         : "{{ volume.user_id                | default(omit) }}"
-      volume_security_style           : "{{ volume.security_style         | default(omit) }}"
-      snaplock                        : "{{ volume.snaplock               | default(omit) }}"
-      volume_space_logical_reporting  : "{{ volume.logical_space_reporting   | default(omit) }}"
-      volume_space_logical_enforcement: "{{ volume.logical_space_enforcement | default(omit) }}"
+      activity_tracking               : "{{ volume.activity_tracking              | default(omit) }}"
+      analytics                       : "{{ volume.analytics                      | default(omit) }}"
+      auto_remap_luns                 : "{{ volume.auto_remap_luns                | default(omit) }}"
+      aggregate_name                  : "{{ volume.aggregate.name                 | default(aggr_lookup.aggregate.name)    | default(omit) }}"
+      size                            : "{{ volume.size                           | default(omit) }}"
+      size_unit                       : "{{ volume.size_unit                      | default(omit) }}"
+      space_guarantee                 : "{{ volume.space_guarantee                | default(omit) }}"
+      percent_snapshot_space          : "{{ volume.percent_snapshot_space         | default(omit) }}"
+      wait_for_completion             : "{{ volume.wait_for_completion            | default(omit) }}"
+      junction_path                   : "{{ volume.junction_path                  | default(omit) }}"
+      language                        : "{{ volume.language                       | default(omit) }}"
+      comment                         : "{{ volume.comment                        | default(omit) }}"
+      type                            : "{{ volume.type                           | default(omit) }}"
+      atime_update                    : "{{ volume.atime_update                   | default(omit) }}" 
+      compression                     : "{{ volume.compression                    | default(omit) }}"
+      encrypt                         : "{{ volume.encrypt                        | default(omit) }}"
+      group_id                        : "{{ volume.group_id                       | default(omit) }}"
+      inline_compression              : "{{ volume.inline_compression             | default(omit) }}"
+      size_change_threshold           : "{{ volume.size_change_threshold          | default(omit) }}"
+      unix_permissions                : "{{ volume.unix_permissions               | default(omit) }}"
+      user_id                         : "{{ volume.user_id                        | default(omit) }}"
+      volume_security_style           : "{{ volume.security_style                 | default(omit) }}"
+      snaplock                        : "{{ volume.snaplock                       | default(omit) }}"
+      logical_space_reporting         : "{{ volume.logical_space_reporting        | default(omit) }}"
+      logical_space_enforcement       : "{{ volume.logical_space_enforcement      | default(omit) }}"
       efficiency_policy               : "{{ volume.efficiency_policy.name         | default(omit) }}"
       export_policy                   : "{{ volume.export_policy.name             | default(omit) }}"
       snapshot_policy                 : "{{ volume.snapshot_policy.name           | default(omit) }}"
@@ -84,19 +88,6 @@
       qos_policy_group                : "{{ volume.qos_policy_group.name          | default(omit) }}"
       qos_adaptive_policy_group       : "{{ volume.qos_adaptive_policy_group.name | default(omit) }}"
     delegate_to: localhost
-
-  # create the volume
-  - name: "Mount volume [{{ volume.name }}]"
-    netapp.ontap.na_ontap_volume:
-      <<: *auth  
-      state: present
-      vserver:                 "{{ svm.name }}"    
-      name:                    "{{ volume.name }}"
-      junction_path:           "{{ volume.junction_path | default(omit) }}"
-    delegate_to: localhost
-    ignore_errors: yes # ignore if volume is type DP    
-    when: 
-    - volume.junction_path | default(false)
 
   # set effeciency
   - name: "Set efficiency [{{ volume.name }}]"

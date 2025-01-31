@@ -25,6 +25,7 @@
       use_python_keys: true
       parameters:
         source.svm.name: "{{ svm.name }}"
+        fields: "*"
       <<: *auth
     delegate_to: localhost
     register: sm_info_out
@@ -40,9 +41,52 @@
     loop: "{{ sm_info_out.ontap_info.snapmirror_relationships.records | list }}"
     loop_control:
       loop_var: snapmirror
-      label: "{{ snapmirror.uuid }}"
+      label: "{{ snapmirror.source.path }} -> {{ snapmirror.destination.path }}"
     when:
       - sm_info_out.ontap_info.snapmirror_relationships.num_records | default(0) > 0
+
+  - name: "Get outgoing snapmirror relations from [{{ svm.name }}]"
+    netapp.ontap.na_ontap_rest_info:
+      gather_subset: 
+      - snapmirror/relationships
+      use_python_keys: true
+      parameters:
+        source.svm.name: "{{ svm.name }}"
+        list_destinations_only: true
+        fields: "*"
+      <<: *auth
+    delegate_to: localhost
+    register: sm_info_out
+
+  - name: "Online the source volumes of the snapmirror relations"
+    netapp.ontap.na_ontap_volume:
+      <<: *auth
+      is_online: true
+      vserver: "{{ svm.name }}"
+      name: "{{ snapmirror.source.path.split(':')[1] }}"
+    delegate_to: localhost
+    loop: "{{ sm_info_out.ontap_info.snapmirror_relationships.records | list }}"
+    loop_control:
+      loop_var: snapmirror
+      label: "{{ snapmirror.source.path.split(':')[1] }}"
+    when:
+      - snapmirror.source.path.split(':')[1] | length > 0
+
+  - name: "Remove outgoing snapmirror relations from [{{ svm.name }}]"
+    netapp.ontap.na_ontap_rest_cli:
+      <<: *auth
+      command: "snapmirror/release"
+      verb: POST
+      body:
+        destination_path: "{{ snapmirror.destination.path }}"
+    delegate_to: localhost 
+    loop: "{{ sm_info_out.ontap_info.snapmirror_relationships.records | list }}"
+    loop_control:
+      loop_var: snapmirror
+      label: "{{ snapmirror.source.path }} -> {{ snapmirror.destination.path }}"
+    when:
+      - snapmirror.source.path | default(false)
+      - snapmirror.destination.path | default(false)
 
   when:
   - remote_cluster | default(false)

@@ -1,0 +1,13 @@
+---
+# unfortunately, ansible doesn't allow looping roles
+# so we have a local tasks "delete_one" which includes facts & delete of the quota role
+# hence we can delete multiple quotas in a loop
+
+- name: Delete multiple quotas
+  # debug:
+  #   msg: "{{ quota.name }}"
+  include_tasks: "delete_one.yml" 
+  loop_control:
+    loop_var: quota_item
+    label: "Delete quota {{ quota_item.name }}"
+  loop: "{{ quotas }}"

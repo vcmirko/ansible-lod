@@ -1,0 +1,87 @@
+---
+- name : "Role ontap/volume/create_dp"
+  block:
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest.validate_certs | default(false) }}"
+        https: "{{ auth_rest.https | default(false) }}"
+        use_rest: always
+
+  # logging
+  - name: Logging
+    set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/volume/create_dp','cluster',qlogname) }}"
+      l_svm:     "{{ svm     | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_volume:  "{{ volume  | to_nice_yaml(2) | indent(2,true) | do_log('','volume',qlogname) }}"
+
+  # get best aggregate
+  - name: "Find best aggregate [{{ volume.name }}]" 
+    get_best_aggregate:
+        <<: *auth
+        volume_name              : "{{ volume.name }}"
+        svm_name                 : "{{ svm.name }}"
+        debug                    : True
+        size_mb                  : "{{ volume.size | default(0) }}"
+        weight_volume_count      : 0
+        weight_used_pct          : 0
+        weight_provisioned_pct   : 0
+        weight_available_space   : 1
+        # threshold_volume_count   : 
+        # threshold_used_pct       : 
+        # threshold_provisioned_pct: 10000000
+        # threshold_available_space: 
+        # exclude_name_regex       : 
+        # include_name_regex       : "^{{ volume.aggregate_include_name_regex | default('.*') }}$"
+        # exclude_node_regex       : 
+        include_node_regex         : "{{ volume.aggregate_include_node_regex | default('.*') }}"
+        # names_to_exclude         :
+        # nodes_to_exclude         : 
+    register: aggr_lookup
+    delegate_to: localhost
+    when:
+    - volume.aggregate.name is not defined
+
+  # create the volume
+  - name: "Create dp volume [{{ volume.name }}]"
+    netapp.ontap.na_ontap_volume:
+      <<: *auth  
+      state: present
+      vserver:                 "{{ svm.name }}"    
+      name:                    "{{ volume.name }}"
+      type                            : dp
+      aggregate_name                  : "{{ volume.aggregate.name                 | default(aggr_lookup.aggregate.name)    | default(omit) }}"
+      is_infinite                     : False
+      is_online                       : True
+      activity_tracking               : "{{ volume.activity_tracking              | default(omit) }}"
+      analytics                       : "{{ volume.analytics                      | default(omit) }}"
+      size                            : "{{ volume.size                           | default(omit) }}"
+      size_unit                       : "{{ volume.size_unit                      | default(omit) }}"
+      space_guarantee                 : "{{ volume.space_guarantee                | default(omit) }}"
+      percent_snapshot_space          : "{{ volume.percent_snapshot_space         | default(omit) }}"
+      wait_for_completion             : "{{ volume.wait_for_completion            | default(omit) }}"
+      language                        : "{{ volume.language                       | default(omit) }}"
+      comment                         : "{{ volume.comment                        | default(omit) }}"
+      atime_update                    : "{{ volume.atime_update                   | default(omit) }}" 
+      compression                     : "{{ volume.compression                    | default(omit) }}"
+      encrypt                         : "{{ volume.encrypt                        | default(omit) }}"
+      inline_compression              : "{{ volume.inline_compression             | default(omit) }}"
+      size_change_threshold           : "{{ volume.size_change_threshold          | default(omit) }}"
+      snaplock                        : "{{ volume.snaplock                       | default(omit) }}"
+      efficiency_policy               : "{{ volume.efficiency_policy.name         | default(omit) }}"
+      export_policy                   : "{{ volume.export_policy.name             | default(omit) }}"
+      snapshot_policy                 : "{{ volume.snapshot_policy.name           | default(omit) }}"
+      tiering_policy                  : "{{ volume.tiering_policy.name            | default(omit) }}"
+      qos_policy_group                : "{{ volume.qos_policy_group.name          | default(omit) }}"
+      qos_adaptive_policy_group       : "{{ volume.qos_adaptive_policy_group.name | default(omit) }}"
+    delegate_to: localhost
+
+  when:  
+  - volume.name | default(false)
+  - svm.name | default(false)    

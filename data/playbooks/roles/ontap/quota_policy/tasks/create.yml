@@ -22,21 +22,22 @@
       l_quota_policy:          "{{ quota_policy         | to_nice_yaml(2) | indent(2,true) | do_log('','quota_policy',qlogname) }}"
 
   - name: "Create/Modify Quota Policy {{ quota_policy.name }}"
-    netapp.ontap.na_ontap_rest_cli:
+    na_ontap_rest_cli_idempotent:
       command: "volume/quota/policy"
       verb: POST
       body: 
         policy_name: "{{ quota_policy.name }}"
         vserver: "{{ svm.name }}"
       <<: *auth
+      idempotency_params:
+        ignore_failure: 
+          regex: "duplicate entry"
+        not_changed:
+          regex: "duplicate entry"
+        custom_messages:
+          ignore_failure: "Quota policy already exists"
+          changed: "Quota policy created"
     delegate_to: localhost
-    register: quota_policy_result
-    ignore_errors: yes
-
-  - name: "Fail on non-duplicate error"
-    fail:
-      msg: "{{ quota_policy_result }}"
-    when: quota_policy_result.failed and "duplicate" not in quota_policy_result.msg
 
   when: 
   - quota_policy.name | default(false)

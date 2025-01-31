@@ -1,0 +1,48 @@
+---
+- name: "Role - ontap/quota/delete"
+  block:
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest.validate_certs | default(false) }}"
+        https: "{{ auth_rest.https | default(false) }}"
+        use_rest: always
+
+  # logging
+  - name: Logging
+    set_fact:
+      l_cluster:             "{{ cluster             | to_nice_yaml(2) | indent(2,true) | do_log('ontap/quota/delete','cluster',qlogname) }}"
+      l_svm:                 "{{ svm                 | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_volume:              "{{ volume              | to_nice_yaml(2) | indent(2,true) | do_log('','volume',qlogname) }}"
+      l_quota:                 "{{ quota                 | to_nice_yaml(2) | indent(2,true) | do_log('','quota',qlogname) }}"
+
+  - name: "Delete Quota on {{ quota.quota_target }}"
+    netapp.ontap.na_ontap_quotas:
+      state: absent
+      vserver:                   "{{ svm.name }}"    
+      volume:                    "{{ volume.name }}"
+      quota_target:              "{{ quota.quota_target | default(omit) }}"
+      disk_limit:                "{{ quota.disk_limit | default(omit) }}"
+      file_limit:                "{{ quota.file_limit | default(omit) }}"
+      perform_user_mapping:      "{{ quota.perform_user_mapping | default(omit) }}"
+      qtree:                     "{{ quota.qtree | default(omit) }}"
+      set_quota_status:          "{{ quota.set_quota_status | default(omit) }}"
+      soft_disk_limit:           "{{ quota.soft_disk_limit | default(omit) }}"
+      soft_file_limit:           "{{ quota.soft_file_limit | default(omit) }}"
+      threshold:                 "{{ quota.threshold | default(omit) }}"
+      type:                      "{{ quota.type | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+
+  when: 
+  - volume.name | default(false)
+  - quota.quota_target | default(false)
+  - svm.name | default(false)
+
+

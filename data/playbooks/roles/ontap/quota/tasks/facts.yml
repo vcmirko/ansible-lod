@@ -2,16 +2,14 @@
 ## Naming facts
 - name: Merge Extravars
   ansible.builtin.set_fact:
-    qos_adaptive_policy_group: "{{ 'qos_adaptive_policy_group' | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child,s=qtask_suffix) }}"
-    svm             : "{{ 'svm'              | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
-    cluster         : "{{ 'cluster'          | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
+    # note in volume, l = quota_item => the quota role implements multiple => quota_item is the loop item, which is merged too.
+    # because it is undefined when running single => you must default it.
+    quota    : "{{ 'quota'         | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,l=quota_item,o=vars_overrides,c=qtask_child,s=qtask_suffix) }}"
+    volume : "{{ 'volume'      | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
+    svm    : "{{ 'svm'         | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
+    cluster: "{{ 'cluster'     | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
 
-# - name: debug qos policy group after merge
-#   debug:
-#     var: qos_adaptive_policy_group
-
-
-- name: Set naming facts
+- name: Set naming facts - Assign everything
   no_log: true
   ansible.builtin.set_fact:
     # the next 2 lines are for the certificate based authentication

@@ -83,9 +83,8 @@
     loop: "{{ cifs_share.acls }}"
     loop_control:
       loop_var: acl
-      label: "Setting {{ acl.state}} -> {{ acl.permission }} for {{ acl.user_or_group }} on {{ cifs_share.name }}"
+      label: "Setting {{ acl.state}} -> {{ acl.permission }} for {{ acl.user_or_group }} on {{ cifs_share.name | default(None) }}"
     when: 
-    - cifs_share.name | default(false)
     - cifs_share.acls | default(false)
 
     ## Set Cifs Share file security permissions
@@ -126,3 +125,4 @@
   when: 
   - cifs_share.name | default(false) 
   - svm.name | default(false)
+

@@ -19,20 +19,28 @@
     set_fact:
       l_cluster:             "{{ cluster             | to_nice_yaml(2) | indent(2,true) | do_log('ontap/quota_policy/delete','cluster',qlogname) }}"
       l_svm:                 "{{ svm                 | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
-      l_volume:              "{{ volume              | to_nice_yaml(2) | indent(2,true) | do_log('','volume',qlogname) }}"
       l_quota_policy:        "{{ quota_policy        | to_nice_yaml(2) | indent(2,true) | do_log('','quota_policy',qlogname) }}"
 
   - name: "Delete Quota Policy {{ quota_policy.name }}"
-    netapp.ontap.na_ontap_rest_cli:
+    na_ontap_rest_cli_idempotent:
       command: "volume/quota/policy"
       verb: DELETE
       params: 
         policy_name: "{{ quota_policy.name }}"
         vserver: "{{ svm.name }}"
       <<: *auth
+      idempotency_params:
+        precheck:
+          rest_cli:
+            command: "volume/quota/policy"
+            verb: GET
+            params:
+              policy_name: "{{ quota_policy.name }}"
+              vserver: "{{ svm.name }}"
+          skip_main_command:
+            num_records: "==0"
     delegate_to: localhost
     register: quota_policy_result
-    ignore_errors: yes
 
   - name: "Fail on non-duplicate error"
     fail:
@@ -40,7 +48,6 @@
     when: quota_policy_result.failed and "duplicate" not in quota_policy_result.msg
 
   when: 
-  - volume.name | default(false)
   - quota_policy.name | default(false)
   - svm.name | default(false)
 

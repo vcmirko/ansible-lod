@@ -1,0 +1,15 @@
+---
+# unfortunately, ansible doesn't allow looping roles
+# so we have a local tasks "create_one" which includes facts & create of the quota role
+# hence we can create multiple quotas in a loop
+
+# - debug: var=qtask_child
+
+- name: Create multiple quotas
+  # debug:
+  #   msg: "{{ quota.name }}"
+  include_tasks: "create_one.yml" 
+  loop_control:
+    loop_var: quota_item
+    label: "Creating quota {{ quota_item.name }}"
+  loop: "{{ quotas }}"

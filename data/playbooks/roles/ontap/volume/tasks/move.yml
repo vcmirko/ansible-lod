@@ -1,0 +1,63 @@
+---
+- name : "Role ontap/volume/move"
+  block:
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest.validate_certs | default(false) }}"
+        https: "{{ auth_rest.https | default(false) }}"
+        use_rest: always
+
+  # logging
+  - name: Logging
+    set_fact:
+      l_cluster: "{{ cluster | to_nice_yaml(2) | indent(2,true) | do_log('ontap/volume/move','cluster',qlogname) }}"
+      l_svm:     "{{ svm     | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_volume:  "{{ volume  | to_nice_yaml(2) | indent(2,true) | do_log('','volume',qlogname) }}"
+
+  # get best aggregate
+  - name: "Find best aggregate [{{ volume.name }}]" 
+    get_best_aggregate:
+        <<: *auth
+        volume_name              : "{{ volume.name }}"
+        svm_name                 : "{{ svm.name }}"
+        debug                    : True
+        size_mb                  : "{{ volume.size | default(0) }}"
+        weight_volume_count      : 0
+        weight_used_pct          : 0
+        weight_provisioned_pct   : 0
+        weight_available_space   : 1
+        # threshold_volume_count   : 
+        # threshold_used_pct       : 
+        # threshold_provisioned_pct: 10000000
+        # threshold_available_space: 
+        # exclude_name_regex       : 
+        # include_name_regex       : "^{{ volume.aggregate_include_name_regex | default('.*') }}$"
+        # exclude_node_regex       : 
+        include_node_regex         : "{{ volume.aggregate_include_node_regex | default('.*') }}"
+        # names_to_exclude         :
+        # nodes_to_exclude         : 
+    register: aggr_lookup
+    delegate_to: localhost
+    when:
+    - volume.aggregate.name is not defined
+
+  # move the volume
+  - name: "Move volume [{{ volume.name }}]"
+    netapp.ontap.na_ontap_volume:
+      <<: *auth  
+      state: present
+      vserver:                 "{{ svm.name }}"    
+      name:                    "{{ volume.name }}"
+      aggregate_name:          "{{ volume.aggregate.name                 | default(aggr_lookup.aggregate.name)    | default(omit) }}"
+    delegate_to: localhost
+
+  when:  
+  - volume.name | default(false)
+  - svm.name | default(false)    

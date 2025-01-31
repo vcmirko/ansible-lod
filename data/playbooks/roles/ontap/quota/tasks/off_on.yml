@@ -1,0 +1,45 @@
+---
+- name: "Role - ontap/quota/create"
+  block:
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest.validate_certs | default(false) }}"
+        https: "{{ auth_rest.https | default(false) }}"
+        use_rest: always
+
+    # logging
+  - name: Logging
+    set_fact:
+      l_cluster:               "{{ cluster              | to_nice_yaml(2) | indent(2,true) | do_log('ontap/quota/create','cluster',qlogname) }}"
+      l_svm:                   "{{ svm                  | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
+      l_volume:                "{{ volume               | to_nice_yaml(2) | indent(2,true) | do_log('','volume',qlogname) }}"
+      l_quota:                 "{{ quota                | to_nice_yaml(2) | indent(2,true) | do_log('','quota',qlogname) }}"
+
+  - name: "Set Quota off -> {{ volume.name }}"
+    netapp.ontap.na_ontap_quotas:
+      state: present
+      vserver:                   "{{ svm.name }}"    
+      volume:                    "{{ volume.name }}"    
+      set_quota_status: false
+      <<: *auth
+    delegate_to: localhost
+
+  - name: "Set Quota on -> {{ volume.name }}"
+    netapp.ontap.na_ontap_quotas:
+      state: present
+      vserver:                   "{{ svm.name }}"    
+      volume:                    "{{ volume.name }}"    
+      set_quota_status: true
+      <<: *auth
+    delegate_to: localhost
+
+  when: 
+  - volume.name | default(false)
+  - svm.name | default(false)
