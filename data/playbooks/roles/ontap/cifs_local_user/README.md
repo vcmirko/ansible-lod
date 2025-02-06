@@ -1,5 +1,13 @@
 # ontap / cifs_local_user 
-Manage NetApp ONTAP CIFS local users
+Manage NetApp ONTAP CIFS local users  
+  
+Note : This role supports multi / looping
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

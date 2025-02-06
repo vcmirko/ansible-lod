@@ -1,5 +1,13 @@
 # ontap / cifs_privilege 
-Manage NetApp ONTAP Cifs Privileges
+Manage NetApp ONTAP Cifs Privileges  
+  
+
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

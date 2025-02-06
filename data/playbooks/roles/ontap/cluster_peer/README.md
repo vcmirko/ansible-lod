@@ -1,5 +1,13 @@
 # ontap / cluster_peer 
-Manage NetApp ONTAP Cluster Peer
+Manage NetApp ONTAP Cluster Peer  
+  
+
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

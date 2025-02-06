@@ -1,5 +1,13 @@
 # aiqum / management 
-AIQUM management, register, rediscover, ...
+AIQUM management, register, rediscover, ...  
+  
+
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

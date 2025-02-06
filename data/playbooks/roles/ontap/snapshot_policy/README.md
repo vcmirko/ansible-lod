@@ -1,5 +1,13 @@
 # ontap / snapshot_policy 
-Manage NetApp ONTAP Snapshot Policies
+Manage NetApp ONTAP Snapshot Policies  
+  
+
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

@@ -1,5 +1,13 @@
 # ontap / lun 
-Manage NetApp ONTAP LUNs
+Manage NetApp ONTAP LUNs  
+  
+Note : This role supports multi / looping
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

@@ -1,5 +1,13 @@
 # ontap / quota 
-Manage NetApp ONTAP Quotas
+Manage NetApp ONTAP Quotas  
+  
+Note : This role supports multi / looping
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

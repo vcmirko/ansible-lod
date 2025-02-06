@@ -1,5 +1,13 @@
 # ontap / svm 
-Manage NetApp ONTAP SVMs (vservers)
+Manage NetApp ONTAP SVMs (vservers)  
+  
+Note : This role supports multi / looping
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

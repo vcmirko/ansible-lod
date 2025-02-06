@@ -1,5 +1,13 @@
 # ontap / snapmirror 
-Manage NetApp ONTAP Snapmirrors
+Manage NetApp ONTAP Snapmirrors  
+  
+Note : This role supports multi / looping
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

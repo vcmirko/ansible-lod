@@ -1,5 +1,13 @@
 # ontap / vlan 
-Manage NetApp ONTAP VLANs
+Manage NetApp ONTAP VLANs  
+  
+Note : This role supports multi / looping
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

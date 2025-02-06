@@ -1,5 +1,13 @@
 # ontap / file_security_permissions 
-Manage NetApp ONTAP File Security Permissions
+Manage NetApp ONTAP File Security Permissions  
+  
+
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

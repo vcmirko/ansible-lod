@@ -1,5 +1,13 @@
 # ontap / qtree 
-Manage NetApp ONTAP Qtrees
+Manage NetApp ONTAP Qtrees  
+  
+Note : This role supports multi / looping
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

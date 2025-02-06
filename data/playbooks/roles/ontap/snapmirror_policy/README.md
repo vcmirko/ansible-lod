@@ -1,5 +1,13 @@
 # ontap / snapmirror_policy 
-Manage NetApp ONTAP SnapMirror policies
+Manage NetApp ONTAP SnapMirror policies  
+  
+
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

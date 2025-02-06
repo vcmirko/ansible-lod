@@ -1,5 +1,13 @@
 # ontap / cifs_share 
-Manage NetApp ONTAP CIFS shares
+Manage NetApp ONTAP CIFS shares  
+  
+Note : This role supports multi / looping
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

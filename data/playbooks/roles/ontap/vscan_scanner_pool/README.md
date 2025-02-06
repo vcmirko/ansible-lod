@@ -1,5 +1,13 @@
 # ontap / vscan_scanner_pool 
-Manage NetApp ONTAP Vscan Scanner Pools
+Manage NetApp ONTAP Vscan Scanner Pools  
+  
+
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |

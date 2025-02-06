@@ -1,5 +1,13 @@
 # cyberark / pam 
-Manages CyberArk PAM tasks
+Manages CyberArk PAM tasks  
+  
+
+
+
+
+
+
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |
