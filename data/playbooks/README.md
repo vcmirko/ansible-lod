@@ -1,4 +1,4 @@
-# MAF - Mirko's Ansible Framework
+# MAF - Modular Ansible Framework
 
 ## Playbooks
 
@@ -32,9 +32,10 @@ Let's break it down :
   gather_facts: false
 ```
 
-Each playbook is targeted against localhost, no inventory is used.  We target ontap cluster from within the playbook.
-Generally just 1 cluster, there are however exeptions in the case of snapmirror/snapvault that two or even 3 clusters are targets.
-We don't gather_facts by default, as we target localhost and not much interesting information can be gathered.
+Each playbook is targeted against localhost, no inventory is used.  We target ontap clusters from within the playbook.  Generally just 1 cluster, there are however exeptions in the case of snapmirror/snapvault that two or even 3 clusters are targets.
+We don't `gather_facts` by default, as we target localhost and not much interesting information can be gathered.
+  
+**Note** : But an inventory can be used is certain cases, like typical multi cluster tasks.  Since we set `delegate` to `localhost`, an inventory will still work.
 
 ``` yaml
   vars_files:
@@ -43,9 +44,9 @@ We don't gather_facts by default, as we target localhost and not much interestin
     - "vars/overrides.yml"
 ```
 
-Typically we load these 3 files that holds the defaults, templates and overrides.  
+Typically we load these 3 files that hold the **defaults**, **templates** and **overrides**.  
 When testing, you can choose to load credentials and extravars from a file.  Wrap the extravars in a dict `vars_external`.
-You can choose to load different files or have them together in 1 file.  
+You can choose to load different files, custom files or have them together in 1 file.  
 The main goal is to load 3 variables, which are mandatory:  **vars_defaults**, **vars_templates** and **vars_overrides**
 
 ``` yaml
@@ -66,14 +67,14 @@ In the example below we first :
 - create a volume  
 - rediscover AIQUM.  
 
-For each role we pass a subtask (variable `qtask`) that is part of that role.  
+For each role we pass a subtask or subrole (variable `qtask`) that is part of that role.  
 The task `facts` is a generic name for pre-processing variables aka `set_facts`.  
 You will typically see this task for each role. (facts + create, facts + delete, facts + rename, fact + rediscover, ...).  
-The goal of the facts task is to prepare the variables for the next task.  
+The goal of the facts task is to prepare the variables for the next task.  In the case of NetApp ONTAP, we will typically prepare the hostname, usually a `cluster.management_ip`, with a fallback to `ansible_host` in case there is an inventory.
 
 ## Variables and merging process
 
-Ansible modules are fed information through variables.  In this framework, we try to structure these variables in objects/dicts.  
+Ansible modules are receiving information through variables.  And it's true, ansible has a hierarchy of precedence with vars folders and defaults etc... But in my experience, pardon my french, this is crap.  In more complex environment, we want to use objects/dicts.  And the precedence doesn't work with dicts.  In this framework, we try to structure these variables in objects/dicts and use a custom written filter that can merge dicts.
 Throughout this documentation, we will use the example where we create a volume for cifs.  
 
 ``` yaml
@@ -103,7 +104,7 @@ To make the framework dynamic we use a couple of variables in this framework tha
 
 - vars_defaults
 - vars_templates
-- vars_local (after vars_external have been processed by the logic-module)
+- vars_local (after vars_external have been processed by the logic-module, vars_external is transformed to vars_local)
 - vars_overrides
 
 ### vars_defaults
@@ -170,7 +171,9 @@ vars_external:
         management_ip : 10.0.0.1
 ```  
 
-**Example 2** : Logic is handled internal, naming conventions internal, resource selection is internal.  The input in this case is somewhat customer specific.  A good practice is to put it under something meaningfull, in this case `meta` (short for metadata)
+**Example 2** : Logic is handled internal, naming conventions internal, resource selection is internal.  The input in this case is somewhat customer specific.  A good practice is to put it under something meaningfull, in this case `meta` (short for metadata).  
+
+The logic can be applied with jinja2-filter, jinja2-templates, or, a personal favorite, a custom module, where we have the full python libraries at our disposal.  This custom module will take the vars_external and manipulate it with resource selections, environment decisions and naming conventions.
 
 ``` yaml
 vars_external:
@@ -184,61 +187,145 @@ vars_external:
         size        : 9
 ```  
 
+**Example 3** : The external extra_vars are not structured and will need to be preprocessed even more.
+
+``` yaml
+  environment : prod
+  location    : ams
+  service     : files
+  shared      : true
+  change_req  : CR123456
+  volume_size : 9
+```  
+
+In this case, we will most likly do a 2-step preprocessing. 
+
+- Pass the information through a jinja2-template, adding a bit of structure
+- Pass the information through a logic module.
+
+
 ## vars_local
 
 Holds the reworked information where vars_external has been processed by the logic-module.  
 Typically in the logic-modules the incoming data is being :
 
 - **validated** : perhaps you want to check required information or check formatting, ...
-- **analysed** : apply some if-then-else logic, custom function, ...
+- **analysed**  : apply some if-then-else logic, custom function, ...
 - **completed** : maybe some resource-selection is required, rest-calls, database lookups, ... to complete the data
-- **reworked** : some input data can be modified, removed, added, naming conventions can be applied, ...
+- **reworked**  : some input data can be modified, removed, added, naming conventions can be applied, ...
 
-**Note** : extra_vars in ansible are immutable.  Since vars_external are extra_vars, we must host the reworked data in a new dict `vars_local`.
+**Note** : extra_vars in ansible are immutable.  Since vars_external are extra_vars, we must put the reworked data in a new dict `vars_local`.
 
-**Example1**: The logic-task to, for example, delete a lun.  When a lun is deleted, the customer wants it renamed to `del_{{ lunname }}`.  Since this is customer specific, we will put this in a custom logic-module.
-
+**Example**: This is a full example, starting with unstructured extra_vars.
+  
 ``` yaml
-# apply logic for the lun_delete operation
-- lun_delete:  # => this is a custom module to handle the logic for lun_delete operation
-    vars_external : "{{ vars_external }}" # => external variables go in (vars_external)
-  delegate_to: localhost
-  register: logic_result 
+---
+- name: "Role - customerX/logic/logicX"
+  block:
 
-# debug the result of the logic if needed
-- debug: var=logic_result 
-  verbosity: 2
+  ## Assemble vars_external from unstructured input
+  - name: "Convert input to vars_external"
+    set_fact:
+      vars_external: "{{ lookup('template', '../templates/logicX.yml.j2', convert_data=False) | from_yaml }}"
 
-# store the processed data in vars_local
-- set_fact:
-    vars_local : "{{ logic_result.vars }}" 
+  ## Apply further logic to the now-structured-data
+  - name: "Logic - logicX" 
+    logicX:
+      vars_external : "{{ vars_external }}"
+    delegate_to: localhost
+    register: logic_result
+
+  - name: Register logic result
+    set_fact:
+      vars_local : "{{ logic_result.vars }}"
+
+  - name: Logging
+    set_fact:
+      qlogname: "{{ vars_external | to_nice_yaml(2) | indent(2,true) | do_log('Running logic logicX','vars_external',qlogname) }}"
+
+  - name: Logging
+    set_fact:
+      qlogname: "{{ vars_local | to_nice_yaml(2) | indent(2,true) | do_log('After logic logicX','vars_local',qlogname) }}"
 ```
 
-**Example2**: The logic-task to create a share.  The share will land on a specific svm, based on the service.  The volume name will be created based on the service, shared, and an auto-increment number.  The junction path will be created based on the volume name.  The comment will have the change_request number added.  We pass, next to the vars_external, the aiqum credentials and the mysql credentials.  The logic will look up the svm, the cluster, ...  
+Note that we can also log the before (vars_external) and after (vars_logic) into some logfile.  
+If the logic is done outside, then `vars_local` can be just a copy of `vars_external`.  Or use the `bypass` module in collection `maf` to skip the logic.
+
+**Example data** : Unstructured data -> structured data -> logic process -> output
+
+Unstructed input :
 
 ``` yaml
-## Naming facts
-- facts_share:
-    vars_external : "{{ vars_external }}"
-    aiqum_host    : "{{ aiqum_host }}"
-    aiqum_username: "{{ aiqum_username }}"
-    aiqum_password: "{{ aiqum_password }}"
-    mysql_host    : "{{ mysql_host }}"
-    mysql_username: "{{ mysql_username }}"
-    mysql_password: "{{ mysql_password }}"
-    mysql_port    : "{{ mysql_port }}"
-  delegate_to: localhost
-  register: logic_result
-
-# - debug: var=logic_result
-
-- set_fact:
-    vars_local : "{{ logic_result.vars }}"
+# extra_vars received
+SVC     : FILES
+SVC_TYPE: SHARED
+PROT    : CIFS
+SZ      : 9
+CR      : CR123456
+LOC     : AMS
+ENV     : PROD
 ```
 
-If the logic is done outside, then `vars_local` can be just a copy of `vars_external`.  Or use the `bypass` module to skip the logic.
+Jinja2 template : will add some structure and a apply some basic logic.    
+Hint : try to keep the logic within the jinja step to a minimum, for readibility  
+  
+``` yaml
+# file ./templates/logicX.yml.j2
+vars_external:
+  meta: 
+    service       : "{{ SVC      | default('files')  | lower }}" 
+    service_type  : "{{ SVC_TYPE | default('shared') | lower }}"
+    protocol      : "{{ PROT     | default('nfs')    | lower }}"
+    change_request: "{{ CR       | default('')       | upper }}"
+    location      : "{{ LOC      | default('bru')    | lower }}"
+    environment   : "{{ ENV      | default('dev')    | lower }}"
+  volume:
+    size: "{{ SZ | int }}"
+```
 
-**Example** : Below is the vars_local after the logic has been applied.  
+Below a sample code snippet, applying further logic
+
+``` python
+# file ./library/logicX.py
+# ... this just a snippet of a custom logic module 
+
+# grab input
+ve                                 = module.params['vars_external']
+
+# grab metadata
+meta                               = ve.get('meta')
+service                            = meta.get('service')
+service_type                       = meta.get('service_type')
+protocol                            = meta.get('protocol')
+change_request                      = meta.get('change_request')
+location                            = meta.get('location')
+environment                         = meta.get('environment')
+
+# prep resources
+cluster                            = ve.get('cluster',{})
+svm                                = ve.get('svm',{})
+volume                             = ve.get('volume',{})
+
+# apply logic
+resource = find_proper_cluster(location,environment) # just an example to find a resource based on location & environment
+cluster["name"]          = resource["cluster_name"]
+cluster["management_ip"] = resource["cluster_ip"]
+
+svm["name"] = f"svm_{protocol}"
+
+volume["name"]          = find_next_incremental_name(f"v_{service}_{service_type}_###",'001') # function that finds next incremental name, default = 001
+volume["comment"]       = f"volume created for {service}, {service_type} is enabled, change_request = {change_request}"
+volume["junction_path"] = f"/{volume["name"]}" 
+volume["size"]          = (volume["size"] + 9) // 10 * 10 # round to next 10
+
+# assemble
+ve["template"]= f"nas_{protocol}"
+ve["meta"]    = meta
+ve["cluster"] = cluster
+ve["svm"]     = svm
+ve["volume"]  = volume
+
+```
 
 ``` yaml
 # this is the vars_local after the logic has been applied
@@ -267,7 +354,9 @@ It's also a way to enforce certain values, like setting the security style to nt
 vars_overrides:
     volume:
         size_unit              : mb
-        security_style         : ntfs
+    dns:
+        domain: demo.local
+        servers: 192.168.1.1
 ```
 
 ## merging process
@@ -304,7 +393,7 @@ This merging process is done in the `facts` task of each role.
     cluster: "{{ 'cluster'     | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
 ```
 
-**Example 3**: There is a list to merged, you will typically see this in the case of a loop, in the `facts_multi` task
+**Example 3**: There is a list to be merged, you will typically see this in the case of a loop, in the `facts_multi` task
 
 ``` yaml
 - name: Merge Extravars
