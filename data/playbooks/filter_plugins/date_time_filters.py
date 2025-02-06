@@ -1,3 +1,11 @@
+# =========================================================
+# DESCRIPTION
+# Filters for date time manipulation
+#
+# VERSION HISTORY
+# 2025-02-03 - Mirko Van Colen - Initial version
+# =========================================================
+
 import datetime
 
 class FilterModule(object):

@@ -1,4 +1,10 @@
-# Description: Custom Jinja2 filter for Netapp ontap specific tasks
+# ==============================================================================
+# DESCRIPTION
+# Filter export policy rules and apply the correct state to each rule (present or absent)
+#
+# VERSION HISTORY
+# 2025-02-03 - Mirko Van Colen - Initial version
+# ==============================================================================
 
 class FilterModule(object):
 

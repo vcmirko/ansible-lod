@@ -1,6 +1,14 @@
 #!/usr/bin/python
 
 # (c) 2019-2025, NetApp, Inc
+# ==============================================================================
+# DESCRIPTION
+# Invoke the ONTAP REST API to run a CLI command but with extended idempotency checks
+# Mostly cloned from na_ontap_rest_cli.py
+#
+# VERSION HISTORY
+# 2025-02-03 - Mirko Van Colen - Initial version
+# ==============================================================================
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 '''

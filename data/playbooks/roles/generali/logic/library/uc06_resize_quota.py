@@ -1,11 +1,21 @@
 #!/usr/bin/python
 
 # Copyright: (c) 2020, Mirko Van Colen <mirko@netapp.com>
+# ==============================================================================
+# DESCRIPTION
+# The custom logic used to resize a quota
+#
+# It's only purpose is setting the quota target based on the volume & qtree name
+#
+# VERSION HISTORY
+# 2025-02-03 - Mirko Van Colen - Initial version
+# ==============================================================================
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 from ansible.module_utils.basic import AnsibleModule
+import re
 
 summary=[]
 result = {}
@@ -15,6 +25,7 @@ def validate_input(inputs):
         for key in i:
             if not i[key]:
                 raise Exception(f"Missing required parameter {key}")
+
 
 # logging 
 def log(t):
@@ -27,7 +38,6 @@ def run_module():
     module_args = dict(
         # debug                     = dict(type='bool', required=False, default=False),
         vars_external               = dict(type='dict', required=True), # vars external dict
- 
     )
 
     module = AnsibleModule(
@@ -40,32 +50,30 @@ def run_module():
     
     err = None
     # debug          = module.params['debug']
-    ve             = module.params['vars_external']
-    cluster        = ve.get("cluster", {})
-    svm            = ve.get("svm", {})
-    volumes        = ve.get("volumes", [])
 
-     # apply logic
+    # grab input
+    ve                                 = module.params['vars_external']
+
+   
+    # grab the 3 environments
+    primary                            = ve.get('primary',{}) # subkey of vars_external
+    quota                              = primary.get('quota',{}) # subkey of primary
+    volume                             = primary.get('volume',{}) # subkey of primary
+    qtree                              = primary.get('qtree',{}) # subkey of primary
+
     try:
 
-        # validate input
-        # validate_input([cluster, svm, volumes])
+        # set quota target
+        volume_name = volume.get('name','')
+        qtree_name = qtree.get('name','')
+        quota["quota_target"] = f"/vol0/{volume_name}/{qtree_name}"
+        primary["quota"] = quota
 
-        # set template name
-        svm["template"] = "nas_nfs"
+        # ---------------------
+        # ASSEMBLE FINAL VARS
+        # ---------------------
 
-        # complete svm lifs
-        if svm.get("lifs", None):   
-            svm["lifs"][0]["node"] = f"{cluster['name']}-01" # set node name
-
-        # loop over volumes and set junction path
-        for volume in volumes:
-            # volume["name"] = f"{svm['name']}_{volume['name']}"
-            volume["junction_path"] = f"/{volume['name']}"
-
-        # reassign to vars_external
-        ve["svm"] = svm 
-        ve["volumes"] = volumes
+        ve["primary"] = primary
 
     except Exception as e:
         log(repr(e))

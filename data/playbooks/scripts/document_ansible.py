@@ -25,6 +25,75 @@ roles_path = '../roles'
 # set the path to the script
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+def find_commented_lines(file,headers_to_find=["description","version history"]):
+
+    # convert the headers to uppercase
+    headers_to_find = [header.upper() for header in headers_to_find]
+
+    # read the file
+    with open(file) as f:
+        lines = f.readlines()
+
+    # find the start and end of the comment block
+    start = None
+    end = None
+    for i, line in enumerate(lines):
+        if line.startswith("# ====="):
+            if start is None:
+                start = i
+            else:
+                end = i
+                break
+    
+    if start is None or end is None:
+        return None
+    
+    # extract the lines between the start and end
+    lines = lines[start:end]
+
+    # remove the comment character and the space
+    lines = [line[2:].strip() for line in lines]
+
+    # find the headers and the content
+    headers = {}
+
+    for i, line in enumerate(lines):
+        if line in headers_to_find:
+            header_name = line.lower().replace(" ","_")
+            headers[header_name] = ""
+            for j in range(i+1, len(lines)):
+                if lines[j] in headers_to_find:
+                    break
+                headers[header_name] += lines[j] + "<br>"
+
+    # remove all trailing <br> from the headers
+
+    for header in headers:
+        headers[header] = headers[header].strip("<br>")
+
+    return headers
+
+def find_python_file_headers(path):
+    # for each .py file, find the commented lines
+    if not os.path.exists(path):
+        return []
+
+    list_of_files = []
+    file_names = os.listdir(path)
+    for file_name in file_names:
+        if not file_name.endswith('.py'):
+            continue
+
+        headers = find_commented_lines(f"{path}/{file_name}")
+        # print(headers)
+        object = {}
+        object["name"] = file_name
+        for header in headers:
+            object[header] = headers[header]
+
+        list_of_files.append(object)
+    return list_of_files
+
 def template_to_file(template, file, vars, check=False):
     if check and os.path.exists(file):
         return
@@ -88,8 +157,6 @@ def document_roles():
         role_names = os.listdir(f'{roles_path}/{collection_name}')
         # svm, volume, ...
 
-
-
         for role_name in role_names:
 
             if not os.path.isdir(f'{roles_path}/{collection_name}/{role_name}'):
@@ -104,14 +171,20 @@ def document_roles():
             role = {}
             role["name"] = role_name
             role["link"] = get_link(f"{collection_name} / {role_name}")
+
+            # process library
+            role["modules"] = find_python_file_headers(f'{roles_path}/{collection_name}/{role_name}/library')
+
+            # process filters
+            role["filters"] = find_python_file_headers(f'{roles_path}/{collection_name}/{role_name}/filter_plugins')
+
+            # process qtasks
             role["qtasks"] = []
 
             if not os.path.exists(f'{roles_path}/{collection_name}/{role_name}/tasks'):
                 # print with color
                 print(colored(f"Role {role_name} does not have a tasks folder", 'red'))
                 continue
-
-            
 
             # check if the role has a meta folder with main.yml file
             # if it does, extra the role description

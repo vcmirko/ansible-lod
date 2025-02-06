@@ -1,0 +1,112 @@
+---
+- name: "Role - generali/logic/uc01_create_volume"
+  block:
+
+    #===========================================================================#
+    # Grab the cluster names for the primary, backup local, backup remote, and ADPE clusters
+    # For snapmirror purposes, these are needed
+    # Need to create the snapmirrors
+    #===========================================================================#
+
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
+      auth: &auth
+        username: "{{ ontap_username }}"
+        password: "{{ ontap_password }}"
+        validate_certs: False
+        https: True
+        use_rest: always
+
+  - name: "Get Primary Cluster Name"
+    block:
+    - name: "Get rest info"
+      netapp.ontap.na_ontap_rest_info:
+        gather_subset: cluster
+        fields:
+        - "name"
+        <<: *auth
+        hostname: "{{ ansibleHost }}"
+      delegate_to: localhost
+      register: primary_cluster_info
+
+    - name: "Store Primary Cluster Name"
+      set_fact:
+        ansibleHostName: "{{ primary_cluster_info.ontap_info.cluster.name }}"
+    when: ansibleHost is defined
+
+  - name: "Get Backup Local Cluster Name"
+    block:
+    - name: "Get rest info"
+      netapp.ontap.na_ontap_rest_info:
+        gather_subset: cluster
+        fields:
+        - "name"
+        <<: *auth
+        hostname: "{{ ansibleHostBL }}"
+      delegate_to: localhost
+      register: backup_local_cluster_info
+
+    - name: "Store Backup Local Cluster Name"
+      set_fact:
+        ansibleHostBLName: "{{ backup_local_cluster_info.ontap_info.cluster.name }}"
+    when: ansibleHostBL is defined
+    
+  - name: "Get Backup Remote Cluster Name"
+    block:
+    - name: "Get rest info"
+      netapp.ontap.na_ontap_rest_info:
+        gather_subset: cluster
+        fields:
+        - "name"
+        <<: *auth
+        hostname: "{{ ansibleHostBR }}"
+      delegate_to: localhost
+      register: backup_remote_cluster_info
+
+    - name: "Store Backup Remote Cluster Name"
+      set_fact:
+        ansibleHostBRName: "{{ backup_remote_cluster_info.ontap_info.cluster.name }}"
+    when: ansibleHostBR is defined
+
+  - name: "Get ADPE Cluster Name"
+    block:
+    - name: "Get rest info"
+      netapp.ontap.na_ontap_rest_info:
+        gather_subset: cluster
+        fields:
+        - "name"
+        <<: *auth
+        hostname: "{{ ansibleHostAP }}"
+      delegate_to: localhost
+      register: adpe_cluster_info
+
+    - name: "Store ADPE Cluster Name"
+      set_fact:
+        ansibleHostAPName: "{{ adpe_cluster_info.ontap_info.cluster.name }}"
+    when: ansibleHostAP is defined
+
+  ## Assemble vars_external from generali vrealize input
+  - name: "Apply vrealize input to vars_external"
+    set_fact:
+      vars_external: "{{ lookup('template', '../templates/uc01_create_volume.yml.j2', convert_data=False) | from_yaml }}"
+
+  - name: "Logic - UC01 Create Volume"
+    uc01_create_volume:
+      vars_external : "{{ vars_external }}"
+    delegate_to: localhost
+    register: logic_result
+
+  # - debug: var=logic_result
+
+  - name: Register logic result
+    set_fact:
+      vars_local : "{{ logic_result.vars }}"
+
+  - name: Logging
+    set_fact:
+      qlogname: "{{ vars_external | to_nice_yaml(2) | indent(2,true) | do_log('Running logic uc01_create_volume','vars_external',qlogname) }}"
+
+  - name: Logging
+    set_fact:
+      qlogname: "{{ vars_local | to_nice_yaml(2) | indent(2,true) | do_log('After logic uc01_create_volume','vars_local',qlogname) }}"

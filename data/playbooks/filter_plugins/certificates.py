@@ -1,4 +1,11 @@
 # let's create a custom filter plugin to handle certificate manipulations
+# ==============================================================================
+# DESCRIPTION
+# Several filters for certificate manipulation
+#
+# VERSION HISTORY
+# 2025-02-03 - Mirko Van Colen - Initial version
+# ==============================================================================
 
 class FilterModule(object):
 

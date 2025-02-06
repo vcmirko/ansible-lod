@@ -1,3 +1,11 @@
+# =========================================================
+# DESCRIPTION:
+# Filter that logs to file
+# 
+# VERSION HISTORY:
+# 2025-02-03 - Mirko Van Colen - Initial version
+# =========================================================
+
 class FilterModule(object):
   '''
   log to file Filter

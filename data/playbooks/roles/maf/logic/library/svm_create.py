@@ -1,6 +1,15 @@
 #!/usr/bin/python
 
 # Copyright: (c) 2020, Mirko Van Colen <mirko@netapp.com>
+# ==============================================================================
+# DESCRIPTION
+# This script is the custom logic used to create a SVM and volumes
+#
+# Adding a few lifs, setting volume junction paths and setting the template
+#
+# VERSION HISTORY
+# 2025-02-03 - Mirko Van Colen - Initial version
+# ==============================================================================
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type

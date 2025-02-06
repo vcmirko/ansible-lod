@@ -1,3 +1,11 @@
+# =============================================================================
+# DESCRIPTION
+# Merge dictionaries and lists with defaults, templates and overrides
+#
+# VERSION HISTORY
+# 2025-02-03 - Mirko Van Colen - Initial version
+# =============================================================================
+
 class FilterModule(object):
   '''
   custom jinja merge vars Filter

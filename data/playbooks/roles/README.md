@@ -7,6 +7,7 @@ This folder contains the collections of roles that are used to deploy the differ
 | [awx](#awx) | AWX (Ansible Tower / Ansible Automation Platform) integration |
 | [cyberark](#cyberark) | CyberArk integration |
 | [eeod](#eeod) | Netapp EEOD (Epic Environment on Demand) integration |
+| [generali](#generali) | Customer Generali integration |
 | [infoblox](#infoblox) | Infoblox integration |
 | [maf](#maf) | MAF - Modular Ansible Framework - this current framework, some common roles |
 | [ontap](#ontap) | Netapp ONTAP integration |
@@ -47,6 +48,17 @@ Netapp EEOD (Epic Environment on Demand) integration
 | Roles | Description |
 | :--- | :--- |
 | logic | EEOD Logic, import excel file to deploy luns |
+
+
+
+## generali
+Customer Generali integration
+
+| Roles | Description |
+| :--- | :--- |
+| cmdb | Add records to CMDB |
+| facts | Process Generali credentials |
+| logic | Manages the logic of the Generali, like naming conventions, environment placing, etc. |
 
 
 

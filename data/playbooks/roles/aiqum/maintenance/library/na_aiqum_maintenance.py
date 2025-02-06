@@ -1,6 +1,13 @@
 #!/usr/bin/python
 
 # Copyright: (c) 2023, Mirko Van Colen <mirko@netapp.com>
+# ==============================================================================
+# DESCRIPTION
+# A custom module to put an ontap cluster in/out maintenance mode in AIQUM
+#
+# VERSION HISTORY
+# 2023-02-03 - Mirko Van Colen - Initial version
+# ==============================================================================
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type

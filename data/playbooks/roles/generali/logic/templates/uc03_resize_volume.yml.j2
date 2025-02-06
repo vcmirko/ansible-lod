@@ -1,0 +1,72 @@
+# ==============================================================================
+# META DATA - to help make logical decisions or naming conventions
+# ==============================================================================
+
+meta:
+  volume_style: "{{ ansibleVolStyle | default('MIX') }}"                # MIX, SMB, NFS
+  volume_dr: "{{ ansibleVolDR | default(none) }}"                       # '0', '1', '2', '9'
+  service_level: "{{ ansibleSerLev | default(none) }}"                  # 'S1', 'M1', ...
+
+# ==============================================================================
+# PRIMARY ENVIRONMENT
+# ==============================================================================
+
+primary: 
+  cluster: &primary_cluster
+    management_ip: "{{ ansibleHost | default(none) }}"
+    name: "{{ ansibleHostName | default(none) }}"
+  svm: &primary_svm
+    name: "{{ ansibleVserver | default(none) }}"
+  volume: &primary_volume
+    name: "{{ ansiblePrimaryVol | default(none) }}" 
+    size: "{{ ansibleVolSize | default(none) | int }}"
+  cmdb:
+    sql_insert: "{{ ansibleSqlInsert | default(none) }}"
+
+# ==============================================================================
+# BACKUP LOCAL ENVIRONMENT
+# ==============================================================================
+
+backup_local:
+  cluster: &backup_local_cluster
+    management_ip: "{{ ansibleHostBL | default(none) }}"
+    name: "{{ ansibleHostBLName | default(none) }}"
+  svm: 
+    name: "" # added in logic script
+  volume: &backup_local_volume
+    <<: *primary_volume                                     # inherit from primary
+    name: "" # added in logic script
+  cmdb:
+    sql_insert: "{{ ansibleSqlInsert }}"
+
+# ==============================================================================
+# BACKUP REMOTE ENVIRONMENT
+# ==============================================================================
+
+backup_remote:
+  cluster: &backup_remote_cluster
+    management_ip: "{{ ansibleHostBR | default(none) }}"
+    name: "{{ ansibleHostBRName | default(none) }}"
+  svm: 
+    name: "" # added in logic script
+  volume:
+    <<: *backup_local_volume                                              # inherit from backup_local
+    name: "" # added in logic script
+  cmdb:
+    sql_insert: "{{ ansibleSqlInsert | default(none) }}"
+
+# ==============================================================================
+# ADPE ENVIRONMENT
+# ==============================================================================
+
+adpe:
+  cluster: &adpe_cluster
+    management_ip: "{{ ansibleHostAP | default(none) }}"
+    name: "{{ ansibleHostAPName | default(none) }}"
+  svm: 
+    name: "" # added in logic script
+  volume:
+    <<: *backup_local_volume                                       # inherit from backup_local
+    name: "" # added in logic script
+  cmdb:
+    sql_insert: "{{ ansibleSqlInsert | default(none) }}"
