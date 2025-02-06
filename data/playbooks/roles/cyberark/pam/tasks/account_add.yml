@@ -1,7 +1,7 @@
 - name: Role - cyberark/pam/account_add
   block:
-  - debug:
-      msg: "Adding new PAM account: {{ pam_account.name }}, System: {{ pam_account.hostname }}, FQDN: {{ pam_account.fqdn }}, Safe: {{ pam_account.safe_name }}, Policy: {{ pam_account.policy_name }}"
+  # - debug:
+  #     msg: "Adding new PAM account: {{ pam_account.name }}, System: {{ pam_account.hostname }}, FQDN: {{ pam_account.fqdn }}, Safe: {{ pam_account.safe_name }}, Policy: {{ pam_account.policy_name }}"
 
   - name: Add new account
     no_log: true

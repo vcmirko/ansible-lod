@@ -57,7 +57,7 @@
       <<: *auth
     delegate_to: localhost
 
-  - name: "Renaming volume {{ snapmirror.destination.volume.name}} -> del_{{ snapmirror.destination.volume.name }}"
+  - name: "Renaming volume [{{ snapmirror.destination.volume.name}}] -> [del_{{ snapmirror.destination.volume.name }}]"
     netapp.ontap.na_ontap_volume:
       state: present
       vserver:                 "{{ snapmirror.destination.svm.name }}"    

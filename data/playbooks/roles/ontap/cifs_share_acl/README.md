@@ -1,23 +1,20 @@
-# Tasks Summary
+# ontap / cifs_share_acl 
+Manage NetApp ONTAP CIFS share ACLs
 
-## create.yml
-This file supports the following properties:
+| Subrole | Description |
+| :------ | :---------- |
+| [create](#cifs_share_acl--create) |  |
 
-### cluster
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the cluster.                   |
 
-### svm
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the SVM.                       |
 
-### cifs_share_acl
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **share_name** | The name of the CIFS share.                |
-| **user_or_group** | The user or group for the ACL.          |
-| **permission** | The permission level for the ACL.          |
-| **type**       | The type of the ACL (e.g., allow, deny).   |
-| **state**      | The state of the ACL (e.g., present, absent). |
+
+## cifs_share_acl / create
+
+
+| Task |
+| :--- |
+| {{ task_action}} Cifs Share ACL  |
+
+
+
+

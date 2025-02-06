@@ -21,7 +21,7 @@
       l_svm:     "{{ svm     | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
       l_vlan:    "{{ vlan    | to_nice_yaml(2) | indent(2,true) | do_log('','vlan',qlogname) }}"
 
-  - name: "Create VLANs"            
+  - name: "Create VLAN"            
     netapp.ontap.na_ontap_net_vlan:
       state           : present
       vlanid          : "{{ vlan.tag  }}"

@@ -22,7 +22,7 @@
       l_volume:                "{{ volume               | to_nice_yaml(2) | indent(2,true) | do_log('','volume',qlogname) }}"
       l_quota:                 "{{ quota                | to_nice_yaml(2) | indent(2,true) | do_log('','quota',qlogname) }}"
 
-  - name: "Create/Modify Quota on {{ quota.quota_target }}"
+  - name: "Create/Modify Quota [{{ volume.name }}][{{ quota.quota_target | default('') }}]"
     netapp.ontap.na_ontap_quotas:
       state: present
       vserver:                   "{{ svm.name }}"    

@@ -1,5 +1,5 @@
 ---
-- name: "Role - ontap/sofware/update"
+- name: "Role - ontap/software_update/update"
   block:
   - name: Set authentication facts
     no_log: true

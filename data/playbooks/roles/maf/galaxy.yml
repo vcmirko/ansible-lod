@@ -1,0 +1,9 @@
+namespace: maf
+name: maf
+version: 1.0.0
+readme: README.md
+authors:
+  - Mirko Van Colen <mirko@netapp.com>
+description: "MAF - Modular Ansible Framework - this current framework, some common roles"
+tags: []
+dependencies: {}

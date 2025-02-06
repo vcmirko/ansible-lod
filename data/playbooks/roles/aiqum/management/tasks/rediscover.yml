@@ -1,5 +1,5 @@
 ---
-- name: "Role - ontap/aiqum/rediscover"
+- name: "Role - aiqum/management/rediscover"
   block:
   - name: Set authentication facts
     no_log: true

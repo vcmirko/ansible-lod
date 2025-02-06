@@ -1,5 +1,5 @@
 ---
-- name: "Role - ontap/aiqum/register"
+- name: "Role - aiqum/management/register"
   block:
   - name: Set authentication facts
     no_log: true
@@ -28,7 +28,8 @@
     ignore_errors: true
     register: cluster_obj
 
-  - block: 
+  - name: Register CLUSTER in Aiqum
+    block: 
     - name: Register CLUSTER in Aiqum
       no_log: true
       uri:

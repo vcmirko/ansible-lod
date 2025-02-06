@@ -1,15 +1,31 @@
-# ontap / export_policy
+# ontap / export_policy 
+Manage NetApp ONTAP Export Policies and rules
 
-This role is used to create an export policy and rules on an SVM.
+| Subrole | Description |
+| :------ | :---------- |
+| [create](#export_policy--create) |  |
+| [delete](#export_policy--delete) |  |
 
-## tasks
 
-- create : create an export policy and / or rules on an SVM (required credentials : ontap)
 
-## Input
 
-- cluster.management_ip
-- svm.name
-- export_policy.name
-- export_policy.rules
+## export_policy / create
+
+
+| Task |
+| :--- |
+| Create Export Policy |
+| Create/Delete/Modify export rules |
+
+
+
+## export_policy / delete
+
+
+| Task |
+| :--- |
+| Delete Export Policy |
+
+
+
 

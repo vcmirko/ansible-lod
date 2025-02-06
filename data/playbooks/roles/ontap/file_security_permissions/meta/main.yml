@@ -1,0 +1,5 @@
+allow_duplicates: true
+role:
+  description: Manage NetApp ONTAP File Security Permissions
+  key: name
+  supports_multi: false

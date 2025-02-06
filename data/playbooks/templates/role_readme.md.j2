@@ -1,0 +1,21 @@
+# {{ collection_name }} / {{ role.name }} 
+{{ role.description }}
+
+| Subrole | Description |
+| :------ | :---------- |
+{% for qtask in role.qtasks %}| [{{ qtask.name }}](#{{ qtask.link }}) | {{ qtask.description | default('') }} |
+{% endfor %}
+
+
+{% for qtask in role.qtasks%}
+## {{ role.name }} / {{ qtask.name }}
+{{ qtask.description }}
+
+| Task |
+| :--- |
+{% for task in qtask.tasks %}| {{ task.name }} |
+{% endfor %}
+
+{% endfor %}
+
+

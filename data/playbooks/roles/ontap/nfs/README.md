@@ -1,19 +1,20 @@
-# ontap / nfs
+# ontap / nfs 
+Manage NetApp ONTAP NFS Servers
 
-<description>>
+| Subrole | Description |
+| :------ | :---------- |
+| [create](#nfs--create) |  |
 
-## tasks
 
-- <action> : <action_description>
-- <action> : <action_description>
 
-## Input
 
-- <input>
-- <input>
+## nfs / create
 
-## execution
 
-**<action>** :
+| Task |
+| :--- |
+| Enable nfs |
 
-<action_description>
+
+
+

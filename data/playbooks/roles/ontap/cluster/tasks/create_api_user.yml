@@ -1,7 +1,7 @@
 ---
   # To create an API user with certificate, we need password authentication 
   # so this task will require the ontap credentials to be passed
-- name: "Role - ontap/cluster/create_api_user.yml"
+- name: "Role - ontap/cluster/create_api_user"
   block:
   - name: Set authentication facts
     no_log: true

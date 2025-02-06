@@ -1,0 +1,4 @@
+---
+- name: Merge Extravars
+  ansible.builtin.set_fact:
+    cifs_local_users : "{{ 'cifs_local_users' | merge_lists(d=vars_defaults,t=vars_templates,v=vars_local,required_keys=['name'],c=qtask_child) }}"

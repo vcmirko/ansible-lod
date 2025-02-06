@@ -1,5 +1,5 @@
 ---
-- name: Role awx/job/concurrent_launch
+- name: Role - awx/job/concurrent_launch
   block:
   - name: Process the awx_concurrent object
     awx_concurrent_loop:

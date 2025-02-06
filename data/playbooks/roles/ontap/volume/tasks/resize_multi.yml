@@ -1,0 +1,7 @@
+---
+- name: "resize Multiple volumes"
+  include_tasks: "resize_one.yml" 
+  loop_control:
+    loop_var: volume_item
+    label: "resizeing -> volume {{ volume_item.name }}"
+  loop: "{{ volumes }}"

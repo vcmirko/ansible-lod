@@ -1,2 +1,5 @@
----
 allow_duplicates: true
+role:
+  description: Some sample logic for MAF
+  key: name
+  supports_multi: false

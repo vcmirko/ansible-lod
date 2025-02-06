@@ -1,19 +1,20 @@
-# ontap / iscsi
+# ontap / iscsi 
+Manage NetApp ONTAP iSCSI Servers
 
-<description>>
+| Subrole | Description |
+| :------ | :---------- |
+| [create](#iscsi--create) |  |
 
-## tasks
 
-- <action> : <action_description>
-- <action> : <action_description>
 
-## Input
 
-- <input>
-- <input>
+## iscsi / create
 
-## execution
 
-**<action>** :
+| Task |
+| :--- |
+| Enable iscsi |
 
-<action_description>
+
+
+

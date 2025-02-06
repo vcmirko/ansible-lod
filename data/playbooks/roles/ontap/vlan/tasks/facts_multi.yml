@@ -1,0 +1,4 @@
+---
+- name: Merge Extravars
+  ansible.builtin.set_fact:
+    vlans : "{{ 'vlans' | merge_lists(d=vars_defaults,t=vars_templates,v=vars_local,required_keys=['name'],c=qtask_child) }}"

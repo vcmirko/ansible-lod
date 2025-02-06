@@ -1,5 +1,5 @@
 ---
-- name : "Role ontap/volume/create_dp"
+- name : "Role - ontap/volume/create_dp"
   block:
   - name: Set authentication facts
     no_log: true

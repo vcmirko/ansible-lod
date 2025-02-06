@@ -1,0 +1,7 @@
+---
+- name: "Multi - volume -> create_dp"
+  include_tasks: "create_dp_one.yml" 
+  loop_control:
+    loop_var: volume_item
+    label: "create_dp -> volume {{ volume_item.name }}"
+  loop: "{{ volumes }}"

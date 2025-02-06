@@ -1,0 +1,7 @@
+---
+- name: "Multi - lun -> rename"
+  include_tasks: "rename_one.yml" 
+  loop_control:
+    loop_var: lun_item
+    label: "rename -> lun {{ lun_item.name }}"
+  loop: "{{ luns }}"

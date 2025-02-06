@@ -36,7 +36,7 @@
       state: present
       vserver:                 "{{ svm.name }}"    
       name:                    "{{ volume.name }}"
-      comment:                 "delete {{ delete_date }}"
+      comment:                 "delete {{ '' | reformat_datetime('%d/%m/%Y') }}"
       <<: *auth
     delegate_to: localhost
     ignore_errors: true

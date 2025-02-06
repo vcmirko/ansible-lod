@@ -36,7 +36,7 @@
       - snapmirror.source.volume.name | default(false)
     ignore_errors: yes
 
-  - name: "Removing snapmirror {{ snapmirror.source.svm.name + ':' + snapmirror.source.volume.name | default('') }} -/-> {{ snapmirror.destination.svm.name + ':' + snapmirror.destination.volume.name | default('') }}"  
+  - name: "Removing snapmirror [{{ snapmirror.source.svm.name + ':' + snapmirror.source.volume.name | default('') }}] -/-> [{{ snapmirror.destination.svm.name + ':' + snapmirror.destination.volume.name | default('') }}]"  
     netapp.ontap.na_ontap_snapmirror:
       state                       : absent
       source_endpoint             : 

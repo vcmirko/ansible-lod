@@ -22,7 +22,7 @@
       l_volume:                "{{ volume               | to_nice_yaml(2) | indent(2,true) | do_log('','volume',qlogname) }}"
       l_lun:                   "{{ lun                  | to_nice_yaml(2) | indent(2,true) | do_log('','lun',qlogname) }}"
 
-  - name: "Create/Modify Lun {{ lun.name }}"
+  - name: "Create/Modify Lun [{{ lun.name }}]"
     netapp.ontap.na_ontap_lun:
       state: present
       vserver:                   "{{ svm.name }}"    

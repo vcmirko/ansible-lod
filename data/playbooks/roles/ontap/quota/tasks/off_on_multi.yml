@@ -1,0 +1,7 @@
+---
+- name: "Multi - quota -> off_on"
+  include_tasks: "off_on_one.yml" 
+  loop_control:
+    loop_var: quota_item
+    label: "off_on -> quota {{ quota_item.quota_target }}"
+  loop: "{{ quotas }}"

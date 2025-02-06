@@ -1,0 +1,7 @@
+---
+- name: "online Multiple volumes"
+  include_tasks: "online_one.yml" 
+  loop_control:
+    loop_var: volume_item
+    label: "onlineing -> volume {{ volume_item.name }}"
+  loop: "{{ volumes }}"

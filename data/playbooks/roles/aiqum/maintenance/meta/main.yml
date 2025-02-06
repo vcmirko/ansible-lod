@@ -1,2 +1,5 @@
----
 allow_duplicates: true
+role:
+  description: Start, stop AIQUM maintenance
+  key: name
+  supports_multi: false

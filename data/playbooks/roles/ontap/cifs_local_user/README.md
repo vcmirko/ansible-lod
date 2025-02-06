@@ -1,28 +1,21 @@
-# Tasks Summary
+# ontap / cifs_local_user 
+Manage NetApp ONTAP CIFS local users
 
-## create.yml
-This file supports the following properties:
+| Subrole | Description |
+| :------ | :---------- |
+| [create](#cifs_local_user--create) |  |
 
-### cluster
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the cluster.                   |
 
-### svm
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the SVM.                       |
 
-### cifs_local_user
-| Property           | Description                                |
-|--------------------|--------------------------------------------|
-| **name**           | The name of the CIFS local user.           |
-| **password**       | The password for the CIFS local user.      |
-| **full_name**      | The full name of the CIFS local user.      |
-| **description**    | The description of the CIFS local user.    |
-| **account_disabled**| Whether the account is disabled.          |
 
-### cifs_local_group
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the CIFS local group.          |
+## cifs_local_user / create
+
+
+| Task |
+| :--- |
+| Create cifs local user  |
+| Add Cifs Local User  |
+
+
+
+

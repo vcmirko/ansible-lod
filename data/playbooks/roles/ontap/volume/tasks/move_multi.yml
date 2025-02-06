@@ -1,0 +1,7 @@
+---
+- name: "move Multiple volumes"
+  include_tasks: "move_one.yml" 
+  loop_control:
+    loop_var: volume_item
+    label: "moveing -> volume {{ volume_item.name }}"
+  loop: "{{ volumes }}"

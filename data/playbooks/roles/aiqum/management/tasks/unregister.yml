@@ -1,5 +1,5 @@
 ---
-- name: "Role - ontap/aiqum/unregister"
+- name: "Role - aiqum/management/unregister"
   block:
   - name: Set authentication facts
     no_log: true

@@ -1,4 +1,4 @@
-- name: Role - cyberark/pam/authentication
+- name: Role - cyberark/pam/authenticate
   block:
   - name: Authenticate to CyberArk PAM
     # no_log: true

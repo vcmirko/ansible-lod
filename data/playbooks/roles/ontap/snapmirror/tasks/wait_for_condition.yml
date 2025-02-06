@@ -1,7 +1,8 @@
 ---
 - name: "Role - ontap/snapmirror/wait_for_condition"
   block:
-  - set_fact:
+  - name: Set authentication facts
+    set_fact:
       auth: &auth
         hostname: "{{ auth_rest.hostname | default(omit) }}"
         username: "{{ auth_rest.username | default(omit) }}"
@@ -13,10 +14,11 @@
     no_log: true
 
   # logging
-  - set_fact:
+  - name: "Logging"
+    set_fact:
       l_snapmirror: "{{ snapmirror | to_nice_yaml(2) | indent(2,true) | do_log('ontap/snapmirror/wait_for_condition','snapmirror',qlogname) }}"
 
-  - name: "Wait for Snapmirror -> [{{ snapmirror.destination.svm.name }}:{{ snapmirror.destination.volume.name | default('') }}]"  
+  - name: "Wait for Snapmirror [{{ snapmirror.destination.svm.name }}:{{ snapmirror.destination.volume.name | default('') }}]"  
     netapp.ontap.na_ontap_wait_for_condition:
       name: snapmirror_relationship
       attributes:
@@ -29,6 +31,7 @@
       <<: *auth
     delegate_to: localhost
   when:
-  - snapmirror | default(false)
+  - snapmirror.source.svm.name | default(false)
+  - snapmirror.destination.svm.name | default(false)
   - snapmirror.conditions | default(false)
   

@@ -1,19 +1,40 @@
-# ontap / lif
+# ontap / lif 
+Manage NetApp ONTAP Logical Interfaces (LIFs)
 
-<description>>
+| Subrole | Description |
+| :------ | :---------- |
+| [create](#lif--create) |  |
+| [delete](#lif--delete) |  |
+| [migrate](#lif--migrate) |  |
 
-## tasks
 
-- <action> : <action_description>
-- <action> : <action_description>
 
-## Input
 
-- <input>
-- <input>
+## lif / create
 
-## execution
 
-**<action>** :
+| Task |
+| :--- |
+| create lif  |
 
-<action_description>
+
+
+## lif / delete
+
+
+| Task |
+| :--- |
+| delete lif  |
+
+
+
+## lif / migrate
+
+
+| Task |
+| :--- |
+| migrate lif  |
+
+
+
+

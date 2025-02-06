@@ -1,0 +1,7 @@
+---
+- name: "Multi - cifs_local_group -> delete"
+  include_tasks: "delete_one.yml" 
+  loop_control:
+    loop_var: cifs_local_group_item
+    label: "delete -> cifs_local_group {{ cifs_local_group_item.name }}"
+  loop: "{{ cifs_local_groups }}"

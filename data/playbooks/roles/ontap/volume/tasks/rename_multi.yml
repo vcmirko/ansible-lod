@@ -1,0 +1,7 @@
+---
+- name: "rename Multiple volumes"
+  include_tasks: "rename_one.yml" 
+  loop_control:
+    loop_var: volume_item
+    label: "renameing -> volume {{ volume_item.name }}"
+  loop: "{{ volumes }}"

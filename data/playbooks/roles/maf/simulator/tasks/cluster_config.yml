@@ -1,6 +1,6 @@
 ---
 # set auth dict, to be reused everywhere
-- name: "Role - ontap/simulator/cluster_config"
+- name: "Role - maf/simulator/cluster_config"
   block:
   - name: Set authentication facts
     no_log: true

@@ -1,0 +1,7 @@
+---
+- name: "modify Multiple volumes"
+  include_tasks: "modify_one.yml" 
+  loop_control:
+    loop_var: volume_item
+    label: "modifying -> volume {{ volume_item.name }}"
+  loop: "{{ volumes }}"

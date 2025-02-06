@@ -1,0 +1,9 @@
+namespace: maf
+name: awx
+version: 1.0.0
+readme: README.md
+authors:
+  - Mirko Van Colen <mirko@netapp.com>
+description: AWX (Ansible Tower / Ansible Automation Platform) integration
+tags: []
+dependencies: {}

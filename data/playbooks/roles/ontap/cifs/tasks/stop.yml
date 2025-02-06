@@ -21,8 +21,8 @@
       l_svm:     "{{ svm     | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
       l_cifs:    "{{ cifs    | to_nice_yaml(2) | indent(2,true) | do_log('','cifs',qlogname) }}"
 
-    ## Enable Cifs
-  - name: "Enable cifs"      
+    ## Stop Cifs
+  - name: "Stop cifs"      
     netapp.ontap.na_ontap_cifs_server:
       state                   : present
       vserver                 : "{{ svm.name }}"

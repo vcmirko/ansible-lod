@@ -1,0 +1,5 @@
+---
+- name: Merge Extravars
+  ansible.builtin.set_fact:
+    {{ role }}s : "{|{ '{{ role }}s' | merge_lists(d=vars_defaults,t=vars_templates,v=vars_local,required_keys=['{{ key }}'],c=qtask_child) }|}"
+

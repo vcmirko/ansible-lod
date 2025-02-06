@@ -1,0 +1,20 @@
+# {{ collection.name }}
+{{ collection.description | default('Add description') }}
+
+| Role | Description |
+| :--- | :---------- |
+{% for role in collection.roles %}| [{{ role.name }}](#{{ role.link }}) | {{ role.description }} |
+{% endfor %}
+
+{% for role in collection.roles%}
+## {{ collection.name }} / {{ role.name }}
+{{ role.description }}
+
+| Role action | 
+| :--- |
+{% for qtask in role.qtasks %}| {{ qtask.name }} | 
+{% endfor %}
+
+{% endfor %}
+
+

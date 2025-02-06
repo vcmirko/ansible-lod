@@ -1,0 +1,7 @@
+---
+- name: "delete Multiple svms"
+  include_tasks: "delete_one.yml" 
+  loop_control:
+    loop_var: svm_item
+    label: "deleteing -> svm {{ svm_item.name }}"
+  loop: "{{ svms }}"

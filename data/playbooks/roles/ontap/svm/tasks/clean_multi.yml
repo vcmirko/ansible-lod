@@ -1,0 +1,7 @@
+---
+- name: "clean Multiple svms"
+  include_tasks: "clean_one.yml" 
+  loop_control:
+    loop_var: svm_item
+    label: "cleaning -> svm {{ svm_item.name }}"
+  loop: "{{ svms }}"

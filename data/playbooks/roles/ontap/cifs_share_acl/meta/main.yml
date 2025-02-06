@@ -1,2 +1,5 @@
----
 allow_duplicates: true
+role:
+  description: Manage NetApp ONTAP CIFS share ACLs
+  key: share_name
+  supports_multi: true

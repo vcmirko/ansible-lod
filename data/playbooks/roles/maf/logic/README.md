@@ -1,12 +1,54 @@
-# dictu / logic
+# maf / logic 
+Some sample logic for MAF
 
-This role contains the logic for the dictu project. 
-It mainly accepts 1 dictionary call vars_external and returns a dictionary that is then used as vars_internal.
-It is used to complete the vars_internal dictionary with the values that are not provided by the user.
-Naming conventions, data validation, data lookup, ...
+| Subrole | Description |
+| :------ | :---------- |
+| [bypass](#logic--bypass) |  |
+| [svm_create](#logic--svm_create) |  |
+| [svm_delete](#logic--svm_delete) |  |
+| [svm_dr](#logic--svm_dr) |  |
 
-## tasks
 
-- facts_share : complete logic for share creation (required credentials : aiqum, mysql)
-- facts_svm_nas : complete logic for svm creation (required credentials : aiqum)
-- facts_svm_delete : complete logic for svm deletion (required credentials : none)
+
+
+## logic / bypass
+
+
+| Task |
+| :--- |
+| Running logic bypass |
+| Register logic result |
+
+
+
+## logic / svm_create
+
+
+| Task |
+| :--- |
+| Logic - svm_create |
+| Register logic result |
+
+
+
+## logic / svm_delete
+
+
+| Task |
+| :--- |
+| Logic - svm_delete |
+| Register logic result |
+
+
+
+## logic / svm_dr
+
+
+| Task |
+| :--- |
+| Logic - svm_dr |
+| Register logic result |
+
+
+
+

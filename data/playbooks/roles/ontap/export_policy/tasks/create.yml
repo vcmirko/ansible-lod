@@ -30,59 +30,37 @@
       <<: *auth
     delegate_to: localhost
 
-  - name: Delete rules
-    netapp.ontap.na_ontap_export_policy_rule:
-      state: absent
-      name: "{{ export_policy.name }}"
-      rule_index: "{{ item.rule_index }}"
-      vserver: "{{ svm.name }}"
-      <<: *auth
-    loop: "{{ export_policy.rules | default([]) | keep_deleted_export_policy_rules | list }}" # based on state=absent or is_deleted_item=true, or force_delete_on_first_match=true
-    loop_control:
-      label: "{{ (item.rule_index | string) + ' -> ' + item.client_match  }}"
-    delegate_to: localhost
+    # ============================================================================#
+    # Create / Modify / Delete Export Policy Rules
+    # ============================================================================#
+    # If a rule contains state=absent or is_deleted_item=true then it will be deleted
+    # If a rule contains is_new_item=true then it will be created
+    # In all other cases the rule will be modified
+    # for this logic, a custom filter is used: filter_export_policy_rules (ontap.py)
+    # ============================================================================#
 
-  - name: Modify existing rules
+  - name: Create/Delete/Modify export rules
     netapp.ontap.na_ontap_export_policy_rule:
-      state: present
-      name: "{{ export_policy.name }}"
-      rule_index: "{{ item.rule_index }}"
-      vserver: "{{ svm.name }}"
-      client_match: "{{ item.client_match }}"
-      ro_rule: "{{ item.ro_rule }}"
-      rw_rule: "{{ item.rw_rule }}"
-      protocol: "{{ item.protocol }}"
-      super_user_security: "{{ item.super_user_security }}"
-      anonymous_user_id: "{{ item.anonymous_user_id | default(omit) }}"
-      allow_suid: "{{ item.allow_suid | default(omit) }}"
-      chown_mode: "{{ item.chown_mode | default(omit) }}"
-      ntfs_unix_security: "{{ item.ntfs_unix_security | default(omit) }}"
-      allow_device_creation: "{{ item.allow_device_creation | default(omit) }}"
+      state                      : "{{ rule.state                       | default(omit) }}"
+      vserver                    : "{{ svm.name }}"
+      name                       : "{{ export_policy.name }}"
+      rule_index                 : "{{ rule.rule_index                  | default(omit) }}"
+      client_match               : "{{ rule.client_match                | default(omit) }}"
+      ro_rule                    : "{{ rule.ro_rule                     | default(omit) }}"
+      rw_rule                    : "{{ rule.rw_rule                     | default(omit) }}"
+      protocol                   : "{{ rule.protocol                    | default(omit) }}"
+      super_user_security        : "{{ rule.super_user_security         | default(omit) }}"
+      anonymous_user_id          : "{{ rule.anonymous_user_id           | default(omit) }}"
+      allow_suid                 : "{{ rule.allow_suid                  | default(omit) }}"
+      chown_mode                 : "{{ rule.chown_mode                  | default(omit) }}"
+      ntfs_unix_security         : "{{ rule.ntfs_unix_security          | default(omit) }}"
+      allow_device_creation      : "{{ rule.allow_device_creation       | default(omit) }}"
+      force_delete_on_first_match: "{{ rule.force_delete_on_first_match | default(omit) }}"
       <<: *auth
-    loop: "{{ export_policy.rules | default([]) | selectattr('is_new_item', 'undefined') | selectattr('is_deleted_item','undefined') | selectattr('rule_index','defined') | list }}"
+    loop: "{{ export_policy.rules | default([]) | filter_export_policy_rules | list }}"
     loop_control:
-      label: "{{ (item.rule_index | string) + ' -> ' + item.client_match  }}"
-    delegate_to: localhost
-
-  - name: Add new rules
-    netapp.ontap.na_ontap_export_policy_rule:
-      state: present
-      name: "{{ export_policy.name }}"
-      vserver: "{{ svm.name }}"
-      client_match: "{{ item.client_match }}"
-      ro_rule: "{{ item.ro_rule }}"
-      rw_rule: "{{ item.rw_rule }}"
-      protocol: "{{ item.protocol }}"
-      super_user_security: "{{ item.super_user_security }}"
-      anonymous_user_id: "{{ item.anonymous_user_id | default(omit) }}"
-      allow_suid: "{{ item.allow_suid | default(omit) }}"
-      chown_mode: "{{ item.chown_mode | default(omit) }}"
-      ntfs_unix_security: "{{ item.ntfs_unix_security | default(omit) }}"
-      allow_device_creation: "{{ item.allow_device_creation | default(omit) }}"
-      <<: *auth
-    loop: "{{ export_policy.rules | default([]) | selectattr('rule_index', 'undefined') | list }}"
-    loop_control:
-      label: "{{ item.client_match  }}"
+      loop_var: rule
+      label: "{{ (rule.rule_index | string | default(-1)) + ' -> ' + rule.client_match | default('') + ' ['+ rule.state +']' }}"
     delegate_to: localhost
 
   when: 

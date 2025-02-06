@@ -1,0 +1,7 @@
+---
+- name: "Multi - snapmirror -> update"
+  include_tasks: "update_one.yml" 
+  loop_control:
+    loop_var: snapmirror_item
+    label: "update -> snapmirror {{ snapmirror_item.None }}"
+  loop: "{{ snapmirrors }}"

@@ -1,0 +1,20 @@
+# Collections
+This folder contains the collections of roles that are used to deploy the different components of the platform.
+
+| Collection | Description |
+| :--- | :---------- |
+{% for collection in collections %}| [{{ collection.name }}](#{{ collection.link }}) | {{ collection.description }} |
+{% endfor %}
+
+{% for collection in collections%}
+## {{ collection.name }}
+{{ collection.description }}
+
+| Roles | Description |
+| :--- | :--- |
+{% for role in collection.roles %}| {{ role.name }} | {{ role.description }} |
+{% endfor %}
+
+{% endfor %}
+
+

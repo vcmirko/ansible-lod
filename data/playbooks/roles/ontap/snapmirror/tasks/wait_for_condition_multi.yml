@@ -1,0 +1,7 @@
+---
+- name: "Multi - snapmirror -> wait_for_condition"
+  include_tasks: "wait_for_condition_one.yml" 
+  loop_control:
+    loop_var: snapmirror_item
+    label: "wait_for_condition -> snapmirror {{ snapmirror_item.None }}"
+  loop: "{{ snapmirrors }}"

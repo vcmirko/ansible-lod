@@ -1,5 +1,5 @@
 ---
-- name : "Role ontap/volume/move"
+- name : "Role - ontap/volume/move"
   block:
   - name: Set authentication facts
     no_log: true

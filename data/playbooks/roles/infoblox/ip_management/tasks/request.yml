@@ -1,5 +1,4 @@
 ---
-
 - name: "Role - infoblox/ip_management/request"
   block:
   ######################################################

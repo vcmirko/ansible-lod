@@ -1,0 +1,7 @@
+---
+- name: "Multi - snapmirror -> set_retention"
+  include_tasks: "set_retention_one.yml" 
+  loop_control:
+    loop_var: snapmirror_item
+    label: "set_retention -> snapmirror {{ snapmirror_item.None }}"
+  loop: "{{ snapmirrors }}"

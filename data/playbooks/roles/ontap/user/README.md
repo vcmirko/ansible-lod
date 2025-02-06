@@ -1,4 +1,20 @@
-# Role users
+# ontap / user 
+Manage NetApp ONTAP Users
 
-Create ontap security logins, you will need to adjust this role, as it also requires passwords
-Implement as you wish to collect the password from some vault.
+| Subrole | Description |
+| :------ | :---------- |
+| [create](#user--create) |  |
+
+
+
+
+## user / create
+
+
+| Task |
+| :--- |
+| Create user  |
+
+
+
+

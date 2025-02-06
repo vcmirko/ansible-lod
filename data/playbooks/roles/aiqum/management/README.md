@@ -1,25 +1,44 @@
-# Tasks Summary
+# aiqum / management 
+AIQUM management, register, rediscover, ...
 
-## register.yml
+| Subrole | Description |
+| :------ | :---------- |
+| [rediscover](#management--rediscover) |  |
+| [register](#management--register) |  |
+| [unregister](#management--unregister) |  |
 
-### cluster
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the cluster.                   |
-| **management_ip** | The ip or fqdn of the cluster. |
 
-## unregister.yml
 
-### cluster
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the cluster.                   |
-| **management_ip** | The ip or fqdn of the cluster. |
 
-## rediscover.yml
+## management / rediscover
 
-### cluster
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the cluster.                   |
-| **management_ip** | The ip or fqdn of the cluster. |
+
+| Task |
+| :--- |
+| Get CLUSTER in Aiqum |
+| Rediscover Aiqum for CLUSTER |
+| Wait for operation |
+
+
+
+## management / register
+
+
+| Task |
+| :--- |
+| Get CLUSTER in Aiqum |
+| Register CLUSTER in Aiqum |
+
+
+
+## management / unregister
+
+
+| Task |
+| :--- |
+| Get CLUSTER in Aiqum |
+| Delete CLUSTER in Aiqum |
+
+
+
+

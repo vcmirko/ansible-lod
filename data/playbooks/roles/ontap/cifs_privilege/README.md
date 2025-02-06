@@ -1,27 +1,20 @@
-# Tasks Summary
+# ontap / cifs_privilege 
+Manage NetApp ONTAP Cifs Privileges
 
-## create.yml
-This file supports the following properties:
+| Subrole | Description |
+| :------ | :---------- |
+| [create](#cifs_privilege--create) |  |
 
-### cluster
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the cluster.                   |
 
-### svm
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the SVM.                       |
 
-### cifs_privilege
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the CIFS privilege.            |
-| **privileges** | A list of privileges assigned to the CIFS user. |
 
-### privilege
-This dictionary is used within the `cifs_privilege.privileges` list.
+## cifs_privilege / create
 
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the privilege.                 |
+
+| Task |
+| :--- |
+| Setting cifs privilege  |
+
+
+
+

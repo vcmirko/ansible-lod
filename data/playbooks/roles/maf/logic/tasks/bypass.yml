@@ -6,18 +6,21 @@
 # Step 3 : log the vars_external
 # Step 4 : log the vars_local
 ######################################################################################
-- bypass:
-    vars_external : "{{ vars_external }}"
-  delegate_to: localhost
-  register: logic_result
+- name: "Role - maf/logic/bypass"
+  block:
+  - name: "Running logic bypass"
+    bypass:
+      vars_external : "{{ vars_external }}"
+    delegate_to: localhost
+    register: logic_result
 
-- name: Register logic result
-  set_fact:
-    vars_local : "{{ logic_result.vars }}"
-    qlogname : "{{ qlogname | default('',true) }}"
+  - name: Register logic result
+    set_fact:
+      vars_local : "{{ logic_result.vars }}"
+      qlogname : "{{ qlogname | default('',true) }}"
 
-- name: Logging
-  set_fact:
-    qlogname: "{{ vars_external | to_nice_yaml(2) | indent(2,true) | do_log('Running logic bypass','vars_external',qlogname) }}"
+  - name: Logging
+    set_fact:
+      qlogname: "{{ vars_external | to_nice_yaml(2) | indent(2,true) | do_log('Running logic bypass','vars_external',qlogname) }}"
 
-# => bypassing the logic, just passing the data through, so no need to log the outcome
+  # => bypassing the logic, just passing the data through, so no need to log the outcome

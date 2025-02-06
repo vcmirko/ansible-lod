@@ -1,0 +1,7 @@
+---
+- name: "{{ qtask }} Multiple {{ role }}s"
+  include_tasks: "{{ qtask }}_one.yml" 
+  loop_control:
+    loop_var: {{ role }}_item
+    label: "{{ qtask }}ing -> {{ role }} {|{ {{ role }}_item.{{ key }} }|}"
+  loop: "{|{ {{ role }}s }|}"

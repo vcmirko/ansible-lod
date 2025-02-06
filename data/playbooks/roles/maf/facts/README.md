@@ -1,7 +1,20 @@
-# facts
+# maf / facts 
+Process sample credentials for MAF testing
 
-This role is used to gather facts.
+| Subrole | Description |
+| :------ | :---------- |
+| [credentials](#facts--credentials) |  |
 
-## tasks
 
-- credentials : gather credentials
+
+
+## facts / credentials
+
+
+| Task |
+| :--- |
+| Set the credentials |
+
+
+
+

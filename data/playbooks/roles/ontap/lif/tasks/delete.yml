@@ -21,7 +21,7 @@
       l_svm: "{{ svm | to_nice_yaml(2) | indent(2,true) | do_log('','svm',qlogname) }}"
       l_lif: "{{ lif | to_nice_yaml(2) | indent(2,true) | do_log('','lif',qlogname) }}"
 
-  - name: "delete lif {{ lif.name }}"               
+  - name: "delete lif [{{ lif.name }}]"               
     netapp.ontap.na_ontap_interface:
       state                  : absent
       vserver                : "{{ svm.name | default(omit) }}"

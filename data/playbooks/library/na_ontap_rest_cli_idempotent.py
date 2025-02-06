@@ -119,10 +119,10 @@ EXAMPLES = """
         changed: "Quota policy my_quota_policy set as active on SVM my_svm"
     precheck:
         rest_cli:
-            command: "volume/quota/policy"
+            command: "vserver"
             verb: GET
             params:
-                policy_name: "my_quota_policy"
+                quota_policy: "my_quota_policy"
                 vserver: "my_svm"
         skip_main_command:
             num_records: "==1"   

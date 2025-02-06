@@ -1,0 +1,7 @@
+---
+- name: "Multi - cifs_local_user -> create"
+  include_tasks: "create_one.yml" 
+  loop_control:
+    loop_var: cifs_local_user_item
+    label: "create -> cifs_local_user {{ cifs_local_user_item.name }}"
+  loop: "{{ cifs_local_users }}"

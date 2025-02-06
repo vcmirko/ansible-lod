@@ -1,39 +1,40 @@
-# Tasks Summary
+# ontap / cifs_local_group 
+Manage NetApp ONTAP CIFS local groups
 
-## add.yml
-This file supports the following properties:
+| Subrole | Description |
+| :------ | :---------- |
+| [add](#cifs_local_group--add) |  |
+| [create](#cifs_local_group--create) |  |
+| [delete](#cifs_local_group--delete) |  |
 
-### cluster
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the cluster.                   |
 
-### svm
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the SVM.                       |
 
-### cifs_local_group
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the CIFS local group.          |
-| **members**    | The members of the CIFS local group.       |
 
-## create.yml
-This file supports the following properties:
+## cifs_local_group / add
 
-### cluster
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the cluster.                   |
 
-### svm
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the SVM.                       |
+| Task |
+| :--- |
+| Add Cifs Local User To Group  |
 
-### cifs_local_group
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the CIFS local group.          |
+
+
+## cifs_local_group / create
+
+
+| Task |
+| :--- |
+| Create cifs local group  |
+
+
+
+## cifs_local_group / delete
+
+
+| Task |
+| :--- |
+| Delete cifs local group  |
+
+
+
 

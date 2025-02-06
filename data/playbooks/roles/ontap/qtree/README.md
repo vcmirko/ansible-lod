@@ -1,19 +1,21 @@
-# ontap / qtree
+# ontap / qtree 
+Manage NetApp ONTAP Qtrees
 
-<description>>
+| Subrole | Description |
+| :------ | :---------- |
+| [create](#qtree--create) |  |
 
-## tasks
 
-- <action> : <action_description>
-- <action> : <action_description>
 
-## Input
 
-- <input>
-- <input>
+## qtree / create
 
-## execution
 
-**<action>** :
+| Task |
+| :--- |
+| create qtree  |
+| Set qtree oplocks  |
 
-<action_description>
+
+
+

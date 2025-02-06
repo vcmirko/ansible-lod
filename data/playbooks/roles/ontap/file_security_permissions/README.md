@@ -1,18 +1,20 @@
-# ontap / file_security_permissions
+# ontap / file_security_permissions 
+Manage NetApp ONTAP File Security Permissions
 
-This role is used to create file security permissions (NTFS) on a cifs share.
+| Subrole | Description |
+| :------ | :---------- |
+| [create](#file_security_permissions--create) |  |
 
-## tasks
 
-- create : create file security permissions on a cifs share (required credentials : ontap)
 
-## Input
 
-- cluster.management_ip
-- svm.name
-- file_security_permissions.access_control
-- file_security_permissions.path
-- file_security_permissions.owner
-- file_security_permissions.acls
-- file_security_permissions.propagation_mode
-- file_security_permissions.group
+## file_security_permissions / create
+
+
+| Task |
+| :--- |
+| Setting NTFS DACL  |
+
+
+
+

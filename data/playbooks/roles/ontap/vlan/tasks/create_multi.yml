@@ -1,0 +1,7 @@
+---
+- name: "Multi - vlan -> create"
+  include_tasks: "create_one.yml" 
+  loop_control:
+    loop_var: vlan_item
+    label: "create -> vlan {{ vlan_item.name }}"
+  loop: "{{ vlans }}"

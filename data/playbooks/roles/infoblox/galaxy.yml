@@ -1,0 +1,9 @@
+namespace: maf
+name: infoblox
+version: 1.0.0
+readme: README.md
+authors:
+  - Mirko Van Colen <mirko@netapp.com>
+description: "Infoblox integration"
+tags: []
+dependencies: {}

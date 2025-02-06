@@ -1,5 +1,5 @@
 ---
-- name: "Role - ontap/quota/create"
+- name: "Role - ontap/quota/off_on"
   block:
   - name: Set authentication facts
     no_log: true
@@ -22,7 +22,7 @@
       l_volume:                "{{ volume               | to_nice_yaml(2) | indent(2,true) | do_log('','volume',qlogname) }}"
       l_quota:                 "{{ quota                | to_nice_yaml(2) | indent(2,true) | do_log('','quota',qlogname) }}"
 
-  - name: "Set Quota off -> {{ volume.name }}"
+  - name: "Set Quota off -> [{{ volume.name }}]"
     netapp.ontap.na_ontap_quotas:
       state: present
       vserver:                   "{{ svm.name }}"    
@@ -31,7 +31,7 @@
       <<: *auth
     delegate_to: localhost
 
-  - name: "Set Quota on -> {{ volume.name }}"
+  - name: "Set Quota on -> [{{ volume.name }}]"
     netapp.ontap.na_ontap_quotas:
       state: present
       vserver:                   "{{ svm.name }}"    

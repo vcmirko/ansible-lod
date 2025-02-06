@@ -1,20 +1,20 @@
-# Tasks Summary
+# ontap / dns 
+Manage NetApp ONTAP DNS
 
-## create.yml
-This file supports the following properties:
+| Subrole | Description |
+| :------ | :---------- |
+| [create](#dns--create) |  |
 
-### cluster
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the cluster.                   |
 
-### svm
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **name**       | The name of the SVM.                       |
 
-### dns
-| Property       | Description                                |
-|----------------|--------------------------------------------|
-| **domain**     | The DNS domain name.                       |
-| **nameservers**| A list of DNS nameservers.                 |
+
+## dns / create
+
+
+| Task |
+| :--- |
+| create dns |
+
+
+
+

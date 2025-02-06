@@ -1,0 +1,7 @@
+---
+- name: "offline Multiple volumes"
+  include_tasks: "offline_one.yml" 
+  loop_control:
+    loop_var: volume_item
+    label: "offlineing -> volume {{ volume_item.name }}"
+  loop: "{{ volumes }}"

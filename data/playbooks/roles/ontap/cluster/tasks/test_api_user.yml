@@ -1,17 +1,9 @@
 ---
-  # To create an API user with certificate, we need password authentication 
-  # so this task will require the ontap credentials to be passed
-- name: "Role - ontap/cluster/create_api_user.yml"
+- name: "Role - ontap/cluster/test_api_user"
   block:
   - name: Set authentication facts
     no_log: true
     set_fact:
-      auth: &auth
-        hostname      : "{{ netapp_hostname }}"
-        username      : "{{ netapp_username }}"
-        password      : "{{ netapp_password }}"
-        use_rest      : always
-        validate_certs: false
 
       # the goals is after this step to used auth_cert to authenticate with the certificate  
       auth_cert: &auth_cert

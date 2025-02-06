@@ -1,0 +1,7 @@
+---
+- name: "Multi - cifs_local_group -> add"
+  include_tasks: "add_one.yml" 
+  loop_control:
+    loop_var: cifs_local_group_item
+    label: "add -> cifs_local_group {{ cifs_local_group_item.name }}"
+  loop: "{{ cifs_local_groups }}"

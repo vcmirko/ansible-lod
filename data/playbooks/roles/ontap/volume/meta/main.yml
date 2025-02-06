@@ -1,2 +1,5 @@
----
 allow_duplicates: true
+role:
+  description: Manage NetApp ONTAP volumes
+  key: name
+  supports_multi: true

@@ -1,2 +1,5 @@
----
 allow_duplicates: true
+role:
+  description: Manage NetApp ONTAP Unix Groups
+  key: name
+  supports_multi: false
