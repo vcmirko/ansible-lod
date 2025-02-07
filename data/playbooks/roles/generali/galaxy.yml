@@ -1,9 +1,0 @@
-namespace: maf
-name: generali
-version: 1.0.0
-readme: README.md
-authors:
-  - Mirko Van Colen <mirko@netapp.com>
-description: Customer Generali integration
-tags: []
-dependencies: {}

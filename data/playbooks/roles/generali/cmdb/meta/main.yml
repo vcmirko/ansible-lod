@@ -1,5 +1,0 @@
-allow_duplicates: true
-role:
-  description: Add records to CMDB
-  key: name
-  supports_multi: false

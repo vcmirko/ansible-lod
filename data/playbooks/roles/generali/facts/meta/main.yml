@@ -1,5 +1,0 @@
-allow_duplicates: true
-role:
-  description: Process Generali credentials
-  key: name
-  supports_multi: false

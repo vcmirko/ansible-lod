@@ -1,6 +1,0 @@
-allow_duplicates: true
-role:
-  description: Manages the logic of the Generali, like naming conventions, environment
-    placing, etc.
-  key: name
-  supports_multi: false
