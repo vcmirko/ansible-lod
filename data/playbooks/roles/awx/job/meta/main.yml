@@ -1,5 +1,1 @@
 allow_duplicates: true
-role:
-  description: Manages AWX job tasks
-  key: name
-  supports_multi: false

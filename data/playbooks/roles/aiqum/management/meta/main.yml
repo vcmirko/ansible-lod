@@ -1,5 +1,1 @@
 allow_duplicates: true
-role:
-  description: AIQUM management, register, rediscover, ...
-  key: name
-  supports_multi: false
