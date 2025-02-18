@@ -1,5 +1,1 @@
 allow_duplicates: true
-role:
-  description: Process sample credentials for MAF testing
-  key: name
-  supports_multi: false
