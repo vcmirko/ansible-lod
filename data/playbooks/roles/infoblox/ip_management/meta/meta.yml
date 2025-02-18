@@ -1,0 +1,4 @@
+role:
+  description: Manage IP addresses in Infoblox
+  key: name
+  supports_multi: false

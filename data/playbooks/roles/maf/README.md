@@ -37,6 +37,7 @@ Deploy, destroy ONTAP simulator
 | :--- |
 | cluster_config | 
 | cluster_init | 
+| cluster_init2 | 
 | deploy_sim | 
 | destroy_sim | 
 | init_sim | 

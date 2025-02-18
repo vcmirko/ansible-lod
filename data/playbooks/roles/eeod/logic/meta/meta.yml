@@ -1,0 +1,4 @@
+role:
+  description: EEOD Logic, import excel file to deploy luns
+  key: name
+  supports_multi: false

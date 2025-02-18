@@ -1,0 +1,4 @@
+role:
+  description: Process sample credentials for MAF testing
+  key: name
+  supports_multi: false
