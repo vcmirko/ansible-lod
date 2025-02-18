@@ -1,0 +1,15 @@
+# Library
+
+This folder contains custom ansible modules that a available for all roles.  
+If you want more role specific ansible modules, create a `library` folder in the role folder tself.
+
+{% if modules | length > 0 %}
+## Custom Modules
+
+| Module | Description | Version History |
+| :----- | :---------- | :-------------- |
+{% for f in modules %}| {{ f.name }} | {{ f.description | default('No description') }} | {{ f.version_history | default('No version history') }} |
+{% endfor %}
+{% endif %}
+
+

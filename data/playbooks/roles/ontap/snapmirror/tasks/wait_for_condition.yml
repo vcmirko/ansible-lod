@@ -18,6 +18,12 @@
     set_fact:
       l_snapmirror: "{{ snapmirror | to_nice_yaml(2) | indent(2,true) | do_log('ontap/snapmirror/wait_for_condition','snapmirror',qlogname) }}"
 
+  # basic sleep
+  - name: "Sleep for 10 seconds"
+    pause:
+      seconds: 10
+    delegate_to: localhost
+
   - name: "Wait for Snapmirror [{{ snapmirror.destination.svm.name }}:{{ snapmirror.destination.volume.name | default('') }}]"  
     netapp.ontap.na_ontap_wait_for_condition:
       name: snapmirror_relationship

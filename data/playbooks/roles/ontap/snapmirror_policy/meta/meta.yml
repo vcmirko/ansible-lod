@@ -1,0 +1,4 @@
+role:
+  description: Manage NetApp ONTAP SnapMirror policies
+  key: name
+  supports_multi: false

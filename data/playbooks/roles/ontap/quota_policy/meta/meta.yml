@@ -1,0 +1,4 @@
+role:
+  description: Manage NetApp ONTAP Quota Policies
+  key: name
+  supports_multi: false

@@ -1,0 +1,30 @@
+# Filter plugins
+
+This folder contains custom ansible filters that a available for all roles.  
+If you want more role specific ansible filters, create a `filter_plugins` folder in the role folder tself.
+
+{% if filters | length > 0 %}
+## Custom Filters
+
+| Filter Plugin |
+| :----- | 
+{% for f in filters %}| [{{ f.name }}]({{ f.link }}) |
+{% endfor %}
+
+{% for f in filters %}
+## {{ f.name }}
+{{ f.description | default('No description') }}  
+
+Version history:  
+{{ f.version_history | default('No version history') }}
+
+| Function | Description |
+| :------- | :---------- |
+{% for key, value in f.defs.items() %}| {{ key }} | {{ value }} |
+{% endfor %}
+{% endfor %}
+{% endif %}
+
+
+
+

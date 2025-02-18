@@ -6,13 +6,6 @@ Note : This role supports multi / looping
 
 
 
-## Custom Modules
-
-| Module | Description | Version History |
-| :----- | :---------- | :-------------- |
-| get_best_aggregate.py | Returns the best aggregate to place a volume on, based on the available space, used space, provisioned space and volume count. | 2025-02-03 - Mirko Van Colen - Initial version |
-
-
 
 ## Role actions/qtasks
 

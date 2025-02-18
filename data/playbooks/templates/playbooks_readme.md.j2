@@ -1,0 +1,46 @@
+# Playbooks
+
+| Playbook |
+| :--- |
+{% for playbook in playbooks %}| [{{ playbook.name }}](#{{ playbook.link }}) |
+{% endfor %}
+
+{% for playbook in playbooks%}
+## {{ playbook.name }}
+**Description**:  
+
+{{ playbook.description | default('No description yet') }}
+
+**Version history**:  
+
+{{ playbook.version_history | default('No version history yet') }}
+
+{% for play in playbook.plays %}
+### {{ play.name }} 
+
+| Option | Value |
+| :----- | :---- |
+| hosts | {{ play.hosts | default('all') }} |
+| gather_facts | {{ play.gather_facts | default(false) }} |
+| become | {{ play.become | default(false) }} |
+
+**Vars files**:
+{% for f in play.vars_files | list %}- {{ f }}
+{% endfor %}
+
+{% if play.vars | length > 0 %}
+| Variable | Value |
+| :------- | :---- |
+{% for key, value in play.vars.items() %}| {{ key }} | {{ value }} |
+{% endfor %}
+{% endif %}
+  
+**Roles**:  
+
+| Role | QTask | QChild | Prefix |
+| :--- | :---- | :----- | :----- |
+{% for role in play.roles %}| {{ role.role }} | {{ role.qtask }} | {{ role.qchild | default('') }} | {{ role.qprefix | default('') }} |
+{% endfor %}
+
+{% endfor %}
+{% endfor %}

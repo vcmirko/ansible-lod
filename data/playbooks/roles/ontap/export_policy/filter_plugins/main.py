@@ -14,6 +14,7 @@ class FilterModule(object):
             'filter_export_policy_rules':self.filter_export_policy_rules
         }
     
+    # Filter export policy rules and apply the correct state to each rule (present or absent)
     def filter_export_policy_rules(self, rules=[]):
         # a deleted rule is a rule that is not new and has state absent or is a deleted item
         # and has a rule_index or force_delete_on_first_match

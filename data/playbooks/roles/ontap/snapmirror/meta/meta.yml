@@ -1,0 +1,4 @@
+role:
+  description: Manage NetApp ONTAP Snapmirrors
+  key: null
+  supports_multi: true

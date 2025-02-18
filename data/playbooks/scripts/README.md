@@ -13,7 +13,7 @@ NOTE : if you create a new role, then run the check_role & document_roles script
 Metadata for documentation, such as description are found in :
 
 - roles/<collection> : each collection has a `galaxy.yml` file with more info
-- roles/<collection>/<role>/meta/main.yml : each role has a meta folder with a `main.yml` file containing :
+- roles/<collection>/<role>/meta/main.yml : each role has a meta folder with a `meta.yml` file containing :
     - role description : the description
     - supports multi : a boolean if role supports multi (looping lists of objects)
     - key : the key property of the role object (usually `name`)

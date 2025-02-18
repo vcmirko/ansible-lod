@@ -16,15 +16,30 @@ from termcolor import colored
 
 roles_to_skip = []
 collections_to_skip = ["role_template"]
-qtasks_to_skip = ["main", "facts",".*_one$",".*_multi$","^facts_.*","^_.*"]
+qtasks_to_skip = ["main", "facts", r".*_one$", r".*_multi$", r"^facts_.*", r"^_.*"]
 tasks_to_skip = ["Set authentication facts","Logging","Set facts"]
 task_parts_to_drop = [r"\[.*\]"]
 templates_path = '../templates' 
-roles_path = '../roles'         
+roles_path = '../roles'   
+filter_plugins_path = '../filter_plugins'
+modules_path = '../library'      
+playbooks_path = '../'
+playbooks_to_add = [r".*"]
+playbooks_to_skip = [r"^inventory",r"^test"]
+playbook_qtasks_to_skip = [r"^facts"]
 
 # set the path to the script
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+# finds something like this: and grabs the headers with values
+# # =========================================================
+# # DESCRIPTION:
+# # Some description
+# # Some more description
+# #
+# # VERSION HISTORY:
+# # 2025-02-03 - Mirko Van Colen - Initial version
+# # =========================================================
 def find_commented_lines(file,headers_to_find=["description","version history"]):
 
     # convert the headers to uppercase
@@ -46,7 +61,7 @@ def find_commented_lines(file,headers_to_find=["description","version history"])
                 break
     
     if start is None or end is None:
-        return None
+        return {}
     
     # extract the lines between the start and end
     lines = lines[start:end]
@@ -73,26 +88,79 @@ def find_commented_lines(file,headers_to_find=["description","version history"])
 
     return headers
 
-def find_python_file_headers(path):
+def find_file_headers(path, allowed_extensions=[".py"], includes=[".*"], excludes=[""]):
     # for each .py file, find the commented lines
     if not os.path.exists(path):
         return []
 
     list_of_files = []
+
+    # print(colored(f"Processing path {path}", 'yellow'))
+
     file_names = os.listdir(path)
     for file_name in file_names:
-        if not file_name.endswith('.py'):
+
+        # if directory, skip
+        if os.path.isdir(f"{path}/{file_name}"):
             continue
 
+        # print(colored(f"Processing file {file_name}", 'yellow'))
+
+        # check if the file is an allowed extension
+        if not any([file_name.endswith(ext) for ext in allowed_extensions]):
+            continue
+
+        # check if the file is in the includes
+        if not check_multi_regex(file_name, includes):
+            continue
+
+        # check if the file is in the excludes
+        if check_multi_regex(file_name, excludes):
+            continue
+
+        # print(colored(f"Processing file for headers {file_name}", 'cyan'))
+
         headers = find_commented_lines(f"{path}/{file_name}")
+
         # print(headers)
         object = {}
         object["name"] = file_name
+        object["link"] = get_link(file_name)
         for header in headers:
             object[header] = headers[header]
 
+        object["defs"] = find_regex_group_with_comments(f"{path}/{file_name}")
+
         list_of_files.append(object)
     return list_of_files
+
+def find_regex_group_with_comments(file, regex=r"^def ([^(]+)\(", comments_char="#", exclude=["filters"]):
+
+    with open(file) as f:
+        lines = f.readlines()
+
+    results = {}
+    for i, line in enumerate(lines):
+        line = line.strip() 
+        if re.match(regex, line):
+            # find the def name
+            def_name = re.match(regex, line).group(1)
+            # find the comment lines above the def
+            comments = []
+            for j in range(i-1, -1, -1):
+                if lines[j].strip().startswith(comments_char):
+                    comments.append(lines[j].strip()[1:])
+                else:
+                    break
+            comments = "<br>".join(comments)
+            results[def_name] = comments
+
+    # remove the excluded items
+    for item in exclude:
+        if item in results:
+            del results[item]
+
+    return results
 
 def template_to_file(template, file, vars, check=False):
     if check and os.path.exists(file):
@@ -119,12 +187,27 @@ def check_multi_regex(t,list):
     return False
 
 def get_link(name):
-    return name.lower().replace(' ', '-').replace('/','')
+    return name.lower().replace(' ', '-').replace('/','').replace('.','')
 
 def document_roles():
+
+    filter_plugins = find_file_headers(f'{filter_plugins_path}')
+    modules = find_file_headers(f'{modules_path}')
+
+    template_to_file(
+        'library_readme.md.j2',
+        f'{modules_path}/README.md',
+        {"modules": modules},
+    )
+
+    template_to_file(
+        'filter_plugins_readme.md.j2',
+        f'{filter_plugins_path}/README.md',
+        {"filters": filter_plugins},
+    )
+
     collection_names = os.listdir(roles_path)
     # like ontap, maf, aiqume
-
     collections = []
     for collection_name in collection_names:
 
@@ -173,10 +256,10 @@ def document_roles():
             role["link"] = get_link(f"{collection_name} / {role_name}")
 
             # process library
-            role["modules"] = find_python_file_headers(f'{roles_path}/{collection_name}/{role_name}/library')
+            role["modules"] = find_file_headers(f'{roles_path}/{collection_name}/{role_name}/library')
 
             # process filters
-            role["filters"] = find_python_file_headers(f'{roles_path}/{collection_name}/{role_name}/filter_plugins')
+            role["filters"] = find_file_headers(f'{roles_path}/{collection_name}/{role_name}/filter_plugins')
 
             # process qtasks
             role["qtasks"] = []
@@ -193,11 +276,11 @@ def document_roles():
                 continue
 
             # get the role description
-            with open(f'{roles_path}/{collection_name}/{role_name}/meta/main.yml') as f:
+            with open(f'{roles_path}/{collection_name}/{role_name}/meta/meta.yml') as f:
                 meta = yaml.load(f, Loader=yaml.FullLoader)
-                role["description"] = meta['role']['description']
+                role["description"]    = meta['role']['description']
                 role["supports_multi"] = meta["role"].get("supports_multi", False)
-                role["key"] = meta["role"].get("key", "name")
+                role["key"]            = meta["role"].get("key", "name")
 
             qtask_file_names = os.listdir(f'{roles_path}/{collection_name}/{role_name}/tasks')
             for qtask_file_name in qtask_file_names:
@@ -292,6 +375,40 @@ def document_roles():
         {"collections": collections},
     )
     
+    # get playbooks (all yaml files, no inventory)
+    playbooks = find_file_headers(playbooks_path,[".yaml",".yml"],playbooks_to_add,playbooks_to_skip)
+
+    for playbook in playbooks:
+
+        playbook_name = playbook["name"]
+
+        # read the playbook from yaml
+        with open(f'{playbooks_path}/{playbook_name}') as f:
+            plays = yaml.load(f, Loader=yaml.FullLoader)
+
+        # if not a list, continue
+        if not isinstance(plays, list):
+            continue
+
+        # if empty, continue
+        if len(plays) == 0:
+            continue
+
+        # play.roles => remove all roles with qtask containing "facts"
+        for play in plays:
+            if "roles" in play:
+                play["roles"] = [role for role in play["roles"] if not any([check_multi_regex(role["qtask"], playbook_qtasks_to_skip)])]
+
+        print(colored(f"Playbook {playbook_name}", 'blue'))    
+        playbook["plays"] = plays
+
+
+    # process template
+    template_to_file(
+        'playbooks_readme.md.j2',
+        f'{playbooks_path}/README_playbooks.md',
+        {"playbooks": playbooks},
+    )
 
 
 

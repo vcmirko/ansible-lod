@@ -1,5 +1,1 @@
 allow_duplicates: true
-role:
-  description: Manage NetApp ONTAP Vscan Scanner Pools
-  key: name
-  supports_multi: false

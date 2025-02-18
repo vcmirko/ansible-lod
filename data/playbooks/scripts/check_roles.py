@@ -112,19 +112,14 @@ def check_roles():
                 os.makedirs(f'{roles_path}/{collection}/{role_name}/meta', exist_ok=True)
 
                 template_to_file(
-                    'role_meta_main.yml.j2',
-                    f'{roles_path}/{collection}/{role_name}/meta/main.yml',
+                    'role_meta_meta.yml.j2',
+                    f'{roles_path}/{collection}/{role_name}/meta/meta.yml',
                     {},
                     True
                 )
 
-                # add the role description and other
-                add_file_property(f'{roles_path}/{collection}/{role_name}/meta/main.yml', 'role.description', 'Add role description here')
-                add_file_property(f'{roles_path}/{collection}/{role_name}/meta/main.yml', 'role.supports_multi', False)
-                add_file_property(f'{roles_path}/{collection}/{role_name}/meta/main.yml', 'role.key', 'name')
-
                 # get the role description
-                with open(f'{roles_path}/{collection}/{role_name}/meta/main.yml') as f:
+                with open(f'{roles_path}/{collection}/{role_name}/meta/meta.yml') as f:
                     meta = yaml.load(f, Loader=yaml.FullLoader)
                     role["description"] = meta['role']['description']
                     role["supports_multi"] = meta["role"].get("supports_multi", False)

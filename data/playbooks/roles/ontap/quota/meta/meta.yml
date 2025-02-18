@@ -1,0 +1,4 @@
+role:
+  description: Manage NetApp ONTAP Quotas
+  key: quota_target
+  supports_multi: true

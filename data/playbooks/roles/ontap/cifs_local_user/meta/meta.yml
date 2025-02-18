@@ -1,0 +1,4 @@
+role:
+  description: Manage NetApp ONTAP CIFS local users
+  key: name
+  supports_multi: true

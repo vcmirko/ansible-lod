@@ -6,7 +6,7 @@
 {% if role.filters | length > 0 %}
 ## Custom Filters
 
-| Module | Description | Version History |
+| Filter Plugin | Description | Version History |
 | :----- | :---------- | :-------------- |
 {% for f in role.filters %}| {{ f.name }} | {{ f.description | default('No description') }} | {{ f.version_history | default('No version history') }} |
 {% endfor %}
