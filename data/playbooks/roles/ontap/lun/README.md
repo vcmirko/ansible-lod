@@ -25,14 +25,14 @@ Note : This role supports multi / looping
 | Task | Collection | Module | Looped | Variables |
 | :--- | :--------- | :----- | :----- | :-------- |
 | Create/Modify Lun  | netapp.ontap | na_ontap_lun |  | lun, svm, volume |
-| Mapping the lun |  | na_ontap_lun_map | x | lun, svm |
+| Mapping the lun |  | na_ontap_lun_map | x | lun, svm, volume |
 
 
 **Variables**
 
 | Variable | Properties |
 | :------- | :--------- |
-| lun | name<br>comment<br>size<br>force_resize<br>force_remove_fenced<br>os_type<br>qos_adaptive_policy_group<br>qos_policy_group<br>qtree_name<br>size_unit<br>space_allocation<br>space_reserve<br>use_exact_size<br>igroups |
+| lun | name, <br/>comment, <br/>size, <br/>force_resize, <br/>force_remove_fenced, <br/>os_type, <br/>qos_adaptive_policy_group, <br/>qos_policy_group, <br/>qtree_name, <br/>size_unit, <br/>space_allocation, <br/>space_reserve, <br/>use_exact_size, <br/>igroups |
 | svm | name |
 | volume | name |
 
@@ -43,7 +43,7 @@ Note : This role supports multi / looping
 | Task | Collection | Module | Looped | Variables |
 | :--- | :--------- | :----- | :----- | :-------- |
 | Get lun uuid | netapp.ontap | na_ontap_restit |  |  |
-| Offline lun | netapp.ontap | na_ontap_restit |  |  |
+| Offline lun | netapp.ontap | na_ontap_restit |  | lun_info |
 | Rename lun | netapp.ontap | na_ontap_lun |  | lun, svm, volume |
 
 
@@ -52,6 +52,7 @@ Note : This role supports multi / looping
 | Variable | Properties |
 | :------- | :--------- |
 | lun | name |
+| lun_info | response |
 | svm | name |
 | volume | name |
 
@@ -62,7 +63,7 @@ Note : This role supports multi / looping
 | Task | Collection | Module | Looped | Variables |
 | :--- | :--------- | :----- | :----- | :-------- |
 | Get lun info | netapp.ontap | na_ontap_restit |  |  |
-| Get lun info | netapp.ontap | na_ontap_restit |  |  |
+| Get lun info | netapp.ontap | na_ontap_restit |  | lun_uuid |
 | Check status |  | assert |  |  |
 | Get all LUN mappings | netapp.ontap | na_ontap_rest_info |  |  |
 | Remove all LUN mappings | netapp.ontap | na_ontap_lun_map | x | lun_map_info |
@@ -75,6 +76,7 @@ Note : This role supports multi / looping
 | :------- | :--------- |
 | lun | name |
 | lun_map_info | ontap_info |
+| lun_uuid | response |
 | svm | name |
 | volume | name |
 
@@ -85,7 +87,7 @@ Note : This role supports multi / looping
 | Task | Collection | Module | Looped | Variables |
 | :--- | :--------- | :----- | :----- | :-------- |
 | Get lun uuid | netapp.ontap | na_ontap_restit |  |  |
-| Online lun | netapp.ontap | na_ontap_restit |  |  |
+| Online lun | netapp.ontap | na_ontap_restit |  | lun_info |
 | Rename lun | netapp.ontap | na_ontap_lun |  | lun, svm, volume |
 
 
@@ -93,7 +95,8 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| lun | name<br>original_name |
+| lun | name, <br/>original_name |
+| lun_info | response |
 | svm | name |
 | volume | name |
 
@@ -110,7 +113,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| lun | name<br>new_name |
+| lun | name, <br/>new_name |
 | svm | name |
 | volume | name |
 
@@ -127,7 +130,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| lun | name<br>comment<br>size<br>force_resize<br>force_remove_fenced<br>os_type<br>qos_adaptive_policy_group<br>qos_policy_group<br>qtree_name<br>size_unit<br>space_allocation<br>space_reserve<br>use_exact_size |
+| lun | name, <br/>comment, <br/>size, <br/>force_resize, <br/>force_remove_fenced, <br/>os_type, <br/>qos_adaptive_policy_group, <br/>qos_policy_group, <br/>qtree_name, <br/>size_unit, <br/>space_allocation, <br/>space_reserve, <br/>use_exact_size |
 | svm | name |
 | volume | name |
 

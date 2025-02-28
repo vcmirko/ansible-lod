@@ -16,22 +16,40 @@ Start, stop AIQUM maintenance
 
 
 
-
 ## maintenance / end
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| End maintenance |  | na_aiqum_maintenance |  | aiq_hostname, aiq_password, aiq_username, cluster_name |
 
-| Task |
-| :--- |
-| End maintenance |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| aiq_hostname |  |
+| aiq_password |  |
+| aiq_username |  |
+| cluster_name |  |
 
 
 
 ## maintenance / start
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Start maintenance |  | na_aiqum_maintenance |  | aiq_hostname, aiq_password, aiq_username, aiqum_ontap_maintenance_hours, cluster_name |
 
-| Task |
-| :--- |
-| Start maintenance |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| aiq_hostname |  |
+| aiq_password |  |
+| aiq_username |  |
+| aiqum_ontap_maintenance_hours |  |
+| cluster_name |  |
 
 
 

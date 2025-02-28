@@ -29,7 +29,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| vlan | tag<br>port<br>node<br>broadcast_domain<br>ipspace<br>ports |
+| vlan | tag, <br/>port, <br/>node, <br/>broadcast_domain, <br/>ipspace, <br/>ports |
 
 
 

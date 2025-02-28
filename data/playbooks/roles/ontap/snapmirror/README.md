@@ -30,7 +30,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| snapmirror | schedule<br>policy<br>identity_preservation<br>max_transfer_rate |
+| snapmirror | schedule, <br/>policy, <br/>identity_preservation, <br/>max_transfer_rate |
 
 
 
@@ -58,7 +58,7 @@ Note : This role supports multi / looping
 | diff date |  | set_fact |  |  |
 | Calculate keep_days |  | set_fact |  |  |
 | Calculate expiration_date |  | set_fact |  |  |
-| Changing comment with expiration date | netapp.ontap | na_ontap_volume |  | snapmirror |
+| Changing comment with expiration date | netapp.ontap | na_ontap_volume |  | expiration_date, snapmirror |
 | Renaming volume  | netapp.ontap | na_ontap_volume |  | snapmirror |
 
 
@@ -66,6 +66,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
+| expiration_date |  |
 | snapmirror | destination |
 
 

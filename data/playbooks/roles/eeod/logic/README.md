@@ -15,14 +15,19 @@ EEOD Logic, import excel file to deploy luns
 
 
 
-
 ## logic / parse_csv
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Parse CSV |  | parse_csv |  | vars_external |
+| Register logic result |  | set_fact |  |  |
 
-| Task |
-| :--- |
-| Parse CSV |
-| Register logic result |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| vars_external |  |
 
 
 

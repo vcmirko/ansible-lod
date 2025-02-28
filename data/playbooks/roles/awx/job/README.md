@@ -15,15 +15,24 @@ Manages AWX job tasks
 
 
 
-
 ## job / concurrent_launch
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Process the awx_concurrent object |  | awx_concurrent_loop |  | vars_external |
+| Get awx_concurrent result |  | set_fact |  |  |
+| Launch Job Template for Each Item Concurrently | awx.awx | job_launch | x | awx_concurrent_items, awx_hostname, awx_password, awx_username |
 
-| Task |
-| :--- |
-| Process the awx_concurrent object |
-| Get awx_concurrent result |
-| Launch Job Template for Each Item Concurrently |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| awx_concurrent_items |  |
+| awx_hostname |  |
+| awx_password |  |
+| awx_username |  |
+| vars_external |  |
 
 
 

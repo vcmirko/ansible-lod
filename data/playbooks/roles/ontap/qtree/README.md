@@ -27,7 +27,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| qtree | name<br>export_policy<br>security_style<br>unix_permissions<br>unix_group<br>unix_user<br>wait_for_completion |
+| qtree | name, <br/>export_policy, <br/>security_style, <br/>unix_permissions, <br/>unix_group, <br/>unix_user, <br/>wait_for_completion |
 | svm | name |
 | volume | name |
 

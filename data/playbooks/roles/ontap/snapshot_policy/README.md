@@ -26,7 +26,7 @@ Manage NetApp ONTAP Snapshot Policies
 
 | Variable | Properties |
 | :------- | :--------- |
-| snapshot_policy | name<br>schedule<br>snapmirror_label<br>prefix<br>count<br>enabled |
+| snapshot_policy | name, <br/>schedule, <br/>snapmirror_label, <br/>prefix, <br/>count, <br/>enabled |
 | svm | name |
 
 

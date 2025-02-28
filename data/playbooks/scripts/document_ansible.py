@@ -86,12 +86,12 @@ def find_commented_lines(file,headers_to_find=["description","version history"])
             for j in range(i+1, len(lines)):
                 if lines[j] in headers_to_find:
                     break
-                headers[header_name] += lines[j] + "<br>"
+                headers[header_name] += lines[j] + " <br/>"
 
     # remove all trailing <br> from the headers
 
     for header in headers:
-        headers[header] = headers[header].strip("<br>")
+        headers[header] = headers[header].strip(" <br/>")
 
     return headers
 
@@ -159,7 +159,7 @@ def find_regex_group_with_comments(file, regex=r"^def ([^(]+)\(", comments_char=
                     comments.append(lines[j].strip()[1:])
                 else:
                     break
-            comments = "<br>".join(comments)
+            comments = r" <br/>".join(comments)
             results[def_name] = comments
 
     # remove the excluded items
@@ -430,12 +430,12 @@ def document_roles():
                                 value = task[module_name][subkey]
                                 # only process strings
                                 if isinstance(value, str):
-                                    # remove all spaces and quota's
-                                    value = value.replace(" ","").replace("'","").replace('"','')
-                                    # check if the value is a jinja2 template
-                                    if value.startswith("{{") and value.endswith("}}"):
-                                        # remove the jinja2 template characters
-                                        value = value[2:-2]
+
+                                    # find all jinja2 template variables
+                                    matches = re.findall(r"\s*{{\s*([a-zA-Z\.0-9_-]*)", value)
+
+                                    for value in matches:
+
                                         # remove the filter part if any
                                         if "|" in value:
                                             value = value.split("|")[0]

@@ -8,12 +8,54 @@
 
 {% for role in collection.roles%}
 ## {{ collection.name }} / {{ role.name }}
-{{ role.description }}
 
-| Role action | 
-| :--- |
-{% for qtask in role.qtasks %}| {{ qtask.name }} | 
+{{ role.description }}  
+  
+{% if role.supports_multi %}Note : This role supports multi / looping{% endif %}
+
+{% if role.filters | length > 0 %}
+### Custom Filters
+
+| Filter Plugin | Description | Version History |
+| :----- | :---------- | :-------------- |
+{% for f in role.filters %}| {{ f.name }} | {{ f.description | default('No description') }} | {{ f.version_history | default('No version history') }} |
 {% endfor %}
+{% endif %}
+
+{% if role.modules | length > 0 %}
+### Custom Modules
+
+| Module | Description | Version History |
+| :----- | :---------- | :-------------- |
+{% for module in role.modules %}| {{ module.name }} | {{ module.description | default('No description') }} | {{ module.version_history | default('No version history') }} |
+{% endfor %}
+{% endif %}
+
+### Role actions/qtasks
+
+| Subrole | Description |
+| :------ | :---------- |
+{% for qtask in role.qtasks %}| [{{ qtask.name }}](#{{ qtask.link }}) | {{ qtask.description | default('') }} |
+{% endfor %}
+
+{% for qtask in role.qtasks %}
+### {{ role.name }} / {{ qtask.name }}
+
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+{% for task in qtask.tasks %}| {{ task.name }} | {{ task.collection }} | {{ task.module }} | {% if task.looped %}x{% endif %} | {% for var in task.vars %}{{ var.name }}{% if not loop.last %}, {% endif %}{% endfor %} |
+{% endfor %}
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+{% for var in qtask.vars %}| {{ var.name }} | {{ var.properties | join(', <br/>') }} |
+{% endfor %}
+
+{% endfor %}
+
+
 
 {% endfor %}
 

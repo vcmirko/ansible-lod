@@ -26,7 +26,7 @@ Manage NetApp ONTAP Subnets
 
 | Variable | Properties |
 | :------- | :--------- |
-| subnet | name<br>ip_ranges<br>ipspace<br>broadcast_domain<br>subnet<br>gateway |
+| subnet | name, <br/>ip_ranges, <br/>ipspace, <br/>broadcast_domain, <br/>subnet, <br/>gateway |
 
 
 

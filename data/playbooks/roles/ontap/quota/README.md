@@ -28,7 +28,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| quota | quota_target<br>disk_limit<br>file_limit<br>perform_user_mapping<br>qtree<br>set_quota_status<br>soft_disk_limit<br>soft_file_limit<br>threshold<br>type |
+| quota | quota_target, <br/>disk_limit, <br/>file_limit, <br/>perform_user_mapping, <br/>qtree, <br/>set_quota_status, <br/>soft_disk_limit, <br/>soft_file_limit, <br/>threshold, <br/>type |
 | svm | name |
 | volume | name |
 
@@ -45,7 +45,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| quota | quota_target<br>disk_limit<br>file_limit<br>perform_user_mapping<br>qtree<br>set_quota_status<br>soft_disk_limit<br>soft_file_limit<br>threshold<br>type |
+| quota | quota_target, <br/>disk_limit, <br/>file_limit, <br/>perform_user_mapping, <br/>qtree, <br/>set_quota_status, <br/>soft_disk_limit, <br/>soft_file_limit, <br/>threshold, <br/>type |
 | svm | name |
 | volume | name |
 

@@ -40,7 +40,7 @@
 
 | Variable | Properties |
 | :------- | :--------- |
-{% for var in qtask.vars %}| {{ var.name }} | {{ var.properties | join('<br>') }} |
+{% for var in qtask.vars %}| {{ var.name }} | {{ var.properties | join(', <br/>') }} |
 {% endfor %}
 
 {% endfor %}

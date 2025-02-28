@@ -1,5 +1,5 @@
 # maf / logic 
-Some sample logic for MAF  
+-- Missing description --  
   
 
 
@@ -18,44 +18,70 @@ Some sample logic for MAF
 
 
 
-
 ## logic / bypass
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Running logic bypass |  | bypass |  | vars_external |
+| Register logic result |  | set_fact |  |  |
 
-| Task |
-| :--- |
-| Running logic bypass |
-| Register logic result |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| vars_external |  |
 
 
 
 ## logic / svm_create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Logic - svm_create |  | svm_create |  | vars_external |
+| Register logic result |  | set_fact |  |  |
 
-| Task |
-| :--- |
-| Logic - svm_create |
-| Register logic result |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| vars_external |  |
 
 
 
 ## logic / svm_delete
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Logic - svm_delete |  | svm_delete |  | aiqum_host, aiqum_password, aiqum_username, vars_external |
+| Register logic result |  | set_fact |  |  |
 
-| Task |
-| :--- |
-| Logic - svm_delete |
-| Register logic result |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| aiqum_host |  |
+| aiqum_password |  |
+| aiqum_username |  |
+| vars_external |  |
 
 
 
 ## logic / svm_dr
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Logic - svm_dr |  | svm_dr |  | vars_external |
+| Register logic result |  | set_fact |  |  |
 
-| Task |
-| :--- |
-| Logic - svm_dr |
-| Register logic result |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| vars_external |  |
 
 
 

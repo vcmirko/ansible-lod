@@ -27,7 +27,7 @@ Manage NetApp ONTAP Unix Users
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| unix_user | name<br>full_name<br>group_id<br>id |
+| unix_user | name, <br/>full_name, <br/>group_id, <br/>id |
 
 
 

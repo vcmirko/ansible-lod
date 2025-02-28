@@ -38,7 +38,7 @@ Note : This role supports multi / looping
 | Set volume snapshot autodelete  | netapp.ontap | na_ontap_rest_cli |  |  |
 | Set space-mgmt-try-first  | netapp.ontap | na_ontap_rest_cli |  |  |
 | Get volume uuid  | netapp.ontap | na_ontap_restit |  |  |
-| Set anti-ransomware state  | netapp.ontap | na_ontap_restit |  |  |
+| Set anti-ransomware state  | netapp.ontap | na_ontap_restit |  | volume_info |
 | Set read-alloc  | netapp.ontap | na_ontap_rest_cli |  |  |
 | Set fractional-reserve  | netapp.ontap | na_ontap_rest_cli |  |  |
 | Set atime-update  | netapp.ontap | na_ontap_rest_cli |  |  |
@@ -51,7 +51,8 @@ Note : This role supports multi / looping
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| volume | name<br>size<br>aggregate_include_node_regex<br>activity_tracking<br>analytics<br>auto_remap_luns<br>aggregate<br>size_unit<br>space_guarantee<br>percent_snapshot_space<br>wait_for_completion<br>junction_path<br>language<br>comment<br>type<br>atime_update<br>compression<br>encrypt<br>group_id<br>inline_compression<br>size_change_threshold<br>unix_permissions<br>user_id<br>security_style<br>snaplock<br>logical_space_reporting<br>logical_space_enforcement<br>efficiency_policy<br>export_policy<br>snapshot_policy<br>tiering_policy<br>qos_policy_group<br>qos_adaptive_policy_group<br>volume_efficiency<br>volume_autosize<br>qtrees<br>luns |
+| volume | name, <br/>size, <br/>aggregate_include_node_regex, <br/>activity_tracking, <br/>analytics, <br/>auto_remap_luns, <br/>aggregate, <br/>size_unit, <br/>space_guarantee, <br/>percent_snapshot_space, <br/>wait_for_completion, <br/>junction_path, <br/>language, <br/>comment, <br/>type, <br/>atime_update, <br/>compression, <br/>encrypt, <br/>group_id, <br/>inline_compression, <br/>size_change_threshold, <br/>unix_permissions, <br/>user_id, <br/>security_style, <br/>snaplock, <br/>logical_space_reporting, <br/>logical_space_enforcement, <br/>efficiency_policy, <br/>export_policy, <br/>snapshot_policy, <br/>tiering_policy, <br/>qos_policy_group, <br/>qos_adaptive_policy_group, <br/>volume_efficiency, <br/>volume_autosize, <br/>qtrees, <br/>luns |
+| volume_info | response |
 
 
 
@@ -68,7 +69,7 @@ Note : This role supports multi / looping
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| volume | name<br>size<br>aggregate_include_node_regex<br>aggregate<br>activity_tracking<br>analytics<br>size_unit<br>space_guarantee<br>percent_snapshot_space<br>wait_for_completion<br>language<br>comment<br>atime_update<br>compression<br>encrypt<br>inline_compression<br>size_change_threshold<br>snaplock<br>efficiency_policy<br>export_policy<br>snapshot_policy<br>tiering_policy<br>qos_policy_group<br>qos_adaptive_policy_group |
+| volume | name, <br/>size, <br/>aggregate_include_node_regex, <br/>aggregate, <br/>activity_tracking, <br/>analytics, <br/>size_unit, <br/>space_guarantee, <br/>percent_snapshot_space, <br/>wait_for_completion, <br/>language, <br/>comment, <br/>atime_update, <br/>compression, <br/>encrypt, <br/>inline_compression, <br/>size_change_threshold, <br/>snaplock, <br/>efficiency_policy, <br/>export_policy, <br/>snapshot_policy, <br/>tiering_policy, <br/>qos_policy_group, <br/>qos_adaptive_policy_group |
 
 
 
@@ -77,7 +78,7 @@ Note : This role supports multi / looping
 | Task | Collection | Module | Looped | Variables |
 | :--- | :--------- | :----- | :----- | :-------- |
 | Unmount volume  | netapp.ontap | na_ontap_volume |  | svm, volume |
-| Set comment with timestamp on volume  | netapp.ontap | na_ontap_volume |  | svm, volume |
+| Set comment with timestamp on volume  | netapp.ontap | na_ontap_volume |  | , svm, volume |
 | Rename volume  | netapp.ontap | na_ontap_volume |  | svm, volume |
 
 
@@ -85,6 +86,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
+|  |  |
 | svm | name |
 | volume | name |
 
@@ -114,13 +116,14 @@ Note : This role supports multi / looping
 | Task | Collection | Module | Looped | Variables |
 | :--- | :--------- | :----- | :----- | :-------- |
 | Get locks on volume  | netapp.ontap | na_ontap_restit |  |  |
-| Delete locks on volume  | netapp.ontap | na_ontap_restit | x | locks_info |
+| Delete locks on volume  | netapp.ontap | na_ontap_restit | x | lock, locks_info |
 
 
 **Variables**
 
 | Variable | Properties |
 | :------- | :--------- |
+| lock | uuid |
 | locks_info | response |
 
 
@@ -137,7 +140,7 @@ Note : This role supports multi / looping
 | Set volume snapshot autodelete  | netapp.ontap | na_ontap_rest_cli |  |  |
 | Set space-mgmt-try-first  | netapp.ontap | na_ontap_rest_cli |  |  |
 | Get volume uuid  | netapp.ontap | na_ontap_restit |  |  |
-| Set anti-ransomware state  | netapp.ontap | na_ontap_restit |  |  |
+| Set anti-ransomware state  | netapp.ontap | na_ontap_restit |  | volume_info |
 | Set read-alloc  | netapp.ontap | na_ontap_rest_cli |  |  |
 | Set fractional-reserve  | netapp.ontap | na_ontap_rest_cli |  |  |
 | Set atime-update  | netapp.ontap | na_ontap_rest_cli |  |  |
@@ -148,7 +151,8 @@ Note : This role supports multi / looping
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| volume | name<br>type<br>is_online<br>activity_tracking<br>analytics<br>auto_remap_luns<br>junction_path<br>language<br>comment<br>atime_update<br>compression<br>encrypt<br>group_id<br>inline_compression<br>size_change_threshold<br>unix_permissions<br>user_id<br>security_style<br>snaplock<br>logical_space_reporting<br>logical_space_enforcement<br>efficiency_policy<br>export_policy<br>snapshot_policy<br>tiering_policy<br>qos_policy_group<br>qos_adaptive_policy_group<br>volume_efficiency<br>volume_autosize |
+| volume | name, <br/>type, <br/>is_online, <br/>activity_tracking, <br/>analytics, <br/>auto_remap_luns, <br/>junction_path, <br/>language, <br/>comment, <br/>atime_update, <br/>compression, <br/>encrypt, <br/>group_id, <br/>inline_compression, <br/>size_change_threshold, <br/>unix_permissions, <br/>user_id, <br/>security_style, <br/>snaplock, <br/>logical_space_reporting, <br/>logical_space_enforcement, <br/>efficiency_policy, <br/>export_policy, <br/>snapshot_policy, <br/>tiering_policy, <br/>qos_policy_group, <br/>qos_adaptive_policy_group, <br/>volume_efficiency, <br/>volume_autosize |
+| volume_info | response |
 
 
 
@@ -165,7 +169,7 @@ Note : This role supports multi / looping
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| volume | name<br>size<br>aggregate_include_node_regex<br>aggregate |
+| volume | name, <br/>size, <br/>aggregate_include_node_regex, <br/>aggregate |
 
 
 
@@ -213,7 +217,7 @@ Note : This role supports multi / looping
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| volume | old_name<br>name |
+| volume | old_name, <br/>name |
 
 
 
@@ -229,7 +233,7 @@ Note : This role supports multi / looping
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| volume | name<br>size<br>size_unit |
+| volume | name, <br/>size, <br/>size_unit |
 
 
 

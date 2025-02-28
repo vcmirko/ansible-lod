@@ -19,15 +19,14 @@ Manage NetApp ONTAP Cluster Peer
 
 | Task | Collection | Module | Looped | Variables |
 | :--- | :--------- | :----- | :----- | :-------- |
-| Create cluster peering between {{ cluster_peer.name }} | netapp.ontap | na_ontap_cluster_peer |  | cluster_peer[0], cluster_peer[1] |
+| Create cluster peering between {{ cluster_peer.name }} | netapp.ontap | na_ontap_cluster_peer |  | cluster_peer |
 
 
 **Variables**
 
 | Variable | Properties |
 | :------- | :--------- |
-| cluster_peer[0] | intercluster_ips<br>passphrase |
-| cluster_peer[1] | intercluster_ips |
+| cluster_peer |  |
 
 
 

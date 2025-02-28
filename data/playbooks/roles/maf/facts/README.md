@@ -15,13 +15,17 @@ Process sample credentials for MAF testing
 
 
 
-
 ## facts / credentials
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Set the credentials | ansible.builtin | set_fact |  |  |
 
-| Task |
-| :--- |
-| Set the credentials |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
 
 
 

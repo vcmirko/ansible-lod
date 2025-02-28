@@ -28,7 +28,7 @@ Manage NetApp ONTAP Export Policies and rules
 
 | Variable | Properties |
 | :------- | :--------- |
-| export_policy | name<br>rules |
+| export_policy | name, <br/>rules |
 | svm | name |
 
 

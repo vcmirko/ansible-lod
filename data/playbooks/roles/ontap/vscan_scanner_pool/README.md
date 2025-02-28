@@ -27,7 +27,7 @@ Manage NetApp ONTAP Vscan Scanner Pools
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| vscan_scanner_pool | scanner_pool<br>scanner_policy<br>privileged_users<br>hostnames |
+| vscan_scanner_pool | scanner_pool, <br/>scanner_policy, <br/>privileged_users, <br/>hostnames |
 
 
 

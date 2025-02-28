@@ -27,7 +27,7 @@ Manage NetApp ONTAP Users
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| user | name<br>role_name<br>authentication_password<br>application_strs<br>authentication_method |
+| user | name, <br/>role_name, <br/>authentication_password, <br/>application_strs, <br/>authentication_method |
 
 
 

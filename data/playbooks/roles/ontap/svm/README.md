@@ -44,7 +44,7 @@ Note : This role supports multi / looping
 | Create Lifs  |  | include_tasks | x | svm |
 | create default route  | netapp.ontap | na_ontap_net_routes | x | svm |
 | Get vserver uuid | netapp.ontap | na_ontap_restit |  |  |
-| Set other svm parameters (using restit)  | netapp.ontap | na_ontap_restit |  |  |
+| Set other svm parameters (using restit)  | netapp.ontap | na_ontap_restit |  | svm_info |
 | Set other svm parameters (using rest_cli)  | netapp.ontap | na_ontap_rest_cli |  |  |
 | Create dns  |  | include_tasks |  |  |
 | Enable cifs  |  | include_tasks |  |  |
@@ -61,7 +61,8 @@ Note : This role supports multi / looping
 | :------- | :--------- |
 | aggr_info | ontap_info |
 | ipspace | name |
-| svm | name<br>allowed_protocols<br>snapshot_policy<br>language<br>comment<br>max_volumes<br>subtype<br>root_volume<br>options<br>lifs<br>vscan_enable<br>volumes |
+| svm | name, <br/>allowed_protocols, <br/>snapshot_policy, <br/>language, <br/>comment, <br/>max_volumes, <br/>subtype, <br/>root_volume, <br/>options, <br/>lifs, <br/>vscan_enable, <br/>volumes |
+| svm_info | response |
 
 
 

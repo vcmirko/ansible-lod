@@ -29,7 +29,7 @@ Manage NetApp ONTAP Software Updates
 
 | Variable | Properties |
 | :------- | :--------- |
-| software | baseurl}}/{{software |
+| software | baseurl, <br/>filename |
 
 
 
@@ -69,9 +69,9 @@ Manage NetApp ONTAP Software Updates
 | Enable maintenance in aiqum |  | include_tasks |  |  |
 | Get all ip interfaces not home | netapp.ontap | na_ontap_rest_info |  |  |
 | Revert ip interfaces to home |  | na_ontap_interface | x | lif_info |
-| Invoke Autosupport - MAINTENANCE START | netapp.ontap | na_ontap_autosupport_invoke |  |  |
+| Invoke Autosupport - MAINTENANCE START | netapp.ontap | na_ontap_autosupport_invoke |  | software |
 | Update Software |  | na_ontap_software_update |  | software |
-| Invoke Autosupport - MAINTENANCE END | netapp.ontap | na_ontap_autosupport_invoke |  |  |
+| Invoke Autosupport - MAINTENANCE END | netapp.ontap | na_ontap_autosupport_invoke |  | software |
 | End maintenance in aiqum |  | include_tasks |  |  |
 
 
@@ -80,7 +80,7 @@ Manage NetApp ONTAP Software Updates
 | Variable | Properties |
 | :------- | :--------- |
 | lif_info | ontap_info |
-| software | version<br>ignore_validation_warning |
+| software | version, <br/>ignore_validation_warning |
 
 
 

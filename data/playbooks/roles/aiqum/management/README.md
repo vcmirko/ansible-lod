@@ -17,35 +17,64 @@ AIQUM management, register, rediscover, ...
 
 
 
-
 ## management / rediscover
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Get CLUSTER in Aiqum |  | uri |  | aiq_hostname, aiq_password, aiq_username, cluster_name |
+| Rediscover Aiqum for CLUSTER |  | uri |  | aiq_hostname, aiq_password, aiq_username, cluster_obj |
+| Wait for operation |  | uri |  | aiq_hostname, aiq_password, aiq_username, rediscover_operation |
 
-| Task |
-| :--- |
-| Get CLUSTER in Aiqum |
-| Rediscover Aiqum for CLUSTER |
-| Wait for operation |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| aiq_hostname |  |
+| aiq_password |  |
+| aiq_username |  |
+| cluster_name |  |
+| cluster_obj | json |
+| rediscover_operation | json |
 
 
 
 ## management / register
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Get CLUSTER in Aiqum |  | uri |  | aiq_hostname, aiq_password, aiq_username, cluster_name |
+| Register CLUSTER in Aiqum |  | block |  |  |
 
-| Task |
-| :--- |
-| Get CLUSTER in Aiqum |
-| Register CLUSTER in Aiqum |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| aiq_hostname |  |
+| aiq_password |  |
+| aiq_username |  |
+| cluster_name |  |
 
 
 
 ## management / unregister
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Get CLUSTER in Aiqum |  | uri |  | aiq_hostname, aiq_password, aiq_username, cluster_name |
+| Delete CLUSTER in Aiqum |  | uri |  | aiq_hostname, aiq_password, aiq_username, cluster_obj |
 
-| Task |
-| :--- |
-| Get CLUSTER in Aiqum |
-| Delete CLUSTER in Aiqum |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| aiq_hostname |  |
+| aiq_password |  |
+| aiq_username |  |
+| cluster_name |  |
+| cluster_obj | json |
 
 
 

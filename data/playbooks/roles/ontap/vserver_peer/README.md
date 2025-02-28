@@ -19,7 +19,7 @@ Manage NetApp ONTAP Vserver Peers
 
 | Task | Collection | Module | Looped | Variables |
 | :--- | :--------- | :----- | :----- | :-------- |
-| Create vserver peering  | netapp.ontap | na_ontap_vserver_peer |  | vserver_peer[0], vserver_peer[1] |
+| Create vserver peering  | netapp.ontap | na_ontap_vserver_peer |  | vserver_peer |
 | wait for vserver peering to be established |  | pause |  |  |
 
 
@@ -27,8 +27,7 @@ Manage NetApp ONTAP Vserver Peers
 
 | Variable | Properties |
 | :------- | :--------- |
-| vserver_peer[0] | svm |
-| vserver_peer[1] | svm<br>cluster |
+| vserver_peer |  |
 
 
 

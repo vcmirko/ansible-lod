@@ -28,7 +28,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| cifs_local_group | name<br>members |
+| cifs_local_group | name, <br/>members |
 | svm | name |
 
 

@@ -28,7 +28,7 @@ Note : This role supports multi / looping
 | Variable | Properties |
 | :------- | :--------- |
 | cifs_local_group | name |
-| cifs_local_user | name<br>password<br>full_name<br>account_disabled<br>description |
+| cifs_local_user | name, <br/>password, <br/>full_name, <br/>account_disabled, <br/>description |
 | svm | name |
 
 

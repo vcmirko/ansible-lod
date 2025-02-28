@@ -4,43 +4,135 @@ MAF - Modular Ansible Framework - this current framework, some common roles
 | Role | Description |
 | :--- | :---------- |
 | [facts](#maf--facts) | Process sample credentials for MAF testing |
-| [logic](#maf--logic) | Some sample logic for MAF |
-| [simulator](#maf--simulator) | Deploy, destroy ONTAP simulator |
+| [logic](#maf--logic) | -- Missing description -- |
 
 
 
 ## maf / facts
-Process sample credentials for MAF testing
 
-| Role action | 
-| :--- |
-| credentials | 
+Process sample credentials for MAF testing  
+  
+
+
+
+
+
+
+### Role actions/qtasks
+
+| Subrole | Description |
+| :------ | :---------- |
+| [credentials](#facts--credentials) |  |
+
+
+
+### facts / credentials
+
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Set the credentials | ansible.builtin | set_fact |  |  |
+
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+
+
+
+
 
 
 
 ## maf / logic
-Some sample logic for MAF
 
-| Role action | 
-| :--- |
-| bypass | 
-| svm_create | 
-| svm_delete | 
-| svm_dr | 
+-- Missing description --  
+  
 
 
 
-## maf / simulator
-Deploy, destroy ONTAP simulator
 
-| Role action | 
-| :--- |
-| cluster_config | 
-| cluster_init | 
-| cluster_init2 | 
-| deploy_sim | 
-| destroy_sim | 
-| init_sim | 
+
+
+### Role actions/qtasks
+
+| Subrole | Description |
+| :------ | :---------- |
+| [bypass](#logic--bypass) |  |
+| [svm_create](#logic--svm_create) |  |
+| [svm_delete](#logic--svm_delete) |  |
+| [svm_dr](#logic--svm_dr) |  |
+
+
+
+### logic / bypass
+
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Running logic bypass |  | bypass |  | vars_external |
+| Register logic result |  | set_fact |  |  |
+
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| vars_external |  |
+
+
+
+### logic / svm_create
+
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Logic - svm_create |  | svm_create |  | vars_external |
+| Register logic result |  | set_fact |  |  |
+
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| vars_external |  |
+
+
+
+### logic / svm_delete
+
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Logic - svm_delete |  | svm_delete |  | aiqum_host, aiqum_password, aiqum_username, vars_external |
+| Register logic result |  | set_fact |  |  |
+
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| aiqum_host |  |
+| aiqum_password |  |
+| aiqum_username |  |
+| vars_external |  |
+
+
+
+### logic / svm_dr
+
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Logic - svm_dr |  | svm_dr |  | vars_external |
+| Register logic result |  | set_fact |  |  |
+
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| vars_external |  |
+
+
+
+
 
 
 
