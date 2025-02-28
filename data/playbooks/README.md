@@ -35,19 +35,23 @@ Let's break it down :
 Each playbook is targeted against localhost, no inventory is used.  We target ontap clusters from within the playbook.  Generally just 1 cluster, there are however exeptions in the case of snapmirror/snapvault that two or even 3 clusters are targets.
 We don't `gather_facts` by default, as we target localhost and not much interesting information can be gathered.
   
-**Note** : But an inventory can be used is certain cases, like typical multi cluster tasks.  Since we set `delegate` to `localhost`, an inventory will still work.
+**Note** : An inventory can be useful is certain cases, like typical multi cluster tasks.  Since we set `delegate` to `localhost`, an inventory will still work.
 
 ``` yaml
   vars_files:
+    # - "vars/test_credentials.yml" => inject / or lookup in production
     - "vars/defaults.yml"
     - "vars/templates.yml"
+    # - "vars/test_extravars.yml" => inject in production
     - "vars/overrides.yml"
 ```
 
-Typically we load these 3 files that hold the **defaults**, **templates** and **overrides**.  
-When testing, you can choose to load credentials and extravars from a file.  Wrap the extravars in a dict `vars_external`.
+Typically we load 3 files that hold the **defaults**, **templates** and **overrides**.  
+  
+When testing, you can choose to load test-credentials and test-extravars from a file.  Wrap the extravars in a dict `vars_external`.
 You can choose to load different files, custom files or have them together in 1 file.  
-The main goal is to load 3 variables, which are mandatory:  **vars_defaults**, **vars_templates** and **vars_overrides**
+  
+The main goal is to load 4 variables, which are mandatory:  **vars_defaults**, **vars_templates**, **vars_external**, and **vars_overrides**  
 
 ``` yaml
   roles:
@@ -60,22 +64,34 @@ The main goal is to load 3 variables, which are mandatory:  **vars_defaults**, *
 ```
 
 Ansible has the concept "roles", that we use/abuse/reformat to create a somewhat readible workflow.  
-In the example below we first :
+  
+In the example above we :
 
 - get the credentials
 - process the logic
 - create a volume  
 - rediscover AIQUM.  
 
-For each role we pass a subtask or subrole (variable `qtask`) that is part of that role.  
-The task `facts` is a generic name for pre-processing variables aka `set_facts`.  
-You will typically see this task for each role. (facts + create, facts + delete, facts + rename, fact + rediscover, ...).  
-The goal of the facts task is to prepare the variables for the next task.  In the case of NetApp ONTAP, we will typically prepare the hostname, usually a `cluster.management_ip`, with a fallback to `ansible_host` in case there is an inventory.
+For each role we pass a subtask/subrole (using variable `qtask`) that is part of that role.  
+  
+The `qtask` variable is a MAF-specific variable we use to tell the role which subtask to perform.  This way we can segregate several actions within a role.
+
+The task `facts`, that keeps recurring, is a generic name for pre-processing variables aka `set_facts`.  
+  
+You will typically see this task before each role. (facts + create, facts + delete, facts + rename, fact + rediscover, ...).  
+The goal of the facts task is to prepare the variables for the next task.  In the case of NetApp ONTAP, we will typically prepare the hostname, usually (but not always) a `cluster.management_ip`, with a fallback to `ansible_host` in case there is an inventory.
 
 ## Variables and merging process
 
-Ansible modules are receiving information through variables.  And it's true, ansible has a hierarchy of precedence with vars folders and defaults etc... But in my experience, pardon my french, this is crap.  In more complex environment, we want to use objects/dicts.  And the precedence doesn't work with dicts.  In this framework, we try to structure these variables in objects/dicts and use a custom written filter that can merge dicts.
+Ansible modules are receiving information through variables.  And it's true, ansible has a hierarchy of precedence with vars folders and defaults etc... 
+
+Howewever, this only works for single variables.  In more complex environments, we want to use objects/dicts.  And the precedence doesn't work with dicts.  
+
+In this framework, we try to structure these variables in objects/dicts and use a **custom written filter** that can merge dicts on a property level.  
+
 Throughout this documentation, we will use the example where we create a volume for cifs.  
+
+Let's assume the following payload (extravars), is passed to the playbook.
 
 ``` yaml
 volume:
@@ -97,7 +113,14 @@ cluster:
     management_ip         : 10.0.0.1
 ```
 
-Now some of this information will always be the same, some will be the same in certain cases, some will be calculated values, some will need to be looked up, ...
+When we analyse this payload, some of this information will :
+
+- always be the same, 
+- will be the same in certain cases, 
+- will be calculated values, 
+- will need to be looked up, 
+- ...
+
 The concept of this framework is to merge 4 layers of information to build the final object.  
 
 To make the framework dynamic we use a couple of variables in this framework that each contain a layer of information :  
@@ -111,7 +134,10 @@ To make the framework dynamic we use a couple of variables in this framework tha
 
 Holds default information per object type (svm, volume, ...)
 
-**Example** :
+**Example** :  
+
+  
+Most of customers will have a least a few defaults.
 
 ``` yaml
 vars_defaults:
@@ -127,10 +153,13 @@ vars_defaults:
 
 ### vars_templates
 
-Holds specific information per object type (svm, volume, ...) grouped together in a **template**, typically for a specific use case.  
-Templates might have overlapping pieces of information, hence the use of **anchors** and **aliases** might be a good idea.
+Holds specific information per object type (svm, volume, ...) grouped together in a **template**, typically for a specific use case.   
+
+Templates might have overlapping pieces of information, hence the use of **anchors** and **aliases** might be a good idea. (https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/)
 
 **Example** :  
+
+Most customers will have use-cases where templates will come in handy.
 
 ``` yaml
 vars_templates:
@@ -144,21 +173,23 @@ vars_templates:
     nas_cifs:                               # another template
         volume:
             security_style         : ntfs
-            percent_snapshot_space : *percent_snapshot_space 
+            percent_snapshot_space : *percent_snapshot_space # here we use an alias to inject the data from the previous anchor
         svm:
             allowed_protocols: cifs
 ```  
 
 ### vars_external
 
-Holds information from external/operator, aka the extra_vars, they must however be wrapped in 1 parent dict `vars_external`.  
+Holds information from external (operator, cli, ...), aka the extra_vars, they must however be wrapped in 1 parent dict `vars_external`.  
   
 **Example 1** : Logic is handled external, naming conventions external, resource selection is external.  
-Note the template name `nas_cifs` is passed.
+
+**Note** : the template name `nas_cifs` is passed.  
+**Note** : the template can also be placed on object-level (eg. volume)
 
 ``` yaml
 vars_external:
-    template: nas_cifs
+    template: nas_cifs # apply template
     volume:
         name          : v_files_shared_001
         size          : 10
@@ -171,7 +202,9 @@ vars_external:
         management_ip : 10.0.0.1
 ```  
 
-**Example 2** : Logic is handled internal, naming conventions internal, resource selection is internal.  The input in this case is somewhat customer specific.  A good practice is to put it under something meaningfull, in this case `meta` (short for metadata).  
+**Example 2** : Logic is handled internally, naming conventions internal, resource selection is internal.  The input in this case is somewhat customer specific.  
+
+A good practice is to put it under something meaningfull, in this case `meta` (short for metadata).  
 
 The logic can be applied with jinja2-filter, jinja2-templates, or, a personal favorite, a custom module, where we have the full python libraries at our disposal.  This custom module will take the vars_external and manipulate it with resource selections, environment decisions and naming conventions.
 
@@ -201,7 +234,7 @@ vars_external:
 In this case, we will most likly do a 2-step preprocessing. 
 
 - Pass the information through a jinja2-template, adding a bit of structure
-- Pass the information through a logic module.
+- Pass the information through an ansible-module to complete more complex logic.
 
 
 ## vars_local
@@ -214,7 +247,7 @@ Typically in the logic-modules the incoming data is being :
 - **completed** : maybe some resource-selection is required, rest-calls, database lookups, ... to complete the data
 - **reworked**  : some input data can be modified, removed, added, naming conventions can be applied, ...
 
-**Note** : extra_vars in ansible are immutable.  Since vars_external are extra_vars, we must put the reworked data in a new dict `vars_local`.
+**Note** : extra_vars in ansible are immutable (read-only).  Since we want to add/modify/remove the input data, we createa new dict `vars_local`.
 
 **Example**: This is a full example, starting with unstructured extra_vars.
   
@@ -287,7 +320,7 @@ Below a sample code snippet, applying further logic
 
 ``` python
 # file ./library/logicX.py
-# ... this just a snippet of a custom logic module 
+# ... this is just a snippet of a custom logic module 
 
 # grab input
 ve                                 = module.params['vars_external']
