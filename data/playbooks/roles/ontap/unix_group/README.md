@@ -15,13 +15,19 @@ Manage NetApp ONTAP Unix Groups
 
 
 
-
 ## unix_group / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Create Unix Group  | netapp.ontap | na_ontap_unix_group |  | svm, unix_group |
 
-| Task |
-| :--- |
-| Create Unix Group  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| svm | name |
+| unix_group | name<br>users<br>id |
 
 
 

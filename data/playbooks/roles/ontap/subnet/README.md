@@ -15,13 +15,18 @@ Manage NetApp ONTAP Subnets
 
 
 
-
 ## subnet / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Create Subnet  | netapp.ontap | na_ontap_net_subnet |  | subnet |
 
-| Task |
-| :--- |
-| Create Subnet  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| subnet | name<br>ip_ranges<br>ipspace<br>broadcast_domain<br>subnet<br>gateway |
 
 
 

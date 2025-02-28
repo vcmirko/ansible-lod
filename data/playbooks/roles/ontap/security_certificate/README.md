@@ -15,13 +15,19 @@ Manage NetApp ONTAP Security Certificates
 
 
 
-
 ## security_certificate / renew
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Renew certificate |  | na_ontap_certificate_renew |  | security_certificate, svm |
 
-| Task |
-| :--- |
-| Renew certificate |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| security_certificate | days<br>expiry_days |
+| svm | name |
 
 
 

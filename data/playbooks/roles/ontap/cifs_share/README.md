@@ -16,27 +16,40 @@ Note : This role supports multi / looping
 
 
 
-
 ## cifs_share / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Create Cifs Share  | netapp.ontap | na_ontap_cifs |  | cifs_share, svm |
+| Get cifs share uuid | netapp.ontap | na_ontap_restit |  |  |
+| Set Vscan Profile for Cifs Share  | netapp.ontap | na_ontap_restit |  |  |
+| Setting Cifs Share ACLs | netapp.ontap | na_ontap_cifs_acl | x | cifs_share, svm |
+| Setting file security permissions for Cifs Share  | netapp.ontap | na_ontap_file_security_permissions |  | cifs_share, svm |
+| Setting file security permissions acl for Cifs Share  | netapp.ontap | na_ontap_file_security_permissions_acl | x | cifs_share, svm |
 
-| Task |
-| :--- |
-| Create Cifs Share  |
-| Get cifs share uuid |
-| Set Vscan Profile for Cifs Share  |
-| Setting Cifs Share ACLs |
-| Setting file security permissions for Cifs Share  |
-| Setting file security permissions acl for Cifs Share  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| cifs_share | name<br>path<br>comment<br>access_based_enumeration<br>show_snapshot<br>show_previous_versions<br>oplocks<br>home_directory<br>change_notify<br>encryption<br>namespace_caching<br>continuously_available<br>browsable<br>allow_unencrypted_access<br>unix_symlink<br>acls<br>file_security_permissions<br>file_security_permissions_acls |
+| svm | name |
 
 
 
 ## cifs_share / delete
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Delete Cifs Share  | netapp.ontap | na_ontap_cifs |  | cifs_share, svm |
 
-| Task |
-| :--- |
-| Delete Cifs Share  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| cifs_share | name |
+| svm | name |
 
 
 

@@ -15,13 +15,19 @@ Manage NetApp ONTAP Unix Users
 
 
 
-
 ## unix_user / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Create Unix User  | netapp.ontap | na_ontap_unix_user |  | svm, unix_user |
 
-| Task |
-| :--- |
-| Create Unix User  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| svm | name |
+| unix_user | name<br>full_name<br>group_id<br>id |
 
 
 

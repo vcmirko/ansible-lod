@@ -15,13 +15,19 @@ Manage NetApp ONTAP File Security Permissions
 
 
 
-
 ## file_security_permissions / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Setting NTFS DACL  | netapp.ontap | na_ontap_file_security_permissions |  | file_security_permissions, svm |
 
-| Task |
-| :--- |
-| Setting NTFS DACL  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| file_security_permissions | access_control<br>path<br>owner<br>acls |
+| svm | name |
 
 
 

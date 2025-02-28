@@ -15,13 +15,17 @@ Manage NetApp ONTAP Cifs Privileges
 
 
 
-
 ## cifs_privilege / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Setting cifs privilege  | netapp.ontap | na_ontap_restit |  |  |
 
-| Task |
-| :--- |
-| Setting cifs privilege  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
 
 
 

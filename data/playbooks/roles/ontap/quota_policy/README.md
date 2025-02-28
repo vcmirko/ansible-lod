@@ -17,32 +17,46 @@ Manage NetApp ONTAP Quota Policies
 
 
 
-
 ## quota_policy / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Create/Modify Quota Policy  |  | na_ontap_rest_cli_idempotent |  |  |
 
-| Task |
-| :--- |
-| Create/Modify Quota Policy  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
 
 
 
 ## quota_policy / delete
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Delete Quota Policy  |  | na_ontap_rest_cli_idempotent |  |  |
+| Fail on non-duplicate error |  | fail |  |  |
 
-| Task |
-| :--- |
-| Delete Quota Policy  |
-| Fail on non-duplicate error |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
 
 
 
 ## quota_policy / set
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Set Quota Policy  |  | na_ontap_rest_cli_idempotent |  |  |
 
-| Task |
-| :--- |
-| Set Quota Policy  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
 
 
 

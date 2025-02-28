@@ -17,31 +17,52 @@ Manage NetApp ONTAP Logical Interfaces (LIFs)
 
 
 
-
 ## lif / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| create lif  | netapp.ontap | na_ontap_interface |  | ipspace, lif, svm |
 
-| Task |
-| :--- |
-| create lif  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| ipspace | name |
+| lif | address<br>name<br>interface_type<br>node<br>port<br>subnet_name<br>is_auto_revert<br>is_dns_update_enabled<br>netmask<br>service_policy |
+| svm | name |
 
 
 
 ## lif / delete
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| delete lif  | netapp.ontap | na_ontap_interface |  | lif, svm |
 
-| Task |
-| :--- |
-| delete lif  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| lif | name |
+| svm | name |
 
 
 
 ## lif / migrate
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| migrate lif  | netapp.ontap | na_ontap_interface |  | lif, svm |
 
-| Task |
-| :--- |
-| migrate lif  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| lif | name<br>node<br>port |
+| svm | name |
 
 
 

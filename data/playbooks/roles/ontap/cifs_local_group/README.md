@@ -17,31 +17,51 @@ Note : This role supports multi / looping
 
 
 
-
 ## cifs_local_group / add
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Add Cifs Local User To Group  | netapp.ontap | na_ontap_cifs_local_group_member | x | cifs_local_group, svm |
 
-| Task |
-| :--- |
-| Add Cifs Local User To Group  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| cifs_local_group | name<br>members |
+| svm | name |
 
 
 
 ## cifs_local_group / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Create cifs local group  | netapp.ontap | na_ontap_cifs_local_group |  | cifs_local_group, svm |
 
-| Task |
-| :--- |
-| Create cifs local group  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| cifs_local_group | name |
+| svm | name |
 
 
 
 ## cifs_local_group / delete
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Delete cifs local group  | netapp.ontap | na_ontap_cifs_local_group |  | cifs_local_group, svm |
 
-| Task |
-| :--- |
-| Delete cifs local group  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| cifs_local_group | name |
+| svm | name |
 
 
 

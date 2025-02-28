@@ -15,13 +15,19 @@ Manage NetApp ONTAP QoS Policy Groups
 
 
 
-
 ## qos_policy_group / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Create QOS Policy Group  | netapp.ontap | na_ontap_qos_policy_group |  | qos_policy_group, svm |
 
-| Task |
-| :--- |
-| Create QOS Policy Group  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| qos_policy_group | name<br>fixed_qos_options |
+| svm | name |
 
 
 

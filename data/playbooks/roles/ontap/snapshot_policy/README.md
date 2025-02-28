@@ -15,13 +15,19 @@ Manage NetApp ONTAP Snapshot Policies
 
 
 
-
 ## snapshot_policy / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Create Snapshot Policy  | netapp.ontap | na_ontap_snapshot_policy |  | snapshot_policy, svm |
 
-| Task |
-| :--- |
-| Create Snapshot Policy  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| snapshot_policy | name<br>schedule<br>snapmirror_label<br>prefix<br>count<br>enabled |
+| svm | name |
 
 
 

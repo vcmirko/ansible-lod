@@ -15,13 +15,19 @@ Manage NetApp ONTAP Name Mappings
 
 
 
-
 ## name_mapping / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Create Name Mapping | netapp.ontap | na_ontap_name_mappings |  | name_mapping, svm |
 
-| Task |
-| :--- |
-| Create Name Mapping |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| name_mapping | direction<br>index<br>pattern<br>replacement<br>client_match |
+| svm | name |
 
 
 

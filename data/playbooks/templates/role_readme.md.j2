@@ -28,14 +28,19 @@
 {% for qtask in role.qtasks %}| [{{ qtask.name }}](#{{ qtask.link }}) | {{ qtask.description | default('') }} |
 {% endfor %}
 
-
-{% for qtask in role.qtasks%}
+{% for qtask in role.qtasks %}
 ## {{ role.name }} / {{ qtask.name }}
-{{ qtask.description }}
 
-| Task |
-| :--- |
-{% for task in qtask.tasks %}| {{ task.name }} |
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+{% for task in qtask.tasks %}| {{ task.name }} | {{ task.collection }} | {{ task.module }} | {% if task.looped %}x{% endif %} | {% for var in task.vars %}{{ var.name }}{% if not loop.last %}, {% endif %}{% endfor %} |
+{% endfor %}
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+{% for var in qtask.vars %}| {{ var.name }} | {{ var.properties | join('<br>') }} |
 {% endfor %}
 
 {% endfor %}

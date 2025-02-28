@@ -15,13 +15,19 @@ Manage NetApp ONTAP DNS
 
 
 
-
 ## dns / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| create dns | netapp.ontap | na_ontap_dns |  | dns, svm |
 
-| Task |
-| :--- |
-| create dns |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| dns | domains<br>servers<br>skip_validation |
+| svm | name |
 
 
 

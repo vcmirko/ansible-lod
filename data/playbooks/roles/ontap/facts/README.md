@@ -15,13 +15,17 @@ Manage NetApp ONTAP Facts, like validations
 
 
 
-
 ## facts / validate
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| check ontap credentials |  | assert |  |  |
 
-| Task |
-| :--- |
-| check ontap credentials |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
 
 
 

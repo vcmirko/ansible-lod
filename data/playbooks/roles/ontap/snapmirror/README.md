@@ -19,56 +19,84 @@ Note : This role supports multi / looping
 
 
 
-
 ## snapmirror / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Create Snapmirror  | netapp.ontap | na_ontap_snapmirror |  | snapmirror |
 
-| Task |
-| :--- |
-| Create Snapmirror  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| snapmirror | schedule<br>policy<br>identity_preservation<br>max_transfer_rate |
 
 
 
 ## snapmirror / delete
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Modify policy SnapMirror (bug fix) - to allow snapmirror break | netapp.ontap | na_ontap_snapmirror |  |  |
+| Removing snapmirror  | netapp.ontap | na_ontap_snapmirror |  |  |
 
-| Task |
-| :--- |
-| Modify policy SnapMirror (bug fix) - to allow snapmirror break |
-| Removing snapmirror  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
 
 
 
 ## snapmirror / set_retention
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Get snapshot info | netapp.ontap | na_ontap_rest_info |  |  |
+| Extract oldest create_date |  | set_fact |  |  |
+| diff date |  | set_fact |  |  |
+| Calculate keep_days |  | set_fact |  |  |
+| Calculate expiration_date |  | set_fact |  |  |
+| Changing comment with expiration date | netapp.ontap | na_ontap_volume |  | snapmirror |
+| Renaming volume  | netapp.ontap | na_ontap_volume |  | snapmirror |
 
-| Task |
-| :--- |
-| Get snapshot info |
-| Extract oldest create_date |
-| diff date |
-| Calculate keep_days |
-| Calculate expiration_date |
-| Changing comment with expiration date |
-| Renaming volume  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| snapmirror | destination |
 
 
 
 ## snapmirror / update
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Update Snapmirror  | netapp.ontap | na_ontap_snapmirror |  |  |
 
-| Task |
-| :--- |
-| Update Snapmirror  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
 
 
 
 ## snapmirror / wait_for_condition
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Sleep for 10 seconds |  | pause |  |  |
+| Wait for Snapmirror  | netapp.ontap | na_ontap_wait_for_condition |  | auth_rest_validate_certs |
 
-| Task |
-| :--- |
-| Wait for Snapmirror  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| auth_rest_validate_certs |  |
 
 
 

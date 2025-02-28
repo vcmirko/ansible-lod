@@ -15,13 +15,19 @@ Manage NetApp ONTAP SnapMirror policies
 
 
 
-
 ## snapmirror_policy / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Create Snapmirror Policy  | netapp.ontap | na_ontap_snapmirror_policy |  | snapmirror, svm |
 
-| Task |
-| :--- |
-| Create Snapmirror Policy  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| snapmirror | policy_name<br>policy_snapmirror_label<br>policy_keep |
+| svm | name |
 
 
 

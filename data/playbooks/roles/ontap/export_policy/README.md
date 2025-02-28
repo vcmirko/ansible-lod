@@ -16,23 +16,36 @@ Manage NetApp ONTAP Export Policies and rules
 
 
 
-
 ## export_policy / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Create Export Policy | netapp.ontap | na_ontap_export_policy |  | export_policy, svm |
+| Create/Delete/Modify export rules | netapp.ontap | na_ontap_export_policy_rule | x | export_policy, svm |
 
-| Task |
-| :--- |
-| Create Export Policy |
-| Create/Delete/Modify export rules |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| export_policy | name<br>rules |
+| svm | name |
 
 
 
 ## export_policy / delete
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Delete Export Policy | netapp.ontap | na_ontap_export_policy |  | export_policy, svm |
 
-| Task |
-| :--- |
-| Delete Export Policy |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| export_policy | name |
+| svm | name |
 
 
 

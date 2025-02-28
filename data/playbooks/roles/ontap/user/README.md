@@ -15,13 +15,19 @@ Manage NetApp ONTAP Users
 
 
 
-
 ## user / create
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Create user  | netapp.ontap | na_ontap_user |  | svm, user |
 
-| Task |
-| :--- |
-| Create user  |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| svm | name |
+| user | name<br>role_name<br>authentication_password<br>application_strs<br>authentication_method |
 
 
 

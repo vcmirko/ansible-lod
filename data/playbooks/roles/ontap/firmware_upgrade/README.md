@@ -15,13 +15,18 @@ Manage NetApp ONTAP Firmware Upgrades
 
 
 
-
 ## firmware_upgrade / upgrade
 
+| Task | Collection | Module | Looped | Variables |
+| :--- | :--------- | :----- | :----- | :-------- |
+| Update disk fw |  | na_ontap_firmware_upgrade |  | firmware |
 
-| Task |
-| :--- |
-| Update disk fw |
+
+**Variables**
+
+| Variable | Properties |
+| :------- | :--------- |
+| firmware | baseurl}}/{{firmware |
 
 
 

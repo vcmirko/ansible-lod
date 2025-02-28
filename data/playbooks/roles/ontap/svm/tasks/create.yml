@@ -76,7 +76,7 @@
 
     ## Set svm options
   - name: "Set SVM Options [{{ svm.name }}]" 
-    na_ontap_svm_options:
+    netapp.ontap.na_ontap_svm_options:
       state  : present
       vserver: "{{ svm.name }}"
       name   : "{{ option.name }}"
@@ -110,13 +110,14 @@
       state      : present
       vserver    : "{{ svm.name }}"
       destination: "0.0.0.0/0"
-      gateway    : "{{ item.gateway }}"
+      gateway    : "{{ lif.gateway }}"
       <<: *auth
     delegate_to: localhost
     # add a filter to the loop, only loop where gateway is defined
     loop: "{{ svm.lifs | default([]) | list | selectattr('gateway', 'defined') | list }}"
     loop_control:
-      label: "{{ item.name + ' -> ' + item.gateway  }}"
+      loop_var: lif
+      label: "{{ lif.name + ' -> ' + lif.gateway  }}"
     when:
     - svm.subtype | default('default') == 'default'  
 
@@ -167,7 +168,7 @@
     ## Create dns
     ## We call the create.yml task from the dns role
     ## All objects like dns/svm/cluster are already set and merged in this parent role
-  - name: "create dns [{{ svm.name }}]"
+  - name: "Create dns [{{ svm.name }}]"
     include_tasks: "{{ playbook_dir }}/roles/ontap/dns/tasks/create.yml"
     when: 
     - dns | default(false)
