@@ -78,7 +78,7 @@ while true; do
     LOGIN_RESPONSE=$(curl -s -k -X POST -H "Authorization: Basic $BASIC_AUTH" -H "Content-Type: application/json" $LOGIN_API_URL)
     ACCESS_TOKEN=$(echo $LOGIN_RESPONSE | jq -r '.token')
 
-    if [ "$ACCESS_TOKEN" != "null" ]; then
+    if [ "$ACCESS_TOKEN" != "" ]; then
         echo "Token acquired: $ACCESS_TOKEN"
         break
     else
@@ -131,3 +131,6 @@ echo "Updating settings..."
 curl -s -k -X PUT -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "$SETTINGS_DATA" $SETTINGS_API_URL
 
 echo "Setup complete. You can now access AnsibleForms."
+
+alias "docker=podman"
+alias "docker-compose=podman-compose"

@@ -34,7 +34,7 @@ $newBookmark2 = @{
     "id" = [System.Guid]::NewGuid().ToString()
     "name" = "Mail Server"
     "type" = "url"
-    "url" = "http://rhel1.demo.netapp.com"
+    "url" = "http://rhel1.demo.netapp.com:1080"
 }
 
 # Add the new bookmark to the "bookmark_bar" children
