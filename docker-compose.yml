@@ -10,6 +10,31 @@ services:
       # Mount host port to docker internal port
       - $SMTP_LOCAL_PORT:1025
       - $SMTP_WEB_LOCAL_PORT:1080
+
+  # Hashi Vault Server
+  vault:
+    image: docker.io/hashicorp/vault
+    container_name: af_vault
+    environment:
+      VAULT_ADDR: "http://rhel1.demo.netapp.com:8200"
+      VAULT_API_ADDR: "http://rhel1.demo.netapp.com:8200"
+      VAULT_ADDRESS: "http://rhel1.demo.netapp.com:8200"
+      # VAULT_UI: true
+      # VAULT_TOKEN:
+    ports:
+      - "8200:8200"
+      - "8201:8201"
+    restart: always
+    volumes:
+      - ./data/vault/logs:/vault/logs/:rw
+      - ./data/vault/data:/vault/data/:rw
+      - ./data/vault/config:/vault/config/:rw
+      - ./data/vault/certs:/certs/:rw
+      - ./data/vault/file:/vault/file/:rw
+    cap_add:
+      - IPC_LOCK
+    entrypoint: vault server -config /vault/config/config.hcl
+
   # MySql Server
   mysqldb:
     image: docker.io/mysql:8.1
