@@ -90,10 +90,6 @@ echo "Creating cron job to unseal every 1 hour..."
 (crontab -l 2>/dev/null; echo "0 * * * * /srv/apps/ansible-lod/unseal.sh") | crontab -
 echo "Cron job created."
 
-# Unseal Vault
-echo "Unsealing Vault now..."
-. unseal.sh
-
 echo ""
 echo ""
 echo "Logging in with root token to test..."
@@ -127,6 +123,10 @@ echo ""
 echo "Containers restarted."
 echo "----------------------------"
 echo ""
+echo ""
+echo "Unsealing vault..."
+echo "----------------------------"
+. unseal.sh
 
 # Enable the secrets engine "ansibleforms"
 echo ""
