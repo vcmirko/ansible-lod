@@ -37,9 +37,19 @@ $newBookmark2 = @{
     "url" = "http://rhel1.demo.netapp.com:1080"
 }
 
+$newBookmark3 = @{
+    "date_added" = (Get-Date).Ticks
+    "guid" = [System.Guid]::NewGuid().ToString()
+    "id" = [System.Guid]::NewGuid().ToString()
+    "name" = "HashiCorp Vault"
+    "type" = "url"
+    "url" = "http://rhel1.demo.netapp.com:8200"
+}
+
 # Add the new bookmark to the "bookmark_bar" children
 $jsonData.roots.bookmark_bar.children += $newBookmark
 $jsonData.roots.bookmark_bar.children += $newBookmark2
+$jsonData.roots.bookmark_bar.children += $newBookmark3
 
 # Convert the updated JSON data back to a string
 $updatedData = $jsonData | ConvertTo-Json -Depth 5
@@ -47,7 +57,7 @@ $updatedData = $jsonData | ConvertTo-Json -Depth 5
 # Write the updated data back to the bookmarks file
 $updatedData | Set-Content $bookmarksFilePath
 
-Write-Host "Bookmark added successfully."
+Write-Host "Bookmarks added successfully."
 
 $explanationToShow = @"
 
@@ -63,14 +73,29 @@ password: Netapp1!
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+# Disable SELinux
+sudo setenforce 0
+
+# Install git
+dnf install -y git
+
+# Create the apps folder
+mkdir -p /srv/apps
+cd /srv/apps
+
+# Clone the ansible-lod repository
+git clone https://github.com/vcmirko/ansible-lod.git
+cd ansible-lod
+
 # run the setup shell script
+chmod +x setup.sh
 . setup.sh
 
 "@
 
 Write-Host $explanationToShow -ForegroundColor Yellow
 
-$dummy = Read-Host "... Prep the linus env with the above command on the rhel1 host, press enter when your are done ..."
+$dummy = Read-Host "... Prep the lab on demand with the above command on the rhel1 host, press enter when your are done ..."
 $dummy = Read-Host "Press any key to continue"
 $dummy = Read-Host "Open chrome browser and use the bookmark created called 'Ansible Forms' to access the application"
 $dummy = Read-Host "Press any key to continue"

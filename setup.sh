@@ -1,18 +1,7 @@
 #!/bin/bash
 
-# Disable SELinux
-sudo setenforce 0
-
 # Install required tools
-dnf install -y git vim podman-compose jq
-
-# Create the apps folder
-mkdir -p /srv/apps
-cd /srv/apps
-
-# Clone the ansible-lod repository
-git clone https://github.com/vcmirko/ansible-lod.git
-cd ansible-lod
+dnf install -y vim podman-compose jq
 
 # Set permissions for the data folder
 chmod -R 664 ./data
