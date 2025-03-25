@@ -54,9 +54,12 @@ echo ""
 echo ""
 echo "--------------------------------------"
 echo "Unseal keys:"
-echo $UNSEAL_KEYS
+echo ""
+# echo $UNSEAL_KEYS but as separate lines
+echo $UNSEAL_KEYS | tr ' ' '\n'
 echo "--------------------------------------"
 echo "Root token:"
+echo ""
 echo $ROOT_TOKEN
 echo "--------------------------------------"
 echo ""
