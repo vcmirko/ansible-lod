@@ -1,17 +1,32 @@
 #!/bin/bash
 
 # Install required tools
+echo "--------------------------------------"
+echo "Installing required tools..."
 dnf install -y vim podman-compose jq
+echo "--------------------------------------"
 
 # Set permissions for the data folder
+echo ""
+echo "--------------------------------------"
+echo "Setting permissions for the data folder..."
 chmod -R 664 ./data
 chmod -R +x ./data/mysql/init/
+echo "--------------------------------------"
 
 # Start the containers
+echo ""
+echo "--------------------------------------"
+echo "Starting containers..."
 podman-compose up -d
-
-# Show the status
 podman-compose ps
+echo "--------------------------------------"
+
+echo ""
+echo ""
+echo ""
+echo "--------------------------------------"
+echo "Preparing Hashicorp Vault..."
 
 VAULT_CONTAINER="af_vault"
 AF_CONTAINER="af_app"
@@ -29,57 +44,63 @@ INIT_OUTPUT=$(podman exec -it $VAULT_CONTAINER vault operator init -format=json)
 UNSEAL_KEYS=$(echo $INIT_OUTPUT | jq -r '.unseal_keys_b64[]')
 ROOT_TOKEN=$(echo $INIT_OUTPUT | jq -r '.root_token')
 
-echo "Unseal Keys:"
-echo "$UNSEAL_KEYS"
-echo "Root Token: $ROOT_TOKEN"
+# create some space and print the keys and token between 2 lines so it can picked up easily
 
-echo "Unsealing Vault..."
-for KEY in $UNSEAL_KEYS; do
-    podman exec -it $VAULT_CONTAINER vault operator unseal $KEY
-done
+echo ""
+echo ""
+echo "--------------------------------------"
+echo "Unseal keys:"
+echo $UNSEAL_KEYS
+echo "--------------------------------------"
+echo "Root token:"
+echo $ROOT_TOKEN
+echo "--------------------------------------"
+echo ""
+echo ""
 
-echo "Vault unsealed successfully."
+# set the unseal keys 1, 2, 3
+UNSEAL_KEY1=$(echo $UNSEAL_KEYS | awk '{print $1}')
+UNSEAL_KEY2=$(echo $UNSEAL_KEYS | awk '{print $2}')
+UNSEAL_KEY3=$(echo $UNSEAL_KEYS | awk '{print $3}')
 
 # create an unseal script with the unseal keys hardcoded
 # and cron schedule to run it every 1 hour with a check if vault is sealed
-echo "Creating unseal script..."
+echo "Creating unseal script you can use later..."
 cat <<EOF > /srv/apps/ansible-lod/unseal.sh
 #!/bin/bash
 
 VAULT_CONTAINER="af_vault"
-VAULT_ADDR="http://rhel1.demo.netapp.com:8200"
 
 if [ "\$(podman exec \$VAULT_CONTAINER vault status -format=json | jq -r '.sealed')" == "true" ]; then
     echo "Vault is sealed. Unsealing..."
-    podman exec -it \$VAULT_CONTAINER vault operator unseal <UNSEAL_KEY_1>
-    podman exec -it \$VAULT_CONTAINER vault operator unseal <UNSEAL_KEY_2>
-    podman exec -it \$VAULT_CONTAINER vault operator unseal <UNSEAL_KEY_3>
+    podman exec -it \$VAULT_CONTAINER vault operator unseal $UNSEAL_KEY1
+    podman exec -it \$VAULT_CONTAINER vault operator unseal $UNSEAL_KEY2
+    podman exec -it \$VAULT_CONTAINER vault operator unseal $UNSEAL_KEY3
 else
     echo "Vault is unsealed."
 fi
 
 EOF
 
-# Replace <UNSEAL_KEY_1>, <UNSEAL_KEY_2>, <UNSEAL_KEY_3> placeholders
-sed -i "s/<UNSEAL_KEY_1>/$UNSEAL_KEYS[0]/" /srv/apps/ansible-lod/unseal.sh
-sed -i "s/<UNSEAL_KEY_2>/$UNSEAL_KEYS[1]/" /srv/apps/ansible-lod/unseal.sh
-sed -i "s/<UNSEAL_KEY_3>/$UNSEAL_KEYS[2]/" /srv/apps/ansible-lod/unseal.sh
-
 # Make the script executable
-chmod +x /srv/apps/ansible-lod/unseal.sh    
+chmod +x /srv/apps/ansible-lod/unseal.sh   
 
 # Create a cron job to run the script every hour
-echo "Creating cron job..."
+echo "Creating cron job to unseal every 1 hour..."
 (crontab -l 2>/dev/null; echo "0 * * * * /srv/apps/ansible-lod/unseal.sh") | crontab -
-
 echo "Cron job created."
 
-echo "Logging in with root token..."
+# Unseal Vault
+echo "Unsealing Vault now..."
+. unseal.sh
+
+echo ""
+echo ""
+echo "Logging in with root token to test..."
 podman exec -it $VAULT_CONTAINER vault login $ROOT_TOKEN
 
-echo "Vault setup complete. Root token: $ROOT_TOKEN"
-
 # Replace <VAULT_TOKEN> placeholder in .env file
+echo "Preparing ansible forms to work with Vault..."
 if [ -f .env ]; then
     sed -i "s/<VAULT_TOKEN>/$ROOT_TOKEN/" .env
     echo "Replaced <VAULT_TOKEN> in .env file."
@@ -87,11 +108,29 @@ else
     echo ".env file not found. Skipping token replacement."
 fi
 
+echo ""
+echo "----------------------------"
+echo "Vault setup complete."
+echo "----------------------------"
+echo ""
+
+
 # Restart the containers to apply the changes
+echo ""
+echo "----------------------------"
+echo "Restarting containers to apply changes..."
+echo ""
 podman-compose down
 podman-compose up -d
 
+echo ""
+echo "Containers restarted."
+echo "----------------------------"
+echo ""
+
 # Enable the secrets engine "ansibleforms"
+echo ""
+echo "----------------------------"
 echo "Enabling secrets engine 'ansibleforms'..."
 curl --header "X-Vault-Token: $ROOT_TOKEN" \
      --request POST \
@@ -106,7 +145,13 @@ curl --header "X-Vault-Token: $ROOT_TOKEN" \
      $VAULT_ADDR/v1/ansibleforms/data/ontap
 
 echo "Secret 'ontap' added to 'ansibleforms'."
+echo "----------------------------"
+echo ""
 
+echo ""
+echo "----------------------------"
+echo "Preparing AnsibleForms..."
+echo ""
 # Define the login API URL
 LOGIN_API_URL="https://rhel1.demo.netapp.com/api/v1/auth/login"
 BASIC_AUTH="YWRtaW46TmV0YXBwMSE="
@@ -136,7 +181,7 @@ USER_DATA=$(jq -n --arg username "loopback" --arg password "Netapp1!" --arg emai
 }')
 
 echo "Creating loopback user..."
-curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "$USER_DATA" $USER_API_URL
+DUMMY=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "$USER_DATA" $USER_API_URL)
 
 # Create loopback credentials
 CREDENTIAL_API_URL="https://rhel1.demo.netapp.com/api/v1/credential/"
@@ -150,7 +195,7 @@ CREDENTIAL_DATA=$(jq -n --arg name "loopback" --arg user "loopback" --arg host "
 }')
 
 echo "Creating loopback credentials..."
-curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "$CREDENTIAL_DATA" $CREDENTIAL_API_URL
+DUMMY=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "$CREDENTIAL_DATA" $CREDENTIAL_API_URL)
 
 # Update settings
 SETTINGS_API_URL="https://rhel1.demo.netapp.com/api/v1/settings/"
@@ -167,7 +212,7 @@ SETTINGS_DATA=$(jq -n --arg mail_server "rhel1.demo.netapp.com" --argjson mail_p
 }')
 
 echo "Updating settings..."
-curl -s -k -X PUT -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "$SETTINGS_DATA" $SETTINGS_API_URL
+DUMMY=$(curl -s -k -X PUT -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "$SETTINGS_DATA" $SETTINGS_API_URL)
 
 echo "Adding data schemas..."
 SCHEMA_API_URL="https://rhel1.demo.netapp.com/api/v1/datasource/schema/"
@@ -184,7 +229,7 @@ schema_id=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Cont
 
 echo "Resetting schema..."
 SCHEMA_RESET_API_URL="https://rhel1.demo.netapp.com/api/v1/datasource/schema/$schema_id/reset/"
-curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" $SCHEMA_RESET_API_URL
+DUMMY=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" $SCHEMA_RESET_API_URL)
 
 echo "Adding datasource..."
 DATASOURCE_API_URL="https://rhel1.demo.netapp.com/api/v1/datasource/"
@@ -198,9 +243,11 @@ DATASOURCE_DATA=$(jq -n --arg name "lod_env" --arg schema "lod_env" --arg form "
 datasource_id=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "$DATASOURCE_DATA" $DATASOURCE_API_URL | jq -r '.data.output')
 
 echo "Importing datasource..."
-curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "{}" "https://rhel1.demo.netapp.com/api/v1/datasource/$datasource_id/import/"
+DUMMY=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "{}" "https://rhel1.demo.netapp.com/api/v1/datasource/$datasource_id/import/")
 
+echo ""
 echo "Setup complete. You can now access AnsibleForms."
+echo "----------------------------"
 
 alias "docker=podman"
 alias "docker-compose=podman-compose"
