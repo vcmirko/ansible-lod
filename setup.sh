@@ -48,23 +48,6 @@ INIT_OUTPUT=$(podman exec -it $VAULT_CONTAINER vault operator init -format=json)
 UNSEAL_KEYS=$(echo $INIT_OUTPUT | jq -r '.unseal_keys_b64[]')
 ROOT_TOKEN=$(echo $INIT_OUTPUT | jq -r '.root_token')
 
-# create some space and print the keys and token between 2 lines so it can picked up easily
-
-echo ""
-echo ""
-echo "--------------------------------------"
-echo "Unseal keys:"
-echo ""
-# echo $UNSEAL_KEYS but as separate lines
-echo $UNSEAL_KEYS | tr ' ' '\n'
-echo "--------------------------------------"
-echo "Root token:"
-echo ""
-echo $ROOT_TOKEN
-echo "--------------------------------------"
-echo ""
-echo ""
-
 # set the unseal keys 1, 2, 3
 UNSEAL_KEY1=$(echo $UNSEAL_KEYS | awk '{print $1}')
 UNSEAL_KEY2=$(echo $UNSEAL_KEYS | awk '{print $2}')
@@ -255,9 +238,27 @@ datasource_id=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "
 echo "Importing datasource..."
 DUMMY=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "{}" "https://rhel1.demo.netapp.com/api/v1/datasource/$datasource_id/import/")
 
+alias "docker=podman"
+alias "docker-compose=podman-compose"
+
+# create some space and print the keys and token between 2 lines so it can picked up easily
+
+echo ""
+echo ""
+echo "--------------------------------------"
+echo "Unseal keys:"
+echo ""
+# echo $UNSEAL_KEYS but as separate lines
+echo $UNSEAL_KEYS | tr ' ' '\n'
+echo "--------------------------------------"
+echo "Root token:"
+echo ""
+echo $ROOT_TOKEN
+echo "--------------------------------------"
+echo ""
+echo ""
+echo "" Write thos the above keys and token to manage the Hasicorp Vault
+echo "" You can run the unseal.sh script to unseal the vault
 echo ""
 echo "Setup complete. You can now access AnsibleForms."
 echo "----------------------------"
-
-alias "docker=podman"
-alias "docker-compose=podman-compose"
