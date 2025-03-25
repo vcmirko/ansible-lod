@@ -51,6 +51,40 @@ done
 
 echo "Vault unsealed successfully."
 
+# create an unseal script with the unseal keys hardcoded
+# and cron schedule to run it every 1 hour with a check if vault is sealed
+echo "Creating unseal script..."
+cat <<EOF > /srv/apps/ansible-lod/unseal.sh
+#!/bin/bash
+
+VAULT_CONTAINER="af_vault"
+VAULT_ADDR="http://rhel1.demo.netapp.com:8200"
+
+if [ "\$(podman exec \$VAULT_CONTAINER vault status -format=json | jq -r '.sealed')" == "true" ]; then
+    echo "Vault is sealed. Unsealing..."
+    podman exec -it \$VAULT_CONTAINER vault operator unseal <UNSEAL_KEY_1>
+    podman exec -it \$VAULT_CONTAINER vault operator unseal <UNSEAL_KEY_2>
+    podman exec -it \$VAULT_CONTAINER vault operator unseal <UNSEAL_KEY_3>
+else
+    echo "Vault is unsealed."
+fi
+
+EOF
+
+# Replace <UNSEAL_KEY_1>, <UNSEAL_KEY_2>, <UNSEAL_KEY_3> placeholders
+sed -i "s/<UNSEAL_KEY_1>/$UNSEAL_KEYS[0]/" /srv/apps/ansible-lod/unseal.sh
+sed -i "s/<UNSEAL_KEY_2>/$UNSEAL_KEYS[1]/" /srv/apps/ansible-lod/unseal.sh
+sed -i "s/<UNSEAL_KEY_3>/$UNSEAL_KEYS[2]/" /srv/apps/ansible-lod/unseal.sh
+
+# Make the script executable
+chmod +x /srv/apps/ansible-lod/unseal.sh    
+
+# Create a cron job to run the script every hour
+echo "Creating cron job..."
+(crontab -l 2>/dev/null; echo "0 * * * * /srv/apps/ansible-lod/unseal.sh") | crontab -
+
+echo "Cron job created."
+
 echo "Logging in with root token..."
 podman exec -it $VAULT_CONTAINER vault login $ROOT_TOKEN
 
@@ -67,6 +101,22 @@ fi
 # Restart the containers to apply the changes
 podman-compose down
 podman-compose up -d
+
+# Enable the secrets engine "ansibleforms"
+echo "Enabling secrets engine 'ansibleforms'..."
+curl --header "X-Vault-Token: $ROOT_TOKEN" \
+     --request POST \
+     --data '{"path":"ansibleforms","type":"kv","config":{"max_lease_ttl":0,"listing_visibility":"hidden","id":"ansibleforms"},"options":{"version":2},"id":"ansibleforms"}' \
+     $VAULT_ADDR/v1/sys/mounts/ansibleforms
+
+# Add the secret "ontap" to the "ansibleforms" secrets engine
+echo "Adding secret 'ontap' to 'ansibleforms'..."
+curl --header "X-Vault-Token: $ROOT_TOKEN" \
+     --request POST \
+     --data '{"data":{"user":"admin","password":"Netapp12"},"options":{"cas":0}}' \
+     $VAULT_ADDR/v1/ansibleforms/data/ontap
+
+echo "Secret 'ontap' added to 'ansibleforms'."
 
 # Define the login API URL
 LOGIN_API_URL="https://rhel1.demo.netapp.com/api/v1/auth/login"
