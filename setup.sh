@@ -3,6 +3,7 @@
 # Install required tools
 echo "--------------------------------------"
 echo "Installing required tools..."
+echo ""
 dnf install -y vim podman-compose jq
 echo "--------------------------------------"
 
@@ -10,6 +11,7 @@ echo "--------------------------------------"
 echo ""
 echo "--------------------------------------"
 echo "Setting permissions for the data folder..."
+echo ""
 chmod -R 664 ./data
 chmod -R +x ./data/mysql/init/
 echo "--------------------------------------"
@@ -18,6 +20,7 @@ echo "--------------------------------------"
 echo ""
 echo "--------------------------------------"
 echo "Starting containers..."
+echo ""
 podman-compose up -d
 podman-compose ps
 echo "--------------------------------------"
@@ -27,6 +30,7 @@ echo ""
 echo ""
 echo "--------------------------------------"
 echo "Preparing Hashicorp Vault..."
+echo ""
 
 VAULT_CONTAINER="af_vault"
 AF_CONTAINER="af_app"
@@ -90,11 +94,6 @@ echo "Creating cron job to unseal every 1 hour..."
 (crontab -l 2>/dev/null; echo "0 * * * * /srv/apps/ansible-lod/unseal.sh") | crontab -
 echo "Cron job created."
 
-echo ""
-echo ""
-echo "Logging in with root token to test..."
-podman exec -it $VAULT_CONTAINER vault login $ROOT_TOKEN
-
 # Replace <VAULT_TOKEN> placeholder in .env file
 echo "Preparing ansible forms to work with Vault..."
 if [ -f .env ]; then
@@ -128,21 +127,29 @@ echo "Unsealing vault..."
 echo "----------------------------"
 . unseal.sh
 
+echo ""
+echo ""
+echo "----------------------------"
+echo "Logging in with root token to test..."
+podman exec -it $VAULT_CONTAINER vault login $ROOT_TOKEN
+echo "----------------------------"
+echo ""
+
 # Enable the secrets engine "ansibleforms"
 echo ""
 echo "----------------------------"
 echo "Enabling secrets engine 'ansibleforms'..."
-curl --header "X-Vault-Token: $ROOT_TOKEN" \
+DUMMY=$(curl --header "X-Vault-Token: $ROOT_TOKEN" \
      --request POST \
      --data '{"path":"ansibleforms","type":"kv","config":{"max_lease_ttl":0,"listing_visibility":"hidden","id":"ansibleforms"},"options":{"version":2},"id":"ansibleforms"}' \
-     $VAULT_ADDR/v1/sys/mounts/ansibleforms
+     $VAULT_ADDR/v1/sys/mounts/ansibleforms)
 
 # Add the secret "ontap" to the "ansibleforms" secrets engine
 echo "Adding secret 'ontap' to 'ansibleforms'..."
-curl --header "X-Vault-Token: $ROOT_TOKEN" \
+DUMMY=$(curl --header "X-Vault-Token: $ROOT_TOKEN" \
      --request POST \
-     --data '{"data":{"user":"admin","password":"Netapp12"},"options":{"cas":0}}' \
-     $VAULT_ADDR/v1/ansibleforms/data/ontap
+     --data '{"data":{"user":"admin","password":"Netapp1!"},"options":{"cas":0}}' \
+     $VAULT_ADDR/v1/ansibleforms/data/ontap)
 
 echo "Secret 'ontap' added to 'ansibleforms'."
 echo "----------------------------"
@@ -163,7 +170,7 @@ while true; do
     ACCESS_TOKEN=$(echo $LOGIN_RESPONSE | jq -r '.token')
 
     if [ "$ACCESS_TOKEN" != "" ]; then
-        echo "Token acquired: $ACCESS_TOKEN"
+        # echo "Token acquired: $ACCESS_TOKEN"
         break
     else
         echo "AnsibleForms not running yet. Retrying in 5 seconds..."
