@@ -180,6 +180,37 @@ SETTINGS_DATA=$(jq -n --arg mail_server "rhel1.demo.netapp.com" --argjson mail_p
 echo "Updating settings..."
 curl -s -k -X PUT -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "$SETTINGS_DATA" $SETTINGS_API_URL
 
+echo "Adding data schemas..."
+SCHEMA_API_URL="https://rhel1.demo.netapp.com/api/v1/datasource/schema/"
+SCHEMA_DATA=$(jq -n --arg name "lod_env" \
+    --arg description "Lab on demand environment" \
+    --arg table_definitions "$(printf 'location:\n  - {name: name, unique: true}\n  - {name: code, length: 3, unique: true}\nenvironment:\n  - {name: name, unique: true}\n  - {name: code, length: 3, unique: true}\nservice_level:\n  - {name: name, unique: true}\n  - {name: code, length: 1, unique: true}\nservice:\n  - {name: name, unique: true}\n  - {name: code, length: 3, unique: true}\n  - {name: protocol, length: 5}\nresource:\n  - {name: location, foreign_key: location}\n  - {name: environment, foreign_key: environment}\n  - {name: service_level, foreign_key: service_level}\n  - {name: service, foreign_key: service}\n  - {name: cluster, length: 20}\n  - {name: dr, length: 20}\n  - {name: code, unique:true}')" \
+    '{
+        name: $name,
+        description: $description,
+        table_definitions: $table_definitions
+    }')
+
+schema_id=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "$SCHEMA_DATA" $SCHEMA_API_URL | jq -r '.data.output')
+
+echo "Resetting schema..."
+SCHEMA_RESET_API_URL="https://rhel1.demo.netapp.com/api/v1/datasource/schema/$schema_id/reset/"
+curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" $SCHEMA_RESET_API_URL
+
+echo "Adding datasource..."
+DATASOURCE_API_URL="https://rhel1.demo.netapp.com/api/v1/datasource/"
+DATASOURCE_DATA=$(jq -n --arg name "lod_env" --arg schema "lod_env" --arg form "Datasource lod env" --arg extra_vars "$(printf 'excel_path: ./datasources/excel_files/lod_env.xlsx\nimport_path: ./datasources\naf_datasource_import_hash_ids: true\naf_datasource_import_keep: true')" '{
+    name: $name,
+    schema: $schema,
+    form: $form,
+    extra_vars: $extra_vars
+}')
+
+datasource_id=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "$DATASOURCE_DATA" $DATASOURCE_API_URL | jq -r '.data.output')
+
+echo "Importing datasource..."
+curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "{}" "https://rhel1.demo.netapp.com/api/v1/datasource/$datasource_id/import/"
+
 echo "Setup complete. You can now access AnsibleForms."
 
 alias "docker=podman"
