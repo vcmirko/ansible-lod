@@ -1,0 +1,11 @@
+---
+- name: "Import team datasource"
+  hosts: localhost
+  become: false
+  gather_facts: false
+  collections:
+    - ansibleguy76.ansibleforms
+  roles:
+    - af_datasource_excel
+    - af_datasource_import
+
