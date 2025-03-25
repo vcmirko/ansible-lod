@@ -26,7 +26,7 @@ Manage NetApp ONTAP Security Certificates
 
 | Variable | Properties |
 | :------- | :--------- |
-| security_certificate | days, <br/>expiry_days |
+| security_certificate | days \nexpiry_days |
 | svm | name |
 
 

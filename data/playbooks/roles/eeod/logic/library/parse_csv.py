@@ -57,7 +57,7 @@ def run_module():
      # apply logic
     try:
 
-        file_path = '/app/dist/persistent/playbooks/uploads/Epic Sizing_Cleveland Clinic_2020_v4(LUNs).csv'
+        file_path = '/app/dist/persistent/playbooks/uploads/Epic Sizing.csv'
 
         # open the file
         # remove first 3 lines

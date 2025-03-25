@@ -30,7 +30,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| snapmirror | schedule, <br/>policy, <br/>identity_preservation, <br/>max_transfer_rate |
+| snapmirror | schedule \npolicy \nidentity_preservation \nmax_transfer_rate |
 
 
 

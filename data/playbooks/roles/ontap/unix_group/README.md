@@ -27,7 +27,7 @@ Manage NetApp ONTAP Unix Groups
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| unix_group | name, <br/>users, <br/>id |
+| unix_group | name \nusers \nid |
 
 
 

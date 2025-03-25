@@ -26,7 +26,7 @@ Manage NetApp ONTAP SnapMirror policies
 
 | Variable | Properties |
 | :------- | :--------- |
-| snapmirror | policy_name, <br/>policy_snapmirror_label, <br/>policy_keep |
+| snapmirror | policy_name \npolicy_snapmirror_label \npolicy_keep |
 | svm | name |
 
 

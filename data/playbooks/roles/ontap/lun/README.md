@@ -32,7 +32,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| lun | name, <br/>comment, <br/>size, <br/>force_resize, <br/>force_remove_fenced, <br/>os_type, <br/>qos_adaptive_policy_group, <br/>qos_policy_group, <br/>qtree_name, <br/>size_unit, <br/>space_allocation, <br/>space_reserve, <br/>use_exact_size, <br/>igroups |
+| lun | name \ncomment \nsize \nforce_resize \nforce_remove_fenced \nos_type \nqos_adaptive_policy_group \nqos_policy_group \nqtree_name \nsize_unit \nspace_allocation \nspace_reserve \nuse_exact_size \nigroups |
 | svm | name |
 | volume | name |
 
@@ -95,7 +95,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| lun | name, <br/>original_name |
+| lun | name \noriginal_name |
 | lun_info | response |
 | svm | name |
 | volume | name |
@@ -113,7 +113,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| lun | name, <br/>new_name |
+| lun | name \nnew_name |
 | svm | name |
 | volume | name |
 
@@ -130,7 +130,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| lun | name, <br/>comment, <br/>size, <br/>force_resize, <br/>force_remove_fenced, <br/>os_type, <br/>qos_adaptive_policy_group, <br/>qos_policy_group, <br/>qtree_name, <br/>size_unit, <br/>space_allocation, <br/>space_reserve, <br/>use_exact_size |
+| lun | name \ncomment \nsize \nforce_resize \nforce_remove_fenced \nos_type \nqos_adaptive_policy_group \nqos_policy_group \nqtree_name \nsize_unit \nspace_allocation \nspace_reserve \nuse_exact_size |
 | svm | name |
 | volume | name |
 

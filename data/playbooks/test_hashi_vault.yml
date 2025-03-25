@@ -1,0 +1,17 @@
+---
+- name: "Test Hashi Vault"
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+    # - "vars/credentials.yml"
+    - "vars/defaults.yml"
+    - "vars/templates.yml"
+    - "vars/overrides.yml"
+  tasks:
+  - name: "Get ontap credentials"
+    set_fact:
+      ontap_creds: "{{ lookup('hashi_vault', 'secret=ansibleforms/data/ontap') }}"
+  - name: "Print ontap credentials"
+    debug:
+      var: ontap_creds

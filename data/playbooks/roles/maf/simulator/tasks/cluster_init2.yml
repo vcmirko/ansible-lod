@@ -1,0 +1,33 @@
+---
+- name: "Role - maf/simulator/cluster_init"
+  block:
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
+      vcenter_auth: &vcenter_auth
+        hostname: '{{ vcenter_host }}'
+        username: '{{ vcenter_username }}'
+        password: '{{ vcenter_password }}'
+        validate_certs: no
+
+  # Run Cluster Setup
+  - name: 'Run cluster setup on {{ cluster.name }}'
+    block:
+  
+    - name: Complete cluster setup
+      community.vmware.vmware_guest_sendkey:
+        <<: *vcenter_auth
+        name: "{{ cluster.name }}"
+        keys_send: ENTER
+        string_send: "{{ item }}"
+      delegate_to: localhost
+      loop: 
+        - "{{ cluster.management_port }}" # cluster mgmt port
+        - "{{ cluster.management_ip }}"
+        - "{{ cluster.netmask }}"
+        - "{{ cluster.gateway }}"
+        - "{{ cluster.dns_domain }}" 
+        - "{{ cluster.dns_server }}"
+        - "{{ cluster.location }}" # single node cluster yes|no
+        - "" # this is here to force the enter key after the preceding command
+

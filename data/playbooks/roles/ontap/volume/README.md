@@ -51,7 +51,7 @@ Note : This role supports multi / looping
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| volume | name, <br/>size, <br/>aggregate_include_node_regex, <br/>activity_tracking, <br/>analytics, <br/>auto_remap_luns, <br/>aggregate, <br/>size_unit, <br/>space_guarantee, <br/>percent_snapshot_space, <br/>wait_for_completion, <br/>junction_path, <br/>language, <br/>comment, <br/>type, <br/>atime_update, <br/>compression, <br/>encrypt, <br/>group_id, <br/>inline_compression, <br/>size_change_threshold, <br/>unix_permissions, <br/>user_id, <br/>security_style, <br/>snaplock, <br/>logical_space_reporting, <br/>logical_space_enforcement, <br/>efficiency_policy, <br/>export_policy, <br/>snapshot_policy, <br/>tiering_policy, <br/>qos_policy_group, <br/>qos_adaptive_policy_group, <br/>volume_efficiency, <br/>volume_autosize, <br/>qtrees, <br/>luns |
+| volume | name \nsize \naggregate_include_node_regex \nactivity_tracking \nanalytics \nauto_remap_luns \naggregate \nsize_unit \nspace_guarantee \npercent_snapshot_space \nwait_for_completion \njunction_path \nlanguage \ncomment \ntype \natime_update \ncompression \nencrypt \ngroup_id \ninline_compression \nsize_change_threshold \nunix_permissions \nuser_id \nsecurity_style \nsnaplock \nlogical_space_reporting \nlogical_space_enforcement \nefficiency_policy \nexport_policy \nsnapshot_policy \ntiering_policy \nqos_policy_group \nqos_adaptive_policy_group \nvolume_efficiency \nvolume_autosize \nqtrees \nluns |
 | volume_info | response |
 
 
@@ -69,7 +69,7 @@ Note : This role supports multi / looping
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| volume | name, <br/>size, <br/>aggregate_include_node_regex, <br/>aggregate, <br/>activity_tracking, <br/>analytics, <br/>size_unit, <br/>space_guarantee, <br/>percent_snapshot_space, <br/>wait_for_completion, <br/>language, <br/>comment, <br/>atime_update, <br/>compression, <br/>encrypt, <br/>inline_compression, <br/>size_change_threshold, <br/>snaplock, <br/>efficiency_policy, <br/>export_policy, <br/>snapshot_policy, <br/>tiering_policy, <br/>qos_policy_group, <br/>qos_adaptive_policy_group |
+| volume | name \nsize \naggregate_include_node_regex \naggregate \nactivity_tracking \nanalytics \nsize_unit \nspace_guarantee \npercent_snapshot_space \nwait_for_completion \nlanguage \ncomment \natime_update \ncompression \nencrypt \ninline_compression \nsize_change_threshold \nsnaplock \nefficiency_policy \nexport_policy \nsnapshot_policy \ntiering_policy \nqos_policy_group \nqos_adaptive_policy_group |
 
 
 
@@ -151,7 +151,7 @@ Note : This role supports multi / looping
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| volume | name, <br/>type, <br/>is_online, <br/>activity_tracking, <br/>analytics, <br/>auto_remap_luns, <br/>junction_path, <br/>language, <br/>comment, <br/>atime_update, <br/>compression, <br/>encrypt, <br/>group_id, <br/>inline_compression, <br/>size_change_threshold, <br/>unix_permissions, <br/>user_id, <br/>security_style, <br/>snaplock, <br/>logical_space_reporting, <br/>logical_space_enforcement, <br/>efficiency_policy, <br/>export_policy, <br/>snapshot_policy, <br/>tiering_policy, <br/>qos_policy_group, <br/>qos_adaptive_policy_group, <br/>volume_efficiency, <br/>volume_autosize |
+| volume | name \ntype \nis_online \nactivity_tracking \nanalytics \nauto_remap_luns \njunction_path \nlanguage \ncomment \natime_update \ncompression \nencrypt \ngroup_id \ninline_compression \nsize_change_threshold \nunix_permissions \nuser_id \nsecurity_style \nsnaplock \nlogical_space_reporting \nlogical_space_enforcement \nefficiency_policy \nexport_policy \nsnapshot_policy \ntiering_policy \nqos_policy_group \nqos_adaptive_policy_group \nvolume_efficiency \nvolume_autosize |
 | volume_info | response |
 
 
@@ -169,7 +169,7 @@ Note : This role supports multi / looping
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| volume | name, <br/>size, <br/>aggregate_include_node_regex, <br/>aggregate |
+| volume | name \nsize \naggregate_include_node_regex \naggregate |
 
 
 
@@ -217,7 +217,7 @@ Note : This role supports multi / looping
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| volume | old_name, <br/>name |
+| volume | old_name \nname |
 
 
 
@@ -233,7 +233,7 @@ Note : This role supports multi / looping
 | Variable | Properties |
 | :------- | :--------- |
 | svm | name |
-| volume | name, <br/>size, <br/>size_unit |
+| volume | name \nsize \nsize_unit |
 
 
 

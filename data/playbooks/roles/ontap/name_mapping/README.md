@@ -26,7 +26,7 @@ Manage NetApp ONTAP Name Mappings
 
 | Variable | Properties |
 | :------- | :--------- |
-| name_mapping | direction, <br/>index, <br/>pattern, <br/>replacement, <br/>client_match |
+| name_mapping | direction \nindex \npattern \nreplacement \nclient_match |
 | svm | name |
 
 

@@ -34,7 +34,7 @@ Manage NetApp ONTAP CIFS server
 | :------- | :--------- |
 | ad_password |  |
 | ad_username |  |
-| cifs | name, <br/>domain, <br/>ou, <br/>session_security, <br/>smb_encryption, <br/>smb_signing, <br/>try_ldap_channel_binding, <br/>restrict_anonymous, <br/>lm_compatibility_level, <br/>ldap_referral_enabled, <br/>kdc_encryption, <br/>is_multichannel_enabled, <br/>encrypt_dc_connection, <br/>default_site, <br/>aes_netlogon_enabled, <br/>privileges, <br/>administrators |
+| cifs | name \ndomain \nou \nsession_security \nsmb_encryption \nsmb_signing \ntry_ldap_channel_binding \nrestrict_anonymous \nlm_compatibility_level \nldap_referral_enabled \nkdc_encryption \nis_multichannel_enabled \nencrypt_dc_connection \ndefault_site \naes_netlogon_enabled \nprivileges \nadministrators |
 | svm | name |
 
 

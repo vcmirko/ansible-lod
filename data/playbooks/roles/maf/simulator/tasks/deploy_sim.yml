@@ -1,0 +1,64 @@
+---
+- name: "Role - maf/simulator/deploy_sim"
+  block:
+  - name: Set authentication facts
+    set_fact:
+      vcenter_auth: &vcenter_auth
+        hostname: '{{ vcenter_host }}'
+        username: '{{ vcenter_username }}'
+        password: '{{ vcenter_password }}'
+        validate_certs: no
+
+  - name: "Deploy ovf file: {{ simulator_ovf_file }}"
+    community.vmware.vmware_deploy_ovf:
+      <<: *vcenter_auth
+      datacenter         : "{{ simulator.vcenter_datacenter }}"
+      cluster            : '{{ vcenter_cluster }}'    
+      datastore          : "{{ simulator_vm_datastore }}"
+      name               : "{{ simulator_vm_name }}"
+      ovf                : "{{ playbook_dir }}/{{ simulator_ovf_path }}/{{ simulator_ovf_file }}"
+      disk_provisioning  : "{{ simulator_vm_disk_provisioning }}"
+      power_on           : no
+      networks           : 
+        "Cluster Network1": "{{ simulator_cluster_network }}"
+        "Cluster Network2": "{{ simulator_cluster_network }}"
+        "VM Network": "{{ simulator_data_network }}"
+        "Vlan Network": "{{ simulator_vlan_network }}"
+      wait_for_ip_address: false
+    delegate_to: localhost
+    # retries: 10
+    # delay: 60
+    register: result           
+    until: result is succeeded 
+
+  - name: Adjust VM Sizing
+    community.vmware.vmware_guest:
+      <<: *vcenter_auth
+      name: '{{ simulator_vm_name }}'
+      state: present
+      hardware:
+        memory_mb: "{{ simulator_vm_memory_mb}}"
+        num_cpus: '{{ simulator_vm_num_cpus }}'
+      advanced_settings:
+        - key: pciHole.start
+          value: 1024  # Moving the PCI hole here gives ONTAP access to more system ram
+    delegate_to: localhost  
+
+  # - debug: var=simulator_vm_num_nics
+
+  # - name: add nics
+  #   block:
+  #     - community.vmware.vmware_guest_network:
+  #         <<: *vcenter_auth
+  #         # datacenter: "{{ simulator.vcenter_datacenter }}"
+  #         name: '{{ simulator_vm_name }}'
+  #         state: present
+  #         force: yes
+  #         device_type:  "e1000"
+  #         network_name: "{{ simulator_data_network }}"
+  #         connected: true
+  #         start_connected: true
+  #       delegate_to: localhost
+  #       with_sequence: start=5 end="{{ simulator_vm_num_nics }}" 
+  #       ignore_errors: true
+  #   when: (simulator_vm_num_nics | int) > 4

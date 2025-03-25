@@ -1,144 +1,4 @@
-# maf
-MAF - Modular Ansible Framework - this current framework, some common roles
-
-| Role | Description |
-| :--- | :---------- |
-| [facts](#maf--facts) | Process sample credentials for MAF testing |
-| [logic](#maf--logic) | Some examples MAF logic |
-| [simulator](#maf--simulator) | Deploy ontap simulator |
-
-
-
-## maf / facts
-
-Process sample credentials for MAF testing  
-  
-
-
-
-
-
-
-### Role actions/qtasks
-
-| Subrole | Description |
-| :------ | :---------- |
-| [credentials](#facts--credentials) |  |
-
-
-
-### facts / credentials
-
-| Task | Collection | Module | Looped | Variables |
-| :--- | :--------- | :----- | :----- | :-------- |
-| Set the credentials | ansible.builtin | set_fact |  |  |
-
-
-**Variables**
-
-| Variable | Properties |
-| :------- | :--------- |
-
-
-
-
-
-
-
-## maf / logic
-
-Some examples MAF logic  
-  
-
-
-
-
-
-
-### Role actions/qtasks
-
-| Subrole | Description |
-| :------ | :---------- |
-| [bypass](#logic--bypass) |  |
-| [svm_create](#logic--svm_create) |  |
-| [svm_delete](#logic--svm_delete) |  |
-| [svm_dr](#logic--svm_dr) |  |
-
-
-
-### logic / bypass
-
-| Task | Collection | Module | Looped | Variables |
-| :--- | :--------- | :----- | :----- | :-------- |
-| Running logic bypass |  | bypass |  | vars_external |
-| Register logic result |  | set_fact |  |  |
-
-
-**Variables**
-
-| Variable | Properties |
-| :------- | :--------- |
-| vars_external |  |
-
-
-
-### logic / svm_create
-
-| Task | Collection | Module | Looped | Variables |
-| :--- | :--------- | :----- | :----- | :-------- |
-| Logic - svm_create |  | svm_create |  | vars_external |
-| Register logic result |  | set_fact |  |  |
-
-
-**Variables**
-
-| Variable | Properties |
-| :------- | :--------- |
-| vars_external |  |
-
-
-
-### logic / svm_delete
-
-| Task | Collection | Module | Looped | Variables |
-| :--- | :--------- | :----- | :----- | :-------- |
-| Logic - svm_delete |  | svm_delete |  | aiqum_host, aiqum_password, aiqum_username, vars_external |
-| Register logic result |  | set_fact |  |  |
-
-
-**Variables**
-
-| Variable | Properties |
-| :------- | :--------- |
-| aiqum_host |  |
-| aiqum_password |  |
-| aiqum_username |  |
-| vars_external |  |
-
-
-
-### logic / svm_dr
-
-| Task | Collection | Module | Looped | Variables |
-| :--- | :--------- | :----- | :----- | :-------- |
-| Logic - svm_dr |  | svm_dr |  | vars_external |
-| Register logic result |  | set_fact |  |  |
-
-
-**Variables**
-
-| Variable | Properties |
-| :------- | :--------- |
-| vars_external |  |
-
-
-
-
-
-
-
-## maf / simulator
-
+# maf / simulator 
 Deploy ontap simulator  
   
 
@@ -147,7 +7,7 @@ Deploy ontap simulator
 
 
 
-### Role actions/qtasks
+## Role actions/qtasks
 
 | Subrole | Description |
 | :------ | :---------- |
@@ -160,7 +20,7 @@ Deploy ontap simulator
 
 
 
-### simulator / cluster_config
+## simulator / cluster_config
 
 | Task | Collection | Module | Looped | Variables |
 | :--- | :--------- | :----- | :----- | :-------- |
@@ -197,7 +57,7 @@ Deploy ontap simulator
 
 
 
-### simulator / cluster_init
+## simulator / cluster_init
 
 | Task | Collection | Module | Looped | Variables |
 | :--- | :--------- | :----- | :----- | :-------- |
@@ -219,7 +79,7 @@ Deploy ontap simulator
 
 
 
-### simulator / cluster_init2
+## simulator / cluster_init2
 
 | Task | Collection | Module | Looped | Variables |
 | :--- | :--------- | :----- | :----- | :-------- |
@@ -233,7 +93,7 @@ Deploy ontap simulator
 
 
 
-### simulator / deploy_sim
+## simulator / deploy_sim
 
 | Task | Collection | Module | Looped | Variables |
 | :--- | :--------- | :----- | :----- | :-------- |
@@ -259,7 +119,7 @@ Deploy ontap simulator
 
 
 
-### simulator / destroy_sim
+## simulator / destroy_sim
 
 | Task | Collection | Module | Looped | Variables |
 | :--- | :--------- | :----- | :----- | :-------- |
@@ -277,7 +137,7 @@ Deploy ontap simulator
 
 
 
-### simulator / init_sim
+## simulator / init_sim
 
 | Task | Collection | Module | Looped | Variables |
 | :--- | :--------- | :----- | :----- | :-------- |
@@ -303,10 +163,6 @@ Deploy ontap simulator
 | vcenter_host |  |
 | vcenter_password |  |
 | vcenter_username |  |
-
-
-
-
 
 
 

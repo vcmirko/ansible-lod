@@ -29,7 +29,7 @@ Manage NetApp ONTAP Logical Interfaces (LIFs)
 | Variable | Properties |
 | :------- | :--------- |
 | ipspace | name |
-| lif | address, <br/>name, <br/>interface_type, <br/>node, <br/>port, <br/>subnet_name, <br/>is_auto_revert, <br/>is_dns_update_enabled, <br/>netmask, <br/>service_policy |
+| lif | address \nname \ninterface_type \nnode \nport \nsubnet_name \nis_auto_revert \nis_dns_update_enabled \nnetmask \nservice_policy |
 | svm | name |
 
 
@@ -61,7 +61,7 @@ Manage NetApp ONTAP Logical Interfaces (LIFs)
 
 | Variable | Properties |
 | :------- | :--------- |
-| lif | name, <br/>node, <br/>port |
+| lif | name \nnode \nport |
 | svm | name |
 
 

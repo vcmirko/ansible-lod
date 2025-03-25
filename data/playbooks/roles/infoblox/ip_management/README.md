@@ -43,7 +43,7 @@ Manage IP addresses in Infoblox
 | :--- | :--------- | :----- | :----- | :-------- |
 | Find Ip Address if non is given |  | block |  |  |
 | Find pre-registered ip |  | block |  |  |
-| Retrieve net info from DCHP for given network {{ infoblox.network }} (Infoblox) | ansible.builtin | set_fact |  |  |
+| Retrieve net info from DCHP for given network  (Infoblox) | ansible.builtin | set_fact |  |  |
 | Validating data returned by nfoblox for DNS servers, domain or gateway information | ansible.builtin | fail |  |  |
 | Setting basic network facts - NDS server list, domain and gateway from data provided in the Infoblox response | ansible.builtin | set_fact |  |  |
 | Make dict from result | ansible.builtin | set_fact |  |  |

@@ -26,7 +26,7 @@ Manage NetApp ONTAP QoS Policy Groups
 
 | Variable | Properties |
 | :------- | :--------- |
-| qos_policy_group | name, <br/>fixed_qos_options |
+| qos_policy_group | name \nfixed_qos_options |
 | svm | name |
 
 

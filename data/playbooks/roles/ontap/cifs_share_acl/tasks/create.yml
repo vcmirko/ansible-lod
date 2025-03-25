@@ -25,7 +25,7 @@
     ## Create Cifs Share acl
   - name: "{{ task_action}} Cifs Share ACL [{{ cifs_share_acl.share_name }}] [{{ cifs_share_acl.user_or_group }}] [{{ cifs_share_acl.permission }}]"        
     netapp.ontap.na_ontap_cifs_acl:
-      state                   : "{{ cifs_share_acl.state }}"
+      state                   : "{{ cifs_share_acl.state | default('present') }}"
       share_name              : "{{ cifs_share_acl.share_name }}"
       vserver                 : "{{ svm.name }}"
       user_or_group           : "{{ cifs_share_acl.user_or_group }}"

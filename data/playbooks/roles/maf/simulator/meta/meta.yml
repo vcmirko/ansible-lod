@@ -1,4 +1,4 @@
 role:
-  description: Some examples MAF logic
+  description: Deploy ontap simulator
   key: name
   supports_multi: false

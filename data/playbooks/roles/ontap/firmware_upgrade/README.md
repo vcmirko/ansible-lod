@@ -26,7 +26,7 @@ Manage NetApp ONTAP Firmware Upgrades
 
 | Variable | Properties |
 | :------- | :--------- |
-| firmware | baseurl, <br/>filename |
+| firmware | baseurl \nfilename |
 
 
 

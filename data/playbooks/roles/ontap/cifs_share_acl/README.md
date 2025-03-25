@@ -26,7 +26,7 @@ Note : This role supports multi / looping
 
 | Variable | Properties |
 | :------- | :--------- |
-| cifs_share_acl | state, <br/>share_name, <br/>user_or_group, <br/>permission, <br/>type |
+| cifs_share_acl | state \nshare_name \nuser_or_group \npermission \ntype |
 | svm | name |
 
 

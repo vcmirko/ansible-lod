@@ -26,7 +26,7 @@ Manage NetApp ONTAP NFS Servers
 
 | Variable | Properties |
 | :------- | :--------- |
-| nfs | showmount, <br/>nfsv3, <br/>nfsv3_fsid_change, <br/>nfsv4, <br/>nfsv41, <br/>nfsv41_acl, <br/>nfsv41_pnfs, <br/>tcp_max_xfer_size, <br/>nfsv4_id_domain, <br/>vstorage_state |
+| nfs | showmount \nnfsv3 \nnfsv3_fsid_change \nnfsv4 \nnfsv41 \nnfsv41_acl \nnfsv41_pnfs \ntcp_max_xfer_size \nnfsv4_id_domain \nvstorage_state |
 | svm | name |
 
 

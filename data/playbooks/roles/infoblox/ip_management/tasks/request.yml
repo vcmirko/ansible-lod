@@ -77,7 +77,7 @@
   ######################################################
   # Network settings lookup
   ######################################################
-  - name: "Retrieve net info from DCHP for given network {{ infoblox.network }} (Infoblox)"
+  - name: "Retrieve net info from DCHP for given network [{{ infoblox.network }}] (Infoblox)"
     ansible.builtin.set_fact:
       dhcp_network_data: "{{ lookup('nios', 'network', filter={'network': infoblox.network}, return_fields=['options'], 
                                   provider={'host': infoblox.hostname, 'username': infoblox_username, 'password': infoblox_password}) }}"

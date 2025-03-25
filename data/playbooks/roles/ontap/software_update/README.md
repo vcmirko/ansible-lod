@@ -29,7 +29,7 @@ Manage NetApp ONTAP Software Updates
 
 | Variable | Properties |
 | :------- | :--------- |
-| software | baseurl, <br/>filename |
+| software | baseurl \nfilename |
 
 
 
@@ -80,7 +80,7 @@ Manage NetApp ONTAP Software Updates
 | Variable | Properties |
 | :------- | :--------- |
 | lif_info | ontap_info |
-| software | version, <br/>ignore_validation_warning |
+| software | version \nignore_validation_warning |
 
 
 

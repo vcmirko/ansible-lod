@@ -26,7 +26,7 @@ Manage NetApp ONTAP File Security Permissions
 
 | Variable | Properties |
 | :------- | :--------- |
-| file_security_permissions | access_control, <br/>path, <br/>owner, <br/>acls |
+| file_security_permissions | access_control \npath \nowner \nacls |
 | svm | name |
 
 

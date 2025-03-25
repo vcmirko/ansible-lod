@@ -61,7 +61,7 @@ Note : This role supports multi / looping
 | :------- | :--------- |
 | aggr_info | ontap_info |
 | ipspace | name |
-| svm | name, <br/>allowed_protocols, <br/>snapshot_policy, <br/>language, <br/>comment, <br/>max_volumes, <br/>subtype, <br/>root_volume, <br/>options, <br/>lifs, <br/>vscan_enable, <br/>volumes |
+| svm | name \nallowed_protocols \nsnapshot_policy \nlanguage \ncomment \nmax_volumes \nsubtype \nroot_volume \noptions \nlifs \nvscan_enable \nvolumes |
 | svm_info | response |
 
 

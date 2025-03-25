@@ -26,7 +26,7 @@ Manage NetApp ONTAP DNS
 
 | Variable | Properties |
 | :------- | :--------- |
-| dns | domains, <br/>servers, <br/>skip_validation |
+| dns | domains \nservers \nskip_validation |
 | svm | name |
 
 
