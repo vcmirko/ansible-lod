@@ -1,0 +1,20 @@
+- name: "Role - maf/logic/svm_create_advanced"
+  block:
+  - name: "Logic - svm_create_advanced"
+    svm_create_advanced:
+      vars_external : "{{ vars_external }}"
+    delegate_to: localhost
+    register: logic_result
+
+  - name: Register logic result
+    set_fact:
+      vars_local : "{{ logic_result.vars }}"
+      qlogname : "{{ qlogname | default('',true) }}"    
+
+  - name: Logging
+    set_fact:
+      qlogname: "{{ vars_external | to_nice_yaml(2) | indent(2,true) | do_log('Running logic svm_create_advanced','vars_external',qlogname) }}"
+
+  - name: Logging
+    set_fact:
+      qlogname: "{{ vars_local | to_nice_yaml(2) | indent(2,true) | do_log('After logic svm_create_advanced','vars_local',qlogname) }}"
