@@ -1,5 +1,5 @@
 vars_templates:
-  vmware1:
+  VMW_1:
     svm:
       allowed_protocols: nfs
       services: 
@@ -8,7 +8,7 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
-  vmware5:
+  VMW_5:
     svm:
       allowed_protocols: nfs
       services: 
@@ -17,7 +17,7 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
-  vmware9:
+  VMW_9:
     svm:
       allowed_protocols: nfs
       services: 
@@ -26,7 +26,7 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
-  nas_nfs1:
+  NFS_1:
     svm:
       allowed_protocols: nfs
       services: 
@@ -35,7 +35,7 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
-  nas_nfs5:
+  NFS_5:
     svm:
       allowed_protocols: nfs
       services: 
@@ -44,7 +44,7 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
-  nas_nfs9:
+  NFS_9:
     svm:
       allowed_protocols: nfs
       services: 
@@ -53,7 +53,7 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
-  nas_smb1:
+  SMB_1:
     svm:
       allowed_protocols: cifs
       services:
@@ -62,7 +62,7 @@ vars_templates:
         nfs:
           allowed: false
       volume_delete_retention_hours: 5
-  nas_smb5:
+  SMB_5:
     svm:
       allowed_protocols: cifs
       services:
@@ -71,7 +71,7 @@ vars_templates:
         nfs:
           allowed: false
       volume_delete_retention_hours: 3
-  nas_smb9:
+  SMB_9:
     svm:
       allowed_protocols: cifs
       services:
