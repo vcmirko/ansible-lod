@@ -28,6 +28,9 @@ roles:
     groups: []
 constants: 
   AIQUM_HOST: "aiqum.demo.netapp.com"
+  LOD_ENV_QUERY: lod_env.location l,lod_env.environment e,lod_env.service_level
+    sl,lod_env.service s,lod_env.resource r WHERE r.location_id=l.id AND
+    r.service_level_id=sl.id AND r.service_id=s.id AND r.environment_id=e.id  
 forms:
   - name: Demo Form Ansible No input
     showHelp: true
