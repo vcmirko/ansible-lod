@@ -74,6 +74,8 @@ def run_module():
         # validate input
         # validate_input([cluster, svm, volumes])
 
+        ve["cluster"] = cluster_source
+
         # set template name
         svm["template"] = f"{service}_{service_level}" # set template name
 
