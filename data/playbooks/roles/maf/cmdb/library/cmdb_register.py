@@ -3,9 +3,7 @@
 # Copyright: (c) 2020, Mirko Van Colen <mirko@netapp.com>
 # ==============================================================================
 # DESCRIPTION
-# This script is the custom logic used to create a SVM and volumes
-#
-# Adding a few lifs, setting volume junction paths and setting the template
+# This script is a blank template for custom logic, currently it does nothing and bypasses vars_external to the output
 #
 # VERSION HISTORY
 # 2025-02-03 - Mirko Van Colen - Initial version
@@ -15,6 +13,11 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 from ansible.module_utils.basic import AnsibleModule
+
+
+import datetime  # Import the datetime module
+
+
 
 summary=[]
 result = {}
@@ -36,7 +39,8 @@ def run_module():
     module_args = dict(
         # debug                     = dict(type='bool', required=False, default=False),
         vars_external               = dict(type='dict', required=True), # vars external dict
- 
+        cmdb                        = dict(type='dict', required=True), # cmdb dict
+        user                        = dict(type='dict', required=True), # user
     )
 
     module = AnsibleModule(
@@ -50,44 +54,44 @@ def run_module():
     err = None
     # debug          = module.params['debug']
     ve             = module.params['vars_external']
+    cmdb           = module.params['cmdb']
     meta           = ve.get("meta", {})
-
+    svm            = ve.get("svm", {})
+    source         = ve.get("source", {})
+    destination    = ve.get("destination", {})
+    cluster_source = source.get("cluster", {})
+    cluster_dest   = destination.get("cluster", {})
+    user           = module.params['user']
     location       = meta.get("location", "")
     environment    = meta.get("environment", "")
     service        = meta.get("service", "")
     service_level  = meta.get("service_level", "")
     resource       = meta.get("resource", "")
     change_request = meta.get("change_request", "")
-    customer       = meta.get("customer", "")
+    mysql_host     = cmdb.get("host", "")
+    mysql_user     = cmdb.get("user", "")
+    mysql_password = cmdb.get("password", "")
+    mysql_port     = cmdb.get("port", "")
 
-    source         = ve.get("source", {})
-    destination    = ve.get("destination", {})
-
-    cluster_source = source.get("cluster", {})
-    cluster_dest   = destination.get("cluster", {})
-    svm            = ve.get("svm", {})
-    # volumes        = ve.get("volumes", [])
+    result         = {}
 
      # apply logic
     try:
 
-        # validate input
-        # validate_input([cluster, svm, volumes])
+        import pymysql
 
-        # set template name
-        svm["template"] = f"{service}_{service_level}" # set template name
+        # Open database connection
+        db = pymysql.connect(host=mysql_host, user=mysql_user, password=mysql_password, port=mysql_port)
 
-        # complete svm lifs
-        if svm.get("lifs", None):   
-            svm["lifs"][0]["node"] = f"{cluster_source['name']}-01" # set node name
+        # prepare a cursor object using cursor() method
+        cursor = db.cursor()
 
-        # # loop over volumes and set junction path
-        # for volume in volumes:
-        #     volume["junction_path"] = f"/{volume['name']}"
-
-        # reassign to vars_external
-        ve["svm"] = svm 
-        # ve["volumes"] = volumes
+        # insert data into log table
+        sql = f"INSERT INTO `cmdb`.`log` (`created_at`, `location`, `environment`, `service`, `service_level`, `resource`, `change_request`, `customer`, `user`, `cluster`, `svm`) VALUES (CURRENT_TIMESTAMP, '{location}', '{environment}', '{service}', '{service_level}', '{resource}', '{change_request}', '{user}', '{cluster_source['name']}', '{svm}');"
+        
+        cursor.execute(sql)
+        db.commit()
+        db.close()
 
     except Exception as e:
         log(repr(e))

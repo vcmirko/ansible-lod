@@ -1,0 +1,20 @@
+- name: "Role - maf/logic/cmdb_register"
+  block:
+  - name: "Logic - cmdb_register"
+    cmdb_register:
+      vars_external : "{{ vars_external }}"
+      cmdb: "{{ cmdb }}"
+    delegate_to: localhost
+    register: logic_result
+
+  # - debug: var=logic_result
+
+  - name: Register logic result
+    set_fact:
+      vars_local : "{{ logic_result.vars }}"
+      qlogname : "{{ qlogname | default('',true) }}"    
+
+  - name: Logging
+    set_fact:
+      qlogname: "{{ vars_external | to_nice_yaml(2) | indent(2,true) | do_log('Registering in cmdb','vars_external',qlogname) }}"
+

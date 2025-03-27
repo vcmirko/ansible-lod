@@ -48,4 +48,3 @@ vars_defaults:
     size_unit: gb
   svm:  
     svm_type: default
-    
