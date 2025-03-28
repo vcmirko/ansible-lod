@@ -79,6 +79,11 @@ def run_module():
         # set template name
         svm["template"] = f"{service}_{service_level}" # set template name
 
+        # set cifs if required
+        if service == "SMB":
+            ve["cifs"] = {}
+            ve["cifs"]["name"] = svm["name"]
+
         # complete svm lifs
         if svm.get("lifs", None):   
             svm["lifs"][0]["node"] = f"{cluster_source['name']}-01" # set node name
