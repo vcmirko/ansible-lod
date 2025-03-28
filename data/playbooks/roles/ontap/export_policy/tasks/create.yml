@@ -60,7 +60,7 @@
     loop: "{{ export_policy.rules | default([]) | filter_export_policy_rules | list }}"
     loop_control:
       loop_var: rule
-      label: "{{ (rule.rule_index | string | default(-1)) + ' -> ' + rule.client_match | default('') + ' ['+ rule.state +']' }}"
+      label: "{{ (rule.rule_index | default(-1)) | string + ' -> ' + rule.client_match | default('') + ' ['+ rule.state +']' }}"
     delegate_to: localhost
 
   when: 
