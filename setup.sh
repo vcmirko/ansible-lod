@@ -141,6 +141,17 @@ echo "Secret 'ontap' added to 'ansibleforms'."
 echo "----------------------------"
 echo ""
 
+# Add the secret "ontap" to the "ansibleforms" secrets engine
+echo "Adding secret 'ad' to 'ansibleforms'..."
+DUMMY=$(curl --header "X-Vault-Token: $ROOT_TOKEN" \
+     --request POST \
+     --data '{"data":{"user":"admin","password":"Netapp1!"},"options":{"cas":0}}' \
+     $VAULT_ADDR/v1/ansibleforms/data/ad)
+
+echo "Secret 'ad' added to 'ansibleforms'."
+echo "----------------------------"
+echo ""
+
 echo ""
 echo "----------------------------"
 echo "Preparing AnsibleForms..."

@@ -1,5 +1,5 @@
 ---
-- name: "Create lod Svm"
+- name: "Create lod Svm Advanced"
   hosts: localhost
   become: false
   gather_facts: false
@@ -12,9 +12,32 @@
   roles:
     - { role: maf/facts, qtask: credentials }  
     - { role: maf/logic, qtask: svm_create_advanced }
-    - { role: ontap/svm, qtask: facts }
-    - { role: ontap/svm, qtask: create } 
-    - { role: ontap/security_certificate, qtask: facts }
-    - { role: ontap/security_certificate, qtask: renew }     
-    - { role: aiqum/management, qtask: facts }
-    - { role: aiqum/management, qtask: rediscover }
+
+    - { role: ontap/cluster_peer, qtask: facts }
+    - { role: ontap/cluster_peer, qtask: create }
+
+    # source
+
+    - { role: ontap/svm, qtask: facts, qchild: source }
+    - { role: ontap/svm, qtask: create, qchild: source } 
+    - { role: ontap/volume, qtask: facts_multi, qchild: source }
+    - { role: ontap/volume, qtask: create_multi, qchild: source }
+
+    # destination
+
+    - { role: ontap/svm, qtask: facts, qchild: destination }
+    - { role: ontap/svm, qtask: create, qchild: destination }
+
+    # peering and snapmirrors
+
+    - { role: ontap/vserver_peer, qtask: facts }
+    - { role: ontap/vserver_peer, qtask: create }    
+    - { role: ontap/snapmirror, qtask: facts }
+    - { role: ontap/snapmirror, qtask: create }
+
+    # rediscover aiqum
+
+    - { role: aiqum/management, qtask: facts, qchild: source }
+    - { role: aiqum/management, qtask: rediscover, qchild: source }
+    - { role: aiqum/management, qtask: facts, qchild: destination }
+    - { role: aiqum/management, qtask: rediscover, qchild: destination }

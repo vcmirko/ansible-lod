@@ -56,6 +56,7 @@ def run_module():
     environment    = meta.get("environment", "")
     service        = meta.get("service", "")
     service_level  = meta.get("service_level", "")
+    is_dr          = meta.get("is_dr", False)
     resource       = meta.get("resource", "")
     change_request = meta.get("change_request", "")
     customer       = meta.get("customer", "")
@@ -63,38 +64,115 @@ def run_module():
     source         = ve.get("source", {})
     destination    = ve.get("destination", {})
 
-    cluster_source = source.get("cluster", {})
-    cluster_dest   = destination.get("cluster", {})
-    svm            = ve.get("svm", {})
     # volumes        = ve.get("volumes", [])
 
      # apply logic
     try:
 
-        # validate input
-        # validate_input([cluster, svm, volumes])
+        # template
+        source["template"] = f"{service}_{service_level}"
+        destination["template"] = "svm_dr"
 
-        ve["cluster"] = cluster_source
+        # create cluster peer object
+        cluster_peer = []
+        source_cluster = source["cluster"]
 
-        # set template name
-        svm["template"] = f"{service}_{service_level}" # set template name
+        # in lod, we can calculate the intercluster ips, based on the management ip
+        # it's a bit of a hack, but it works.  We could have also looked them up by rest api
+        source_cluster["intercluster_ips"] = source["cluster"]["management_ip"].replace(".111", ".121").replace(".112", ".122")
+        cluster_peer.append(source_cluster)
+        destination_cluster = destination["cluster"]
+        destination_cluster["intercluster_ips"] = destination["cluster"]["management_ip"].replace(".111", ".121").replace(".112", ".122")
+        cluster_peer.append(destination_cluster)
+
+        # complete svm lifs
+        source_svm = source["svm"]     
+        if source_svm.get("lifs", None):   
+            source_svm["lifs"][0]["node"] = f"{source_cluster['name']}-01" # set node name
+
+        # complete volumes
+        source_volumes = source.get("volumes", [])
+        # loop over volumes
+        for volume in source_volumes:
+            volume["junction_path"] = f"/{volume['name']}"
+
+        # set destination svm
+        destination_svm = {
+            "name" : f"{source_svm['name']}_dr"
+        }
+        destination["svm"] = destination_svm    
+
+        # vserver peer
+        vserver_peer = []
+        peer_source_svm = {
+            "cluster": {
+                "name": source_cluster["name"],
+                "management_ip": source_cluster["management_ip"]
+            },
+            "svm": {
+                "name": source_svm["name"]
+            }
+        }
+        peer_destination_svm = {
+            "cluster": {
+                "name": destination_cluster["name"],
+                "management_ip": destination_cluster["management_ip"]
+            },
+            "svm": {
+                "name": destination_svm["name"]
+            }
+        }
+        vserver_peer.append(peer_source_svm)
+        vserver_peer.append(peer_destination_svm)
+
+        # set snapmirror
+        snapmirror = {
+            "source": {
+                "svm": {
+                    "name": source_svm["name"]
+                },
+                "cluster": {
+                    "name": source_cluster["name"],
+                    "management_ip": source_cluster["management_ip"]
+                },
+            },
+            "destination": {
+                "svm": {
+                    "name": destination_svm["name"]
+                },
+                "cluster": {
+                    "name": destination_cluster["name"],
+                    "management_ip": destination_cluster["management_ip"]
+                },
+            },
+            "identity_preserve": "full"
+        }
 
         # set cifs if required
         if service == "SMB":
-            ve["cifs"] = {}
-            ve["cifs"]["name"] = svm["name"].replace("_smb_","").replace("_","")
+            ["source"]["cifs"] = {}
+            ["source"]["cifs"]["name"] = source_svm["name"].replace("_smb_","").replace("_","")
 
-        # complete svm lifs
-        if svm.get("lifs", None):   
-            svm["lifs"][0]["node"] = f"{cluster_source['name']}-01" # set node name
 
-        # # loop over volumes and set junction path
-        # for volume in volumes:
-        #     volume["junction_path"] = f"/{volume['name']}"
+        # set clusters (for delete)
+        clusters = []
+        clusters.append(source_cluster)
+        clusters.append(destination_cluster)
 
-        # reassign to vars_external
-        ve["svm"] = svm 
-        # ve["volumes"] = volumes
+        source["clusters"] = clusters
+        destination["clusters"] = clusters
+        ve["snapmirror"] = snapmirror
+        ve["vserver_peer"] = vserver_peer
+        ve["cluster_peer"] = cluster_peer     
+
+        # now we check if is_dr is set, if not, we remove all dr-related stuff
+
+        if not is_dr:
+            # remove dr related stuff
+            ve.pop("snapmirror", None)
+            ve.pop("vserver_peer", None)
+            ve.pop("cluster_peer", None)
+            ve.pop("destination", None)
 
     except Exception as e:
         log(repr(e))
