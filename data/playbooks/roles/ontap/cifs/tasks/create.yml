@@ -46,7 +46,7 @@
       service_state           : "started"
       force                   : True
       <<: *auth
-    no_log: true
+    # no_log: true
     delegate_to: localhost
 
     ## Set cifs options with no rest support
