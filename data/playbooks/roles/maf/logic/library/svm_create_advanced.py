@@ -82,7 +82,7 @@ def run_module():
         # set cifs if required
         if service == "SMB":
             ve["cifs"] = {}
-            ve["cifs"]["name"] = svm["name"]
+            ve["cifs"]["name"] = svm["name"].replace("_smb_","").replace("_","")
 
         # complete svm lifs
         if svm.get("lifs", None):   
