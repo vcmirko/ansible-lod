@@ -41,6 +41,7 @@ password : => your classic LOD password
 
 1. Form 1 : Create Svm => allows you to create a basic svm
 2. Form 2 : Create Svm DR => allows you to create an svm with svm-dr
+3. Form 3 : Create Svm advanced => will prompt you with multiple options coming from excel
 
 ... come back, more forms and playbooks will be added.
 ... in rhel1 under /srv/apps/ansible-lod/ you can run the refresh.sh script, it will refresh new forms and playbook from git

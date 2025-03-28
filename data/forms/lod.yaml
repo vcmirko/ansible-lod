@@ -61,7 +61,14 @@
 - name: Create svm advanced
   type: ansible
   playbook: test_create_lod_svm_advanced.yml
-  description: ""
+  description: Create advanced svm
+  help: >
+    The dropdown info comes from an excel file (using a datasource).  
+
+    Depending on your choice, the resource cluster will flip between cluster1 and cluster2.  And a different template will be chosen.  
+
+    If you enable DR, an svm dr will be created.
+  showHelp: true
   roles:
     - public
   categories:
@@ -79,7 +86,7 @@
       query: |
         SELECT DISTINCT l.* FROM $(LOD_ENV_QUERY)
       columns:
-      - name
+        - name
       valueColumn: code
       group: Resource selection
       line: rs_line1
@@ -92,7 +99,7 @@
       query: |
         SELECT DISTINCT e.* FROM $(LOD_ENV_QUERY) AND l.id=$(location.id)
       columns:
-      - name
+        - name
       valueColumn: code
       group: Resource selection
       line: rs_line1
@@ -102,41 +109,45 @@
       default: __auto__
       type: enum
       dbConfig: self
-      query: |
-        SELECT DISTINCT s.* FROM $(LOD_ENV_QUERY) AND l.id=$(location.id) AND e.id=$(environment.id)
+      query: >
+        SELECT DISTINCT s.* FROM $(LOD_ENV_QUERY) AND l.id=$(location.id) AND
+        e.id=$(environment.id)
       columns:
-      - name
+        - name
       valueColumn: code
       group: Resource selection
-      line: rs_line1   
+      line: rs_line1
       model: vars_external.meta.service
     - name: service_level
       label: Service Level
       default: __auto__
       type: enum
       dbConfig: self
-      query: |
-        SELECT DISTINCT sl.* FROM $(LOD_ENV_QUERY) AND l.id=$(location.id) AND e.id=$(environment.id) AND s.id=$(service.id)
+      query: >
+        SELECT DISTINCT sl.* FROM $(LOD_ENV_QUERY) AND l.id=$(location.id) AND
+        e.id=$(environment.id) AND s.id=$(service.id)
       columns:
-      - name
+        - name
       valueColumn: code
       group: Resource selection
-      line: rs_line1      
+      line: rs_line1
       model: vars_external.meta.service_level
     - name: resource
       label: Resource
       default: __auto__
       type: enum
       dbConfig: self
-      query: |
-        SELECT DISTINCT r.* FROM $(LOD_ENV_QUERY) AND l.id=$(location.id) AND e.id=$(environment.id) AND s.id=$(service.id) AND sl.id=$(service_level.id) 
+      query: >
+        SELECT DISTINCT r.* FROM $(LOD_ENV_QUERY) AND l.id=$(location.id) AND
+        e.id=$(environment.id) AND s.id=$(service.id) AND
+        sl.id=$(service_level.id) 
       columns:
-      - cluster
-      - dr
-      - code
+        - cluster
+        - dr
+        - code
       valueColumn: code
       group: Resource selection
-      line: rs_line2     
+      line: rs_line2
       model: vars_external.meta.resource
     - name: cluster_source
       label: cluster
@@ -155,25 +166,29 @@
       expression: fn.fnRestBasic('get','https://$(AIQUM_HOST)/api/datacenter/cluster/clusters?name=$(resource.dr)','','aiqum_rest','.records[]
         | {"name":.name,"management_ip":.management_ip}')
       required: true
-      model: vars_external.destination.cluster   
+      model: vars_external.destination.cluster
     - name: cr
       label: Change request
       required: true
       type: text
       placeholder: CR######
       regex:
-        expression: "^CR[0-9]{6}$"
-        description: "Must be format CR######"
+        expression: ^CR[0-9]{6}$
+        description: Must be format CR######
       model: vars_external.meta.change_request
+    - name: isDr
+      label: Enable DR
+      type: checkbox
+      model: vars_external.meta.is_dr
     - name: customer
       type: text
       group: Resource selection
       line: rs_line2
       label: Customer Id
-      placeholder: "A41"
+      placeholder: A41
       regex:
-        expression: "^[A-Z0-9]{3}$"
-        description: "A valid Alfanumeric customer id"
+        expression: ^[A-Z0-9]{3}$
+        description: A valid Alfanumeric customer id
       required: true
       model: vars_external.meta.customer
     - name: svm
@@ -185,12 +200,12 @@
       label: Svm name
       required: true
       dependencies:
-      - name: customer
-        isValid: true
+        - name: customer
+          isValid: true
       validIfNot:
         field: svm_exists
         description: The svm already exists, use a unique name
-      model: vars_external.svm.name
+      model: vars_external.source.svm.name
     - name: lif_name
       label: Lif name
       type: text
@@ -198,7 +213,7 @@
       required: true
       group: Svm
       line: svm
-      model: vars_external.svm.lifs[0].name
+      model: vars_external.source.svm.lifs[0].name
     - name: svm_exists
       type: local
       expression: |
@@ -212,4 +227,5 @@
       hide: true
       noOutput: true
       expression: fn.fnRestBasic('get','https://$(cluster_source.management_ip)/api/svm/svms','','aiqum_rest','[.records[]
-        | .name ]')  
+        | .name ]')
+
