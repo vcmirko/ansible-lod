@@ -69,6 +69,7 @@
       name                            : "{{ svm.root_volume.name }}"
       from_name                       : "{{ svm.name }}_root"
       vserver                         : "{{ svm.name }}"
+      export_policy                   : "{{ svm.root_volume.export_policy | default(omit) }}"
       <<: *auth
     delegate_to: localhost
     when: 
