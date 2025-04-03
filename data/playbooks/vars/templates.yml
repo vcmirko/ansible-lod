@@ -8,6 +8,8 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
+    volume:
+      volume_security_style: unix               
   vmw_5:
     svm:
       allowed_protocols: nfs
@@ -17,6 +19,8 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
+    volume:
+      volume_security_style: unix               
   vmw_9:
     svm:
       allowed_protocols: nfs
@@ -26,6 +30,8 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
+    volume:
+      volume_security_style: unix               
   nfs_1:
     svm:
       allowed_protocols: nfs
@@ -35,6 +41,8 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
+    volume:
+      volume_security_style: unix               
   nfs_5:
     svm:
       allowed_protocols: nfs
@@ -44,6 +52,8 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
+    volume:
+      volume_security_style: unix               
   nfs_9:
     svm:
       allowed_protocols: nfs
@@ -53,6 +63,8 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
+    volume:
+      volume_security_style: unix          
   smb_1:
     svm:
       allowed_protocols: cifs
@@ -62,6 +74,8 @@ vars_templates:
         nfs:
           allowed: false
       volume_delete_retention_hours: 5
+    volume:
+      volume_security_style: ntfs
   smb_5:
     svm:
       allowed_protocols: cifs
@@ -71,6 +85,8 @@ vars_templates:
         nfs:
           allowed: false
       volume_delete_retention_hours: 3
+    volume:
+      volume_security_style: ntfs      
   smb_9:
     svm:
       allowed_protocols: cifs
@@ -80,6 +96,8 @@ vars_templates:
         nfs:
           allowed: false
       volume_delete_retention_hours: 1
+    volume:
+      volume_security_style: ntfs      
   nas_cifs:
     svm:
       allowed_protocols: cifs
