@@ -73,7 +73,7 @@ def run_module():
         source["volume"]["name"] = f"{location}_{environment}{service_level}_{service}_{customer}_{name}"
         source["volume"]["size"] = size
         source["volume"]["comment"] = f"Created by Ansible playbook {change_request}"
-        source["volume"]["junction_path"] = f"/{source["volume"]["name"]}"
+        source["volume"]["junction_path"] = f"/{source['volume']['name']}"
 
         # if smb, add cifs share
         if service == "smb":
