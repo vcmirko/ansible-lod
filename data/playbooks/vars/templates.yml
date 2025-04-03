@@ -1,5 +1,5 @@
 vars_templates:
-  VMW_1:
+  vmw_1:
     svm:
       allowed_protocols: nfs
       services: 
@@ -8,7 +8,7 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
-  VMW_5:
+  vmw_5:
     svm:
       allowed_protocols: nfs
       services: 
@@ -17,7 +17,7 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
-  VMW_9:
+  vmw_9:
     svm:
       allowed_protocols: nfs
       services: 
@@ -26,7 +26,7 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
-  NFS_1:
+  nfs_1:
     svm:
       allowed_protocols: nfs
       services: 
@@ -35,7 +35,7 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
-  NFS_5:
+  nfs_5:
     svm:
       allowed_protocols: nfs
       services: 
@@ -44,7 +44,7 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
-  NFS_9:
+  nfs_9:
     svm:
       allowed_protocols: nfs
       services: 
@@ -53,7 +53,7 @@ vars_templates:
           enabled: true
         cifs:
           allowed: false  
-  SMB_1:
+  smb_1:
     svm:
       allowed_protocols: cifs
       services:
@@ -62,7 +62,7 @@ vars_templates:
         nfs:
           allowed: false
       volume_delete_retention_hours: 5
-  SMB_5:
+  smb_5:
     svm:
       allowed_protocols: cifs
       services:
@@ -71,7 +71,7 @@ vars_templates:
         nfs:
           allowed: false
       volume_delete_retention_hours: 3
-  SMB_9:
+  smb_9:
     svm:
       allowed_protocols: cifs
       services:
