@@ -70,6 +70,7 @@ def run_module():
     try:
 
         # template
+        log("Set templates")
         source["template"] = f"{service}_{service_level}"
         destination["template"] = "svm_dr"
 
@@ -79,30 +80,35 @@ def run_module():
         cluster_peer = []
         source_cluster = source["cluster"]
 
+        log("Set intercluster ips")
         # in lod, we can calculate the intercluster ips, based on the management ip
         # it's a bit of a hack, but it works.  We could have also looked them up by rest api
         source_cluster["intercluster_ips"] = source["cluster"]["management_ip"].replace(".101", ".121").replace(".102", ".123")
         cluster_peer.append(source_cluster)
-        destination_cluster = destination["cluster"]
+        destination_cluster = destination.get("cluster", {})
         destination_cluster["intercluster_ips"] = destination.get("cluster", {}).get("management_ip", "").replace(".101", ".121").replace(".102", ".123")
         cluster_peer.append(destination_cluster)
 
+        log("Set lifs")
         # complete svm lifs
         source_svm = source["svm"]     
         if source_svm.get("lifs", None):   
             source_svm["lifs"][0]["node"] = f"{source_cluster['name']}-01" # set node name
 
+        log("Set junction paths if volumes are given")
         # complete volumes
         source_volumes = source.get("volumes", [])
         # loop over volumes
         for volume in source_volumes:
             volume["junction_path"] = f"/{volume['name']}"
 
+        log("Set destination svm")
         # set destination svm
         destination_svm = {
             "name" : f"{source_svm['name']}_dr"
         }
         destination["svm"] = destination_svm    
+
 
         # vserver peer
         vserver_peer = []
@@ -117,8 +123,8 @@ def run_module():
         }
         peer_destination_svm = {
             "cluster": {
-                "name": destination_cluster["name"],
-                "management_ip": destination_cluster["management_ip"]
+                "name": destination_cluster.get("name", ""),
+                "management_ip": destination_cluster.get("management_ip", "")
             },
             "svm": {
                 "name": destination_svm["name"]
@@ -143,8 +149,8 @@ def run_module():
                     "name": destination_svm["name"]
                 },
                 "cluster": {
-                    "name": destination_cluster["name"],
-                    "management_ip": destination_cluster["management_ip"]
+                    "name": destination_cluster.get("name", ""),
+                    "management_ip": destination_cluster.get("management_ip", "")
                 },
             },
             "identity_preserve": "full"
