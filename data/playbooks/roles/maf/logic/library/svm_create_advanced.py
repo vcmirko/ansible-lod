@@ -157,10 +157,11 @@ def run_module():
             "identity_preserve": "full"
         }
 
+        log("Set cifs server")
         # set cifs if required
         if service == "SMB":
-            ["source"]["cifs"] = {}
-            ["source"]["cifs"]["name"] = source_svm["name"].replace("_smb_","").replace("_","")
+            source["cifs"] = {}
+            source["cifs"]["name"] = source_svm["name"].replace("_smb_","").replace("_","")
 
         log("Assign everything to the vars_external dict")
         # set clusters (for delete)
