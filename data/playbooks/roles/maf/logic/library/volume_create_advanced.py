@@ -50,8 +50,8 @@ def run_module():
     ve             = module.params['vars_external']
     meta           = ve.get("meta", {})
 
-    location       = meta.get("location", "")
-    environment    = meta.get("environment", "")
+    location       = meta.get("location", "").lower()
+    environment    = meta.get("environment", "").lower()
     service        = meta.get("service", "").lower()
     service_level  = meta.get("service_level", "")
     change_request = meta.get("change_request", "")
