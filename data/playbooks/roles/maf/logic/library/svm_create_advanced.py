@@ -166,6 +166,9 @@ def run_module():
             # if nfs, add export policy
             source["export_policy"] = {}
             source["export_policy"]["name"] = f"xp_default"
+            source["svm"]["root_volume"] = {}
+            source["svm"]["root_volume"]["name"] = f"{source_svm["name"]}_root"
+            source["svm"]["root_volume"]["export_policy"] = source["export_policy"]["name"]
         
             # auto add 0.0.0.0/0 to export policy for readonly
             rule = {}
