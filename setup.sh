@@ -201,6 +201,24 @@ CREDENTIAL_DATA=$(jq -n --arg name "loopback" --arg user "loopback" --arg host "
 echo "Creating loopback credentials..."
 DUMMY=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "$CREDENTIAL_DATA" $CREDENTIAL_API_URL)
 
+# Create local database credentials
+CREDENTIAL_API_URL="https://rhel1.demo.netapp.com/api/v1/credential/"
+CREDENTIAL_DATA=$(jq -n --arg name "self" --arg user "root" --arg host "rhel1.demo.netapp.com" --arg description "" --arg password "AnsibleForms!123" --argjson port 3306 --argjson secure 1 --arg db_type "mysql" --arg db_name "" '{
+    name: $name,
+    user: $user,
+    port: $port,
+    host: $host,
+    description: $description,
+    password: $password,
+    secure: $secure,
+    db_type: $db_type,
+    db_name: $db_name,
+    is_database: 1
+}')
+echo "Creating local database credentials..."
+DUMMY=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json" -d "$CREDENTIAL_DATA" $CREDENTIAL_API_URL)
+
+
 # Update settings
 SETTINGS_API_URL="https://rhel1.demo.netapp.com/api/v1/settings/"
 SETTINGS_DATA=$(jq -n --arg mail_server "rhel1.demo.netapp.com" --argjson mail_port 25 --argjson mail_secure 0 --arg mail_username "" --arg mail_password "" --arg mail_from "rhel1@demo.netapp.com" --arg url "https://rhel1.demo.netapp.com" --arg forms_yaml "" --argjson enableFormsYamlInDatabase false '{
