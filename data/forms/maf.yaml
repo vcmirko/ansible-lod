@@ -179,7 +179,6 @@
       model: vars_external.cluster
 - name: Create volume from template
   type: ansible
-  check: true
   playbook: test_create_lod_volume_template.yml
   showHelp: true
   help: |
@@ -325,7 +324,6 @@
       model: vars_external.volume.name
 - name: Create volume advanced
   type: ansible
-  check: true
   playbook: test_create_lod_volume_advanced.yml
   showHelp: true
   help: |
