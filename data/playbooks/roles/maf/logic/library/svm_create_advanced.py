@@ -52,14 +52,13 @@ def run_module():
     ve             = module.params['vars_external']
     meta           = ve.get("meta", {})
 
-    location       = meta.get("location", "")
-    environment    = meta.get("environment", "")
-    service        = meta.get("service", "")
+    location       = meta.get("location", "").lower()
+    environment    = meta.get("environment", "").lower()
+    service        = meta.get("service", "").lower()
     service_level  = meta.get("service_level", "")
     is_dr          = meta.get("is_dr", False)
-    resource       = meta.get("resource", "")
     change_request = meta.get("change_request", "")
-    customer       = meta.get("customer", "")
+    customer       = meta.get("customer", "").lower()
 
     source         = ve.get("source", {})
     destination    = ve.get("destination", {})
@@ -159,9 +158,23 @@ def run_module():
 
         log("Set cifs server")
         # set cifs if required
-        if service == "SMB":
+        if service == "smb":
             source["cifs"] = {}
             source["cifs"]["name"] = source_svm["name"].replace("_smb_","").replace("_","")
+
+        if service == "nfs":
+            # if nfs, add export policy
+            source["export_policy"] = {}
+            source["export_policy"]["name"] = f"xp_default"
+        
+            # auto add 0.0.0.0/0 to export policy for readonly
+            rule = {}
+            rule["client_match"] = "0.0.0.0/0"
+            rule["ro_rule"] = "sys"
+            rule["rw_rule"] = "never"
+            rule["super_user_security"] = "none"
+            source["export_policy"]["rules"] = []
+            source["export_policy"]["rules"].append(rule)
 
         log("Assign everything to the vars_external dict")
         # set clusters (for delete)
