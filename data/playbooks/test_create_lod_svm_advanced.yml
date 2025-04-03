@@ -18,6 +18,8 @@
 
     # source
 
+    - { role: ontap/export_policy, qtask: facts, qchild: source }
+    - { role: ontap/export_policy, qtask: create, qchild: source }
     - { role: ontap/svm, qtask: facts, qchild: source }
     - { role: ontap/svm, qtask: create, qchild: source } 
     - { role: ontap/volume, qtask: facts_multi, qchild: source }
