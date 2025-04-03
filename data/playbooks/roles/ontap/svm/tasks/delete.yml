@@ -27,6 +27,7 @@
     netapp.ontap.na_ontap_svm:
       state:                    absent
       name:                     "{{ svm.name }}"
+      force:                   true
       <<: *auth
     delegate_to: localhost
     retries: 3
