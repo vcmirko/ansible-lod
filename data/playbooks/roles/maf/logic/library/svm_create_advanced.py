@@ -109,7 +109,7 @@ def run_module():
         }
         destination["svm"] = destination_svm    
 
-
+        log("Set vserver peer")
         # vserver peer
         vserver_peer = []
         peer_source_svm = {
@@ -133,6 +133,7 @@ def run_module():
         vserver_peer.append(peer_source_svm)
         vserver_peer.append(peer_destination_svm)
 
+        log("Set snapmirror")
         # set snapmirror
         snapmirror = {
             "source": {
@@ -161,7 +162,7 @@ def run_module():
             ["source"]["cifs"] = {}
             ["source"]["cifs"]["name"] = source_svm["name"].replace("_smb_","").replace("_","")
 
-
+        log("Assign everything to the vars_external dict")
         # set clusters (for delete)
         clusters = []
         clusters.append(source_cluster)
@@ -173,8 +174,8 @@ def run_module():
         ve["vserver_peer"] = vserver_peer
         ve["cluster_peer"] = cluster_peer     
 
+        log("Drop dr related stuff if not is_dr")
         # now we check if is_dr is set, if not, we remove all dr-related stuff
-
         if not is_dr:
             # remove dr related stuff
             ve.pop("snapmirror", None)
