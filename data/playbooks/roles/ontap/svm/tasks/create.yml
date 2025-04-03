@@ -62,6 +62,13 @@
     - svm.set_aggr_list | default(false)
     - svm.subtype | default('default') == 'default'
 
+
+    ## create export policy
+  - name: "Create export policy [{{ export_policy.name }}] on [{{ svm.name }}]"
+    include_tasks: "{{ playbook_dir }}/roles/ontap/export_policy/tasks/create.yml"
+    when : 
+    - export_policy.name | default(false)
+
   # rename root volume
   - name: "Move and rename root volume [{{ svm.name }}]"
     netapp.ontap.na_ontap_volume:

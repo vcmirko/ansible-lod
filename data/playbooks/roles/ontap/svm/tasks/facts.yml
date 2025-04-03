@@ -12,6 +12,7 @@
     vscan_scanner_pools: "{{ 'vscan_scanner_pools' | merge_lists(d=vars_defaults,t=vars_templates,v=vars_local,has_template=True,c=qtask_child) }}"
     ipspace            : "{{ 'ipspace'             | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
     broadcast_domain   : "{{ 'broadcast_domain'    | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
+    export_policy      : "{{ 'export_policy'       | merge_vars(d=vars_defaults,t=vars_templates,v=vars_local,o=vars_overrides,c=qtask_child) }}"
 
 - name: Set naming facts
   no_log: true
