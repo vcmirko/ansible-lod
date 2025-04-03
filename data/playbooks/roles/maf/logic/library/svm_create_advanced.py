@@ -73,6 +73,8 @@ def run_module():
         source["template"] = f"{service}_{service_level}"
         destination["template"] = "svm_dr"
 
+
+
         # create cluster peer object
         cluster_peer = []
         source_cluster = source["cluster"]
@@ -82,7 +84,7 @@ def run_module():
         source_cluster["intercluster_ips"] = source["cluster"]["management_ip"].replace(".101", ".121").replace(".102", ".123")
         cluster_peer.append(source_cluster)
         destination_cluster = destination["cluster"]
-        destination_cluster["intercluster_ips"] = destination["cluster"]["management_ip"].replace(".101", ".121").replace(".102", ".123")
+        destination_cluster["intercluster_ips"] = destination.get("cluster", {}).get("management_ip", "").replace(".101", ".121").replace(".102", ".123")
         cluster_peer.append(destination_cluster)
 
         # complete svm lifs
