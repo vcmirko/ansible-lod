@@ -1,0 +1,13 @@
+---
+# unfortunately, ansible doesn't allow looping roles
+# so we have a local tasks "create_one" which includes facts & create of the aggregate role
+# hence we can create multiple aggregates in a loop
+
+# - debug: var=qtask_child
+
+- name: create multiple aggregates
+  include_tasks: "create_one.yml" 
+  loop_control:
+    loop_var: aggregate_item
+    label: "Creating aggregate {{ aggregate_item.name }}"
+  loop: "{{ aggregates }}"

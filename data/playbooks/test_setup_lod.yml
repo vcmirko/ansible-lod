@@ -17,6 +17,8 @@
     - { role: ontap/subnet, qtask: create, qchild: cluster1 }
     - { role: ontap/subnet, qtask: facts, qchild: cluster2 }
     - { role: ontap/subnet, qtask: create, qchild: cluster2 }
+    - { role: ontap/aggregate, qtask: facts_multi, qchild: cluster2 }
+    - { role: ontap/aggregate, qtask: create_multi, qchild: cluster2 }
     - { role: aiqum/management, qtask: facts, qchild: cluster1 }
     - { role: aiqum/management, qtask: register, qchild: cluster1 }
     - { role: aiqum/management, qtask: facts, qchild: cluster2 }

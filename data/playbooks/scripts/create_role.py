@@ -81,14 +81,42 @@ def create_role(collection_name,role_name, role_description, role_key, supports_
         {"role_name": role_name},
     )
 
+    # copy the main.yml file
+    template_to_file(
+        'role_template/tasks/main.yml.j2',
+        f'{tasks_path}/main.yml',
+        {"role_name": role_name},
+    )
+
+    if supports_multi:
+        # copy the facts_multi.yml file
+        template_to_file(
+            'role_template/tasks/facts_multi.yml.j2',
+            f'{tasks_path}/facts_multi.yml',
+            {"role_name": role_name},
+        )
+
+        # copy the action_multi.yml and action_one file for each action
+        for action in actions:
+            template_to_file(
+                'role_template/tasks/action_multi.yml.j2',
+                f'{tasks_path}/{action}_multi.yml',
+                {"role_name": role_name, "action": action},
+            )
+            template_to_file(
+                'role_template/tasks/action_one.yml.j2',
+                f'{tasks_path}/{action}_one.yml',
+                {"role_name": role_name, "action": action},
+            )
+
     # copy the action.yml file
     for action in actions:
-        # copy_file("role_template/tasks/action.yml", f"{tasks_path}/{action}.yml")
         template_to_file(
             'role_template/tasks/action.yml.j2',
             f'{tasks_path}/{action}.yml',
             {"collection_name":collection_name,"role_name": role_name, "action": action},
         )
+
 
 # def to prompt for input, with default values and limited list values
 

@@ -82,7 +82,7 @@ def run_module():
             source["volume"]["cifs_share"]["path"] = source["volume"]["junction_path"]
 
         # if nfs, add export policy
-        if service == "nfs":
+        if service == "nfs" or service == "vmw":
             source["export_policy"] = {}
             source["export_policy"]["name"] = f"xp_{name}"
         

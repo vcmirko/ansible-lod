@@ -31,11 +31,11 @@
         size_mb                  : "{{ volume.size | default(0) }}"
         weight_volume_count      : 0
         weight_used_pct          : 0
-        weight_provisioned_pct   : 0
-        weight_available_space   : 1
+        weight_provisioned_pct   : 40
+        weight_available_space   : 20
         # threshold_volume_count   : 
         # threshold_used_pct       : 
-        # threshold_provisioned_pct: 10000000
+        threshold_provisioned_pct: 5000
         # threshold_available_space: 
         # exclude_name_regex       : 
         # include_name_regex       : "^{{ volume.aggregate_include_name_regex | default('.*') }}$"

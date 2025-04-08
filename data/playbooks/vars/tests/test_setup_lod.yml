@@ -11,3 +11,12 @@ vars_external:
       management_ip: 192.168.0.102
     subnet:
       ip_ranges: 192.168.0.180-192.168.0.189
+    aggregates:
+    - name: cluster2_01_SSD_1
+      disk_class: "solid_state"
+      disk_count: 10
+      nodes: cluster2-01
+    - name: cluster2_02_SSD_2
+      disk_class: "solid_state"
+      disk_count: 10
+      nodes: cluster2-02
