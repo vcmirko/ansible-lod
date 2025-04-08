@@ -96,8 +96,5 @@ chmod +x setup.sh
 Write-Host $explanationToShow -ForegroundColor Yellow
 
 $dummy = Read-Host "... Prep the lab on demand with the above command on the rhel1 host, press enter when your are done ..."
-$dummy = Read-Host "Press any key to continue"
-$dummy = Read-Host "Open chrome browser and use the bookmark created called 'Ansible Forms' to access the application"
-$dummy = Read-Host "Press any key to continue"
-$dummy = Read-Host "Continue the setup from AnsibleForms, see readme from github repository"
+$dummy = Read-Host "Open chrome browser and use the bookmark created called 'Ansible Forms' to access the application`r`nContinue the setup from AnsibleForms, see readme from github repository`r`nYou can close this window"
 

@@ -5,6 +5,9 @@ vars_defaults:
     api_role         : admin                  # if you want to authentication with certificates / role for user creation
     api_certificate_folder: api_certificates  # folder to store api certificates
     api_certificate_expiry_days: 365          # validity of the api certificates  
+  aggregate:
+    raid_type: raid_dp
+    service_state: online
   cifs:
     ou: "CN=Computers,DC=demo,DC=netapp,DC=com"
     domain: demo.netapp.com

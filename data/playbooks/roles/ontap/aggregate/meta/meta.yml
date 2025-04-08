@@ -1,0 +1,4 @@
+role:
+  description: "Create ontap aggregate"
+  supports_multi: True
+  key: "name"

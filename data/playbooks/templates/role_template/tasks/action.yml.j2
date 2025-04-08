@@ -20,7 +20,7 @@
       l_{{ action }}: "{|{ {{ role_name }} | to_nice_yaml(2) | indent(2,true) | do_log('{{ collection_name }}/{{ role_name }}/{{ action }}','{{ role_name }}',qlogname) }|}"
 
   - name: "{{ action }} {{ role_name }} {|{ {{ role_name }}.name }|}"               
-    netapp.ontap.na_ontap_<role_name>:
+    netapp.ontap.na_ontap_{{ role_name }}:
       state                  : present
       vserver                : "{|{ svm.name | default(omit) }|}"
       name                   : "{|{ {{ role_name }}.name }|}"

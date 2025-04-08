@@ -1,0 +1,40 @@
+---
+- name: "Role - ontap/aggregate/create"
+  block:
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest.validate_certs | default(false) }}"
+        https: "{{ auth_rest.https | default(true) }}"
+        use_rest: always
+
+  #logging
+  - name: Logging
+    set_fact:
+      l_create: "{{ aggregate | to_nice_yaml(2) | indent(2,true) | do_log('ontap/aggregate/create','aggregate',qlogname) }}"
+
+  - name: "create aggregate {{ aggregate.name }}"               
+    netapp.ontap.na_ontap_aggregate:
+      state                 : present
+      name                  : "{{ aggregate.name }}"
+      disk_class            : "{{ aggregate.disk_class | default(omit) }}"
+      disk_count            : "{{ aggregate.disk_count | int }}"
+      disk_size             : "{{ aggregate.disk_size | default(omit) }}"
+      disk_size_with_unit   : "{{ aggregate.disk_size_with_unit | default(omit) }}"
+      is_mirrored           : "{{ aggregate.is_mirrored | default(omit) }}"
+      object_store_name     : "{{ aggregate.object_store_name | default(omit) }}"
+      raid_size             : "{{ aggregate.raid_size | default(omit) }}"
+      raid_type             : "{{ aggregate.raid_type | default(omit) }}"
+      service_state         : "{{ aggregate.service_state | default('online') }}"
+      snaplock_type         : "{{ aggregate.snaplock_type | default(omit) }}"
+      nodes                 : "{{ aggregate.nodes  }}"
+      <<: *auth
+    delegate_to: localhost
+
+  when: aggregate.name | default(false)

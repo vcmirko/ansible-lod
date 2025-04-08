@@ -60,8 +60,14 @@ def create_role(collection_name,role_name, role_description, role_key, supports_
     template_to_file(
         'role_template/meta/main.yml.j2',
         f'{meta_path}/main.yml',
-        {"role_name": role_name, "role_description": role_description, "role_key": role_key, "supports_multi": supports_multi},
+        {},
     )
+    # create the meta meta.yml file
+    template_to_file(
+        'role_template/meta/meta.yml.j2',
+        f'{meta_path}/meta.yml',
+        {"role_name": role_name, "role_description": role_description, "role_key": role_key, "supports_multi": supports_multi},
+    )    
 
     # create the tasks folder
     log("Creating tasks folder")
