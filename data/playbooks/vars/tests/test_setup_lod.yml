@@ -16,7 +16,7 @@ vars_external:
       disk_class: "solid_state"
       disk_count: 10
       nodes: cluster2-01
-    - name: cluster2_02_SSD_2
+    - name: cluster2_02_SSD_1
       disk_class: "solid_state"
       disk_count: 10
       nodes: cluster2-02

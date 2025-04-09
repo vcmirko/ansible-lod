@@ -1,0 +1,75 @@
+- name: Table unique
+  type: ansible
+  playbook: dummy.yaml
+  help: |
+    This is an example of a table with unique entries. Using expressions and validation.
+  description: "Make sure table entries are unique"
+  roles:
+    - admin
+  categories: []
+  tileClass: has-background-info-light
+  icon: bullseye
+  fields:
+    - name: machinelist
+      type: expression
+      value:
+        - mach1
+        - mach2
+        - mach3
+        - mach4
+    - name: usedMachinelist
+      type: expression
+      runLocal: true
+      expression: $(machines).map(x => x.Machine)
+    - name: unusedMachinelist
+      type: expression
+      runLocal: true
+      expression: $(machinelist).filter( x => !$(usedMachinelist).includes(x))
+    - type: table
+      name: machines
+      label: Add a machine
+      allowInsert: true
+      allowDelete: true
+      insertMarker: isNewItem
+      deleteMarker: isRemovedItem
+      validIfNot:
+        field: hasIdDoubles
+        description: This table must have unique id's
+      readonlyColumns:
+        - Machine
+        - hostname
+      required: true
+      tableFields:
+        - name: Machine
+          label: pick a machine
+          type: enum
+          required: true
+          from: unusedMachinelist
+        - name: Id
+          label: Give a unique id
+          type: text
+          required: true
+    - name: idList
+      type: expression
+      runLocal: true
+      expression: $(machines).map(x => x.Id)
+    - name: hasIdDoubles
+      type: expression
+      runLocal: true
+      expression: ((x) => new Set(x).size !== x.length)($(idList))
+- name: Html
+  type: ansible
+  playbook: dummy.yaml
+  description: "Show you can use html in a field"
+  roles:
+    - admin
+  categories: []
+  tileClass: has-background-info-light
+  icon: bullseye
+  fields:
+    - name: field1
+      type: html
+      expression: "'<b>Hohoho</b>'.toUpperCase()"
+    - name: field2
+      type: html
+      expression: "'<img src=\"https://www.w3schools.com/images/w3schools_green.jpg\" alt=\"W3Schools.com\" width=\"104\" height=\"142\">'"
