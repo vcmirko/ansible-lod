@@ -173,7 +173,7 @@ def run_module():
 
             if dr_type == "volume_dr":
                 log("Volume dr is enabled")
-
+                destination["template"] = f"{service}_{service_level}"
 
                 log("Set lifs")
                 destination_svm["lifs"] = copy.deepcopy(source_svm["lifs"])  # Create a deep copy of the lifs
