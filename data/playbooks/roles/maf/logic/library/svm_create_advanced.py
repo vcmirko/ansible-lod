@@ -72,7 +72,8 @@ def run_module():
         # template
         log("Set templates")
         source["template"] = f"{service}_{service_level}"
-        destination["template"] = "svm_dr"
+        if dr_type == "svm_dr":
+            destination["template"] = "svm_dr"
 
 
 
@@ -199,10 +200,13 @@ def run_module():
             ve.pop("snapmirror", None)
             ve.pop("vserver_peer", None)
             ve.pop("cluster_peer", None)
+            ve.pop("destination", None)
 
         # if no dr or volume dr, remove destination too
-        if not is_dr or dr_type == "volume_dr":
-            ve.pop("destination", None)
+        if is_dr and dr_type == "volume_dr":
+            ve.pop("snapmirror", None)
+            ve.pop("vserver_peer", None)
+            ve.pop("cluster_peer", None)
 
     except Exception as e:
         log(repr(e))
