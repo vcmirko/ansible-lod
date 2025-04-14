@@ -57,6 +57,7 @@ def run_module():
     service        = meta.get("service", "").lower()
     service_level  = meta.get("service_level", "")
     is_dr          = meta.get("is_dr", False)
+    dr_type        = meta.get("dr_type", "svm_dr")
     change_request = meta.get("change_request", "")
     customer       = meta.get("customer", "").lower()
 
@@ -198,6 +199,9 @@ def run_module():
             ve.pop("snapmirror", None)
             ve.pop("vserver_peer", None)
             ve.pop("cluster_peer", None)
+
+        # if no dr or volume dr, remove destination too
+        if not is_dr or dr_type == "volume_dr":
             ve.pop("destination", None)
 
     except Exception as e:

@@ -12,7 +12,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 '''
-na_ontap_rest_cli
+na_ontap_rest_cli_idempotent.py
 '''
 
 from __future__ import absolute_import, division, print_function
