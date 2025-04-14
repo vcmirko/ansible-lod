@@ -15,6 +15,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 from ansible.module_utils.basic import AnsibleModule
+import copy
 
 summary=[]
 result = {}
@@ -117,6 +118,8 @@ def run_module():
         # check dr
         if is_dr:
             log("Dr is enabled")
+            destination_cluster = destination.get("cluster", None)
+            assert(destination_cluster, "Destination cluster is not set")
 
             # create cluster peer object
             cluster_peer = []
@@ -125,7 +128,7 @@ def run_module():
             # it's a bit of a hack, but it works.  We could have also looked them up by rest api
             source_cluster["intercluster_ips"] = source["cluster"]["management_ip"].replace(".101", ".121").replace(".102", ".123")
             cluster_peer.append(source_cluster)
-            destination_cluster = destination.get("cluster", {})
+            
             destination_cluster["intercluster_ips"] = destination.get("cluster", {}).get("management_ip", "").replace(".101", ".121").replace(".102", ".123")
             cluster_peer.append(destination_cluster)
 
@@ -173,11 +176,11 @@ def run_module():
 
 
                 log("Set lifs")
-                destination_svm["lifs"] = source_svm["lifs"].copy() # copy same lifs from source
-                # complete svm lifs
-                if destination_svm.get("lifs", None):   
-                    destination_svm["lifs"][0]["node"] = f"{destination_cluster['name']}-01" # set node name
-
+                destination_svm["lifs"] = copy.deepcopy(source_svm["lifs"])  # Create a deep copy of the lifs
+                # Complete svm lifs
+                if destination_svm.get("lifs", None):
+                    destination_svm["lifs"][0]["node"] = f"{destination_cluster['name']}-01"  # Set node name
+ 
                 # set cifs if required
                 if service == "smb":
 
