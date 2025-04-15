@@ -1,11 +1,7 @@
 ---
-- name: "Setup lod"
+- name: "Get info test"
   hosts: localhost
-  become: false
-  gather_facts: false
-  vars:
   tasks:
-
   - netapp.ontap.na_ontap_info:
       hostname: "cluster1.demo.netapp.com"
       username: "admin"
@@ -19,13 +15,14 @@
 
   - debug: var=result
 
-  - netapp.ontap.na_ontap_info_rest:
+  - netapp.ontap.na_ontap_rest_info:
       hostname: "cluster1.demo.netapp.com"
       username: "admin"
       password: "Netapp1!"
       https: true
       validate_certs: false
       use_rest: Always
+      use_python_keys: true
       gather_subset:
       - aggregate_info
     register: result
