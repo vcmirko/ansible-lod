@@ -77,8 +77,8 @@ def run_module():
             "name" : f"{location}_{environment}{service_level}_{service}_{customer}_{name}",
             "size" : size,
             "comment" : f"Created by Ansible playbook {change_request}",
-            "junction_path" : f"/{source['volume']['name']}"
         }
+        source["volume"]["junction_path"] = f"/{source['volume']['name']}"
 
         # if smb, add cifs share
         if service == "smb":
@@ -118,8 +118,8 @@ def run_module():
                 "name" : f"{source['volume']['name']}",
                 "size" : size,
                 "comment" : f"Created by Ansible playbook {change_request} - DR",
-                "junction_path" : f"/{source['volume']['name']}"
             }
+            destination["volume"]["junction_path"] = f"/{destination['volume']['name']}"
 
             if service == "smb":
                 log("Set destination cifs share")
@@ -132,6 +132,7 @@ def run_module():
                 log("Set destination export policy")
                 destination["export_policy"] = source["export_policy"]
                 destination["volume"]["export_policy"] = destination["export_policy"]["name"]
+
 
             destination["snapmirror"] = {
                 "conditions": {
