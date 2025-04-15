@@ -26,7 +26,8 @@
       gather_subset:
       - aggregate_info
       fields: 
-      - "*"
+      - name
+      - space.block_storage
     register: result
 
   - debug: var=result
