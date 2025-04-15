@@ -103,7 +103,7 @@ def run_module():
             }
             source["export_policy"]["rules"] = []
             source["export_policy"]["rules"].append(rule)
-            source["volume"]["export_policy"] = source["export_policy"]["name"]
+            source["volume"]["export_policy"] = source["export_policy"]
 
         if is_dr and dr_type == "volume_dr":
 
@@ -131,7 +131,7 @@ def run_module():
             if service == "nfs" or service == "vmw":
                 log("Set destination export policy")
                 destination["export_policy"] = source["export_policy"]
-                destination["volume"]["export_policy"] = destination["export_policy"]["name"]
+                destination["volume"]["export_policy"] = destination["export_policy"]
 
 
             destination["snapmirror"] = {
