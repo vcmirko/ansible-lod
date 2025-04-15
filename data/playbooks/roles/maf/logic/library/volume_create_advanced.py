@@ -76,81 +76,78 @@ def run_module():
             "name" : f"{location}_{environment}{service_level}_{service}_{customer}_{name}",
             "size" : size,
             "comment" : f"Created by Ansible playbook {change_request}",
-            "junction_path" : f"/{source["volume"]["name"]}"
+            "junction_path" : f"/{source['volume']['name']}"
         }
 
-    #     # if smb, add cifs share
-    #     if service == "smb":
-    #         source["cifs_share"] = {
-    #             "name" : f"{name}",
-    #             "path" : source["volume"]["junction_path"]
-    #         }
+        # if smb, add cifs share
+        if service == "smb":
+            source["cifs_share"] = {
+                "name" : f"{name}",
+                "path" : source["volume"]["junction_path"]
+            }
 
-    #     # if nfs, add export policy
-    #     if service == "nfs" or service == "vmw":
-    #         source["export_policy"] = {}
-    #         source["export_policy"]["name"] = f"xp_{name}"
+        # if nfs, add export policy
+        if service == "nfs" or service == "vmw":
+            source["export_policy"] = {}
+            source["export_policy"]["name"] = f"xp_{name}"
         
-    #         # auto add 0.0.0.0/0 to export policy for readonly
-    #         rule = {
-    #             "client_match" : "rhel1.demo.netapp.com",
-    #             "ro_rule" : "sys",
-    #             "rw_rule" : "sys",
-    #             "super_user_security" : "none"
-    #         }
-    #         source["export_policy"]["rules"] = []
-    #         source["export_policy"]["rules"].append(rule)
+            # auto add 0.0.0.0/0 to export policy for readonly
+            rule = {
+                "client_match" : "rhel1.demo.netapp.com",
+                "ro_rule" : "sys",
+                "rw_rule" : "sys",
+                "super_user_security" : "none"
+            }
+            source["export_policy"]["rules"] = []
+            source["export_policy"]["rules"].append(rule)
 
-        # if is_dr and dr_type == "volume_dr":
+        if is_dr and dr_type == "volume_dr":
 
-        #     destination["svm"] = {
-        #         "name" : f"{source["svm"]["name"]}_dr"
-        #     }
+            destination["svm"] = {
+                "name" : f"{source["svm"]["name"]}_dr"
+            }
 
-        #     destination["volume"] = {
-        #         "name" : f"{source["volume"]["name"]}",
-        #         "size" : size,
-        #         "comment" : f"Created by Ansible playbook {change_request} - DR",
-        #         "junction_path" : f"/{source["volume"]["name"]}"
-        #     }
+            destination["volume"] = {
+                "name" : f"{source["volume"]["name"]}",
+                "size" : size,
+                "comment" : f"Created by Ansible playbook {change_request} - DR",
+                "junction_path" : f"/{source['volume']['name']}"
+            }
 
-        #     if service == "smb":
-        #         destination["cifs_share"] = {
-        #             "name" : f"{name}",
-        #             "path" : destination["volume"]["junction_path"]
-        #         }
+            if service == "smb":
+                destination["cifs_share"] = {
+                    "name" : f"{name}",
+                    "path" : destination["volume"]["junction_path"]
+                }
 
-        #     if service == "nfs" or service == "vmw":
-        #         destination["volume"]["export_policy"] = {
-        #             "name" : f"xp_{name}"
-        #         }
-        #         destination["volume"]["export_policy"]=source["export_policy"]
+            if service == "nfs" or service == "vmw":
+                destination["volume"]["export_policy"] = {
+                    "name" : f"xp_{name}"
+                }
+                destination["volume"]["export_policy"]=source["export_policy"]
 
-        #     destination["snapmirror"] = {
-        #         "conditions": {
-        #             "state": "snapmirrored",
-        #             "transfer_state": "idle",
-        #         },
-        #         "source": {
-        #             "cluster": source["cluster"],
-        #             "svm": source["svm"],
-        #             "volume": {
-        #                 "name": source["volume"]["name"]
-        #             }
-        #         },
-        #         "destination": {
-        #             "cluster": destination["cluster"],
-        #             "svm": {
-        #                 "name": destination["svm"]["name"]
-        #             },
-        #             "volume": {
-        #                 "name": destination["volume"]["name"]
-        #             }
-        #         }
-        #     }
-
-
-
+            destination["snapmirror"] = {
+                "conditions": {
+                    "state": "snapmirrored",
+                    "transfer_state": "idle",
+                },
+                "source": {
+                    "cluster": source["cluster"],
+                    "svm": source["svm"],
+                    "volume": {
+                        "name": source["volume"]["name"]
+                    }
+                },
+                "destination": {
+                    "cluster": destination["cluster"],
+                    "svm": {
+                        "name": destination["svm"]["name"]
+                    },
+                    "volume": {
+                        "name": destination["volume"]["name"]
+                    }
+                }
+            }
 
 
     except Exception as e:
