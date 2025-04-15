@@ -104,11 +104,11 @@ def run_module():
         if is_dr and dr_type == "volume_dr":
 
             destination["svm"] = {
-                "name" : f"{source["svm"]["name"]}_dr"
+                "name" : f"{source['svm']['name']}_dr"
             }
 
             destination["volume"] = {
-                "name" : f"{source["volume"]["name"]}",
+                "name" : f"{source['volume']['name']}",
                 "size" : size,
                 "comment" : f"Created by Ansible playbook {change_request} - DR",
                 "junction_path" : f"/{source['volume']['name']}"
