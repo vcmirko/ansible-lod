@@ -70,6 +70,8 @@
       volume_efficiency :        "{{ volume.volume_efficiency.volume_efficiency          | default(omit) }}"
       <<: *auth
     delegate_to: localhost
+    when:
+    - volume.volume_efficiency | default(false)
 
   # set compression / no rest support
   - name: "Set compression type [{{ volume.name }}]"
