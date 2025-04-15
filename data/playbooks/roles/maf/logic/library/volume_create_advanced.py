@@ -68,10 +68,11 @@ def run_module():
     try:
 
         # template
-        log("Set templates")
+        log("Set template")
         source["template"] = f"{service}_{service_level}"
 
         # create volume
+        log("Set source volume")
         source["volume"] = {
             "name" : f"{location}_{environment}{service_level}_{service}_{customer}_{name}",
             "size" : size,
@@ -81,6 +82,7 @@ def run_module():
 
         # if smb, add cifs share
         if service == "smb":
+            log("Set source cifs share")
             source["cifs_share"] = {
                 "name" : f"{name}",
                 "path" : source["volume"]["junction_path"]
@@ -88,6 +90,7 @@ def run_module():
 
         # if nfs, add export policy
         if service == "nfs" or service == "vmw":
+            log("Set source export policy")
             source["export_policy"] = {}
             source["export_policy"]["name"] = f"xp_{name}"
         
@@ -100,13 +103,17 @@ def run_module():
             }
             source["export_policy"]["rules"] = []
             source["export_policy"]["rules"].append(rule)
+            source["volume"]["export_policy"] = source["export_policy"]["name"]
 
         if is_dr and dr_type == "volume_dr":
 
+            log("Dr detected")
+            log("Set destination svm")
             destination["svm"] = {
                 "name" : f"{source['svm']['name']}_dr"
             }
 
+            log("Set destination volume")
             destination["volume"] = {
                 "name" : f"{source['volume']['name']}",
                 "size" : size,
@@ -115,16 +122,16 @@ def run_module():
             }
 
             if service == "smb":
+                log("Set destination cifs share")
                 destination["cifs_share"] = {
                     "name" : f"{name}",
                     "path" : destination["volume"]["junction_path"]
                 }
 
             if service == "nfs" or service == "vmw":
-                destination["volume"]["export_policy"] = {
-                    "name" : f"xp_{name}"
-                }
-                destination["volume"]["export_policy"]=source["export_policy"]
+                log("Set destination export policy")
+                destination["export_policy"] = source["export_policy"]
+                destination["volume"]["export_policy"] = destination["export_policy"]["name"]
 
             destination["snapmirror"] = {
                 "conditions": {
