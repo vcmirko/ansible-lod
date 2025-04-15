@@ -251,8 +251,7 @@
   playbook: test_create_lod_volume_advanced.yml
   showHelp: true
   help: |
-    This form will create a volume into an svm, but also cifs share, export, ...  
-    It allows dr as well
+    This form will create a volume into an svm, but also cifs share, export, ...
   description: ""
   roles:
     - public
@@ -264,35 +263,6 @@
     ontap: ontap_rest
     aiqum: aiqum_rest
   fields:
-    - name: isDr
-      label: Enable DR
-      line: dr
-      type: checkbox
-      model: vars_external.meta.is_dr
-    - name: dr_type
-      type: expression
-      runLocal: true
-      label: DR Type
-      line: dr
-      expression: "((x=0)=>{return (x==1)?'svm_dr':'volume_dr'})($(snapmirrorDestinations))"
-      model: vars_external.meta.dr_type
-      dependencies:
-      - name: isDr
-        values: 
-        - true
-    - name: hasDr
-      type: expression
-      runLocal: true
-      label: Has Dr
-      line: dr
-      expression: "((x=0)=>{return x==1})($(drSvm))"
-      dependencies:
-      - name: isDr
-        values: 
-        - true
-      regex:
-        expression: "true"
-        description: "This svm has no DR enabled"
     - name: location
       label: Location
       type: enum
@@ -442,7 +412,7 @@
       dependencies:
         - name: customer
           isValid: true
-      hide: false
+      hide: true
       noOutput: true    
     - name: volume
       type: text
@@ -463,6 +433,18 @@
       default: 5
       model: vars_external.meta.size
       line: volume
+    - name: drType
+      type: expression
+      hide: true
+      runLocal: true
+      expression: "((x=0)=>{return (x==1)?'svm_dr':'volume_dr'})($(snapmirrorDestinations))"
+      model: vars_external.meta.dr_type
+    - name: isDr
+      type: expression
+      runLocal: true
+      hide: true
+      expression: "((x=0)=>{return x==1})($(drSvm))"
+      model: vars_external.meta.is_dr  
 
 
 - name: Resize volume advanced
