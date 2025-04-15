@@ -13,6 +13,8 @@ categories:
     icon: heart
   - name: Maintenance
     icon: cogs
+  - name: Examples
+    icon: eye
 roles:
   - name: admin
     groups:
@@ -320,46 +322,4 @@ forms:
             values:
               - true
         group: Let's do it
-  - name: Expression Queries
-    showHelp: true
-    help: >
-      This demo grabs information, using various builtin functions.
-      [Read more here](https://github.com/ansibleguy76/ansibleforms/wiki/3.-FAQ#advanced-functions)
-    roles:
-      - public
-    description: An example of the power of expression based queries
-    categories:
-      - Demo
-      - Expressions
-      - Queries
-    tileClass: has-background-warning-light
-    playbook: dummy.yaml
-    inventory: ""
-    type: ansible
-    fields:
-      - type: enum
-        name: user
-        label: Data with Rest (live from internet)
-        default: __auto__
-        required: true
-        outputObject: true
-        multiple: false
-        icon: user
-        expression: fn.fnRestBasic('get','https://gorest.co.in/public/v1/users','','','[.data[]]')
-        columns:
-          - name
-          - email
-        valueColumn: id
-        previewColumn: name
-      - type: enum
-        expression: fn.fnReadYamlFile('/app/dist/persistent/forms.yaml','[.forms[]]')
-        name: forms
-        multiple: true
-        outputObject: false
-        label: Data from Yaml (reading our own forms.yaml)
-        default: __auto__
-        required: false
-        icon: building
-        columns:
-          - name
-          - type
+
