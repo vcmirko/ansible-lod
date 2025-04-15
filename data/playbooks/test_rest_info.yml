@@ -25,6 +25,8 @@
       use_python_keys: true
       gather_subset:
       - aggregate_info
+      fields: 
+      - "*"
     register: result
 
   - debug: var=result
