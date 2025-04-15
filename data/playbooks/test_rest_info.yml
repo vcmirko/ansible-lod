@@ -1,0 +1,33 @@
+---
+- name: "Setup lod"
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars:
+  tasks:
+
+  - netapp.ontap.na_ontap_info:
+      hostname: "cluster1.demo.netapp.com"
+      username: "admin"
+      password: "Netapp1!"
+      https: true
+      validate_certs: false
+      use_rest: Never
+      gather_subset:
+      - aggregate_info
+    register: result
+
+  - debug: var=result
+
+  - netapp.ontap.na_ontap_info_rest:
+      hostname: "cluster1.demo.netapp.com"
+      username: "admin"
+      password: "Netapp1!"
+      https: true
+      validate_certs: false
+      use_rest: Always
+      gather_subset:
+      - aggregate_info
+    register: result
+
+  - debug: var=result
