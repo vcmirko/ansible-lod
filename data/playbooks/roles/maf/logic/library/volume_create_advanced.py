@@ -67,17 +67,17 @@ def run_module():
     #  # apply logic
     try:
 
-    #     # template
-    #     log("Set templates")
-    #     source["template"] = f"{service}_{service_level}"
+        # template
+        log("Set templates")
+        source["template"] = f"{service}_{service_level}"
 
-    #     # create volume
-    #     source["volume"] = {
-    #         "name" : f"{location}_{environment}{service_level}_{service}_{customer}_{name}",
-    #         "size" : size,
-    #         "comment" : f"Created by Ansible playbook {change_request}",
-    #         "junction_path" : f"/{source["volume"]["name"]}"
-    #     }
+        # create volume
+        source["volume"] = {
+            "name" : f"{location}_{environment}{service_level}_{service}_{customer}_{name}",
+            "size" : size,
+            "comment" : f"Created by Ansible playbook {change_request}",
+            "junction_path" : f"/{source["volume"]["name"]}"
+        }
 
     #     # if smb, add cifs share
     #     if service == "smb":
@@ -149,7 +149,7 @@ def run_module():
         #         }
         #     }
 
-        pass
+
 
 
 
