@@ -28,7 +28,6 @@
       state: present
       vserver:                 "{{ svm.name }}"    
       name:                    "{{ volume.name }}"
-      type                            : "{{ volume.type                           | default(omit) }}"
       is_online                       : "{{ volume.is_online                      | default(omit) }}"
       activity_tracking               : "{{ volume.activity_tracking              | default(omit) }}"
       analytics                       : "{{ volume.analytics                      | default(omit) }}"
