@@ -1,0 +1,14 @@
+- name: userManagement.yaml
+  hosts: "localhost"
+  become: false
+  gather_facts: false
+  vars_files:
+    - "vars/defaults.yml"
+    - "vars/templates.yml"    
+    - "vars/overrides.yml"
+  roles:
+    - { role: facts, qtask: credentials }
+    - { role: maf/logic, qtask: bypass}
+    - { role: ontap/users, qtask: facts }
+    - { role: ontap/users, qtask: create_roles }
+    - { role: ontap/users, qtask: create_local }

@@ -50,19 +50,19 @@ def run_module():
     ve             = module.params['vars_external']
     meta           = ve.get("meta", {})
 
-    # location       = meta.get("location", "").lower()
-    # environment    = meta.get("environment", "").lower()
-    # service        = meta.get("service", "").lower()
-    # service_level  = meta.get("service_level", "")
-    # change_request = meta.get("change_request", "")
-    # customer       = meta.get("customer", "").lower()
-    # name           = meta.get("name", "").lower()
-    # size           = meta.get("size", "")
-    # is_dr          = meta.get("is_dr", False)
-    # dr_type        = meta.get("dr_type", "svm_dr")
+    location       = meta.get("location", "").lower()
+    environment    = meta.get("environment", "").lower()
+    service        = meta.get("service", "").lower()
+    service_level  = meta.get("service_level", "")
+    change_request = meta.get("change_request", "")
+    customer       = meta.get("customer", "").lower()
+    name           = meta.get("name", "").lower()
+    size           = meta.get("size", "")
+    is_dr          = meta.get("is_dr", False)
+    dr_type        = meta.get("dr_type", "svm_dr")
 
-    # source         = ve.get("source", {})
-    # destination    = ve.get("destination", {})
+    source         = ve.get("source", {})
+    destination    = ve.get("destination", {})
 
     #  # apply logic
     try:

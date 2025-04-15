@@ -13,27 +13,27 @@
     - { role: maf/facts, qtask: credentials }  
     - { role: maf/logic, qtask: volume_create_advanced }
 
-    - { role: ontap/export_policy, qtask: facts, qchild: source }
-    - { role: ontap/export_policy, qtask: create, qchild: source }
-    - { role: ontap/volume, qtask: facts, qchild: source }
-    - { role: ontap/volume, qtask: create, qchild: source }
-    - { role: ontap/cifs_share, qtask: facts, qchild: primary }
-    - { role: ontap/cifs_share, qtask: create, qchild: primary }
+    # - { role: ontap/export_policy, qtask: facts, qchild: source }
+    # - { role: ontap/export_policy, qtask: create, qchild: source }
+    # - { role: ontap/volume, qtask: facts, qchild: source }
+    # - { role: ontap/volume, qtask: create, qchild: source }
+    # - { role: ontap/cifs_share, qtask: facts, qchild: primary }
+    # - { role: ontap/cifs_share, qtask: create, qchild: primary }
 
-    - { role: ontap/export_policy, qtask: facts, qchild: destination }
-    - { role: ontap/export_policy, qtask: create, qchild: destination }
-    - { role: ontap/volume, qtask: facts, qchild: destination }
-    - { role: ontap/volume, qtask: create_dp, qchild: destination }
-    - { role: ontap/snapmirror, qtask: facts, qchild: destination }
-    - { role: ontap/snapmirror, qtask: create, qchild: destination }
-    - { role: ontap/snapmirror, qtask: wait_for_condition, qchild: destination }
-    - { role: ontap/volume, qtask: facts, qchild: destination }
-    - { role: ontap/volume, qtask: modify, qchild: destination }
-    - { role: ontap/cifs_share, qtask: facts, qchild: destination }
-    - { role: ontap/cifs_share, qtask: create, qchild: destination }
+    # - { role: ontap/export_policy, qtask: facts, qchild: destination }
+    # - { role: ontap/export_policy, qtask: create, qchild: destination }
+    # - { role: ontap/volume, qtask: facts, qchild: destination }
+    # - { role: ontap/volume, qtask: create_dp, qchild: destination }
+    # - { role: ontap/snapmirror, qtask: facts, qchild: destination }
+    # - { role: ontap/snapmirror, qtask: create, qchild: destination }
+    # - { role: ontap/snapmirror, qtask: wait_for_condition, qchild: destination }
+    # - { role: ontap/volume, qtask: facts, qchild: destination }
+    # - { role: ontap/volume, qtask: modify, qchild: destination }
+    # - { role: ontap/cifs_share, qtask: facts, qchild: destination }
+    # - { role: ontap/cifs_share, qtask: create, qchild: destination }
 
-    - { role: aiqum/management, qtask: facts, qchild: source }
-    - { role: aiqum/management, qtask: rediscover, qchild: source }    
-    - { role: aiqum/management, qtask: facts, qchild: destination }
-    - { role: aiqum/management, qtask: rediscover, qchild: destination }    
+    # - { role: aiqum/management, qtask: facts, qchild: source }
+    # - { role: aiqum/management, qtask: rediscover, qchild: source }    
+    # - { role: aiqum/management, qtask: facts, qchild: destination }
+    # - { role: aiqum/management, qtask: rediscover, qchild: destination }    
 
