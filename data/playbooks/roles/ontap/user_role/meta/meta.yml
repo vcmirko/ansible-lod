@@ -1,4 +1,4 @@
 role:
-  description: "Manage Netapp aggregates"
+  description: "Manage Netapp user roles"
   supports_multi: True
   key: "name"

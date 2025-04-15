@@ -249,3 +249,12 @@ vars_templates:
       - name: qtree2
         security_style: unix
         unix_permissions: 777
+  ad_user:
+    user:
+      application_dicts:
+      - application: http
+        authentication_methods: domain
+      - application: ontapi
+        authentication_methods: domain
+      - application: ssh
+        authentication_methods: domain      

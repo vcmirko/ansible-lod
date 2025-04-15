@@ -1,0 +1,35 @@
+---
+- name: "Role - ontap/user_role/create"
+  block:
+  - name: Set authentication facts
+    no_log: true
+    set_fact:
+      auth: &auth
+        hostname: "{{ auth_rest.hostname | default(omit) }}"
+        username: "{{ auth_rest.username | default(omit) }}"
+        password: "{{ auth_rest.password | default(omit) }}"
+        key_filepath: "{{ auth_rest.key_filepath | default(omit) }}"
+        cert_filepath: "{{ auth_rest.cert_filepath | default(omit) }}"
+        validate_certs: "{{ auth_rest.validate_certs | default(false) }}"
+        https: "{{ auth_rest.https | default(true) }}"
+        use_rest: always
+
+  #logging
+  - name: Logging
+    set_fact:
+      l_create: "{{ user_role | to_nice_yaml(2) | indent(2,true) | do_log('ontap/user_role/create','user_role',qlogname) }}"
+
+  - name: "create user role {{ user_role.name }}"               
+    netapp.ontap.na_ontap_user_role:
+      state                  : present
+      vserver                : "{{ svm.name | default(omit) }}"
+      name                   : "{{ user_role.name }}"
+      access_level           : "{{ user_role.access_level           | default(omit) }}"
+      command_directory_name : "{{ user_role.command_directory_name | default(omit) }}"
+      password               : "{{ user_role.password               | default(omit) }}"
+      privileges             : "{{ user_role.privileges             | default(omit) }}"
+      query                  : "{{ user_role.query                  | default(omit) }}"
+      <<: *auth
+    delegate_to: localhost
+
+  when: user_role.name | default(false)

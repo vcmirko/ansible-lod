@@ -23,13 +23,22 @@
 
   - name: "Create user [{{ user.name }}]"               
     netapp.ontap.na_ontap_user:
-      state                  : present
-      vserver                : "{{ svm.name | default(omit) }}"
-      name                   : "{{ user.name }}"
-      role_name              : "{{ user.role_name               | default(omit) }}"
-      authentication_password: "{{ user.authentication_password | default(omit) }}"
-      application_strs       : "{{ user.application_strs        | default(omit) }}"
-      authentication_method  : "{{ user.authentication_method   | default(omit) }}"
+      state                            : present
+      vserver                          : "{{ svm.name | default(omit) }}"
+      name                             : "{{ user.name }}"
+      role_name                        : "{{ user.role_name                         | default(omit) }}"
+      authentication_password          : "{{ user.authentication_password           | default(omit) }}"
+      application_strs                 : "{{ user.application_strs                  | default(omit) }}"
+      authentication_method            : "{{ user.authentication_method             | default(omit) }}"
+      application_dicts                : "{{ user.application_dicts                 | default(omit) }}"
+      application_protocol             : "{{ user.application_protocol              | default(omit) }}"
+      engine_id                        : "{{ user.engine_id                         | default(omit) }}"
+      lock_user                        : "{{ user.lock_user                         | default(omit) }}"
+      privacy_password                 : "{{ user.privacy_password                  | default(omit) }}"
+      privacy_protocol                 : "{{ user.privacy_protocol                  | default(omit) }}"
+      remote_switch_ipaddress          : "{{ user.remote_switch_ipaddress           | default(omit) }}"
+      replace_existing_apps_and_methods: "{{ user.replace_existing_apps_and_methods | default(omit) }}"
+      set_password                     : "{{ user.set_password                      | default(omit) }}"
       <<: *auth
     no_log: true
     delegate_to: localhost
