@@ -17,8 +17,8 @@
     - { role: ontap/export_policy, qtask: create, qchild: source }
     - { role: ontap/volume, qtask: facts, qchild: source }
     - { role: ontap/volume, qtask: create, qchild: source }
-    - { role: ontap/cifs_share, qtask: facts, qchild: primary }
-    - { role: ontap/cifs_share, qtask: create, qchild: primary }
+    - { role: ontap/cifs_share, qtask: facts, qchild: source }
+    - { role: ontap/cifs_share, qtask: create, qchild: source }
 
     - { role: ontap/export_policy, qtask: facts, qchild: destination }
     - { role: ontap/export_policy, qtask: create, qchild: destination }
