@@ -50,56 +50,56 @@ def run_module():
     ve             = module.params['vars_external']
     meta           = ve.get("meta", {})
 
-    location       = meta.get("location", "").lower()
-    environment    = meta.get("environment", "").lower()
-    service        = meta.get("service", "").lower()
-    service_level  = meta.get("service_level", "")
-    change_request = meta.get("change_request", "")
-    customer       = meta.get("customer", "").lower()
-    name           = meta.get("name", "").lower()
-    size           = meta.get("size", "")
-    is_dr          = meta.get("is_dr", False)
-    dr_type        = meta.get("dr_type", "svm_dr")
+    # location       = meta.get("location", "").lower()
+    # environment    = meta.get("environment", "").lower()
+    # service        = meta.get("service", "").lower()
+    # service_level  = meta.get("service_level", "")
+    # change_request = meta.get("change_request", "")
+    # customer       = meta.get("customer", "").lower()
+    # name           = meta.get("name", "").lower()
+    # size           = meta.get("size", "")
+    # is_dr          = meta.get("is_dr", False)
+    # dr_type        = meta.get("dr_type", "svm_dr")
 
-    source         = ve.get("source", {})
-    destination    = ve.get("destination", {})
+    # source         = ve.get("source", {})
+    # destination    = ve.get("destination", {})
 
-     # apply logic
+    #  # apply logic
     try:
 
-        # template
-        log("Set templates")
-        source["template"] = f"{service}_{service_level}"
+    #     # template
+    #     log("Set templates")
+    #     source["template"] = f"{service}_{service_level}"
 
-        # create volume
-        source["volume"] = {
-            "name" : f"{location}_{environment}{service_level}_{service}_{customer}_{name}",
-            "size" : size,
-            "comment" : f"Created by Ansible playbook {change_request}",
-            "junction_path" : f"/{source["volume"]["name"]}"
-        }
+    #     # create volume
+    #     source["volume"] = {
+    #         "name" : f"{location}_{environment}{service_level}_{service}_{customer}_{name}",
+    #         "size" : size,
+    #         "comment" : f"Created by Ansible playbook {change_request}",
+    #         "junction_path" : f"/{source["volume"]["name"]}"
+    #     }
 
-        # if smb, add cifs share
-        if service == "smb":
-            source["cifs_share"] = {
-                "name" : f"{name}",
-                "path" : source["volume"]["junction_path"]
-            }
+    #     # if smb, add cifs share
+    #     if service == "smb":
+    #         source["cifs_share"] = {
+    #             "name" : f"{name}",
+    #             "path" : source["volume"]["junction_path"]
+    #         }
 
-        # if nfs, add export policy
-        if service == "nfs" or service == "vmw":
-            source["export_policy"] = {}
-            source["export_policy"]["name"] = f"xp_{name}"
+    #     # if nfs, add export policy
+    #     if service == "nfs" or service == "vmw":
+    #         source["export_policy"] = {}
+    #         source["export_policy"]["name"] = f"xp_{name}"
         
-            # auto add 0.0.0.0/0 to export policy for readonly
-            rule = {
-                "client_match" : "rhel1.demo.netapp.com",
-                "ro_rule" : "sys",
-                "rw_rule" : "sys",
-                "super_user_security" : "none"
-            }
-            source["export_policy"]["rules"] = []
-            source["export_policy"]["rules"].append(rule)
+    #         # auto add 0.0.0.0/0 to export policy for readonly
+    #         rule = {
+    #             "client_match" : "rhel1.demo.netapp.com",
+    #             "ro_rule" : "sys",
+    #             "rw_rule" : "sys",
+    #             "super_user_security" : "none"
+    #         }
+    #         source["export_policy"]["rules"] = []
+    #         source["export_policy"]["rules"].append(rule)
 
         # if is_dr and dr_type == "volume_dr":
 
@@ -149,7 +149,7 @@ def run_module():
         #         }
         #     }
 
-
+        pass
 
 
 
