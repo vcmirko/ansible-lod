@@ -32,8 +32,8 @@
     - { role: ontap/cifs_share, qtask: facts, qchild: destination }
     - { role: ontap/cifs_share, qtask: create, qchild: destination }
 
-    # - { role: aiqum/management, qtask: facts, qchild: source }
-    # - { role: aiqum/management, qtask: rediscover, qchild: source }    
-    # - { role: aiqum/management, qtask: facts, qchild: destination }
-    # - { role: aiqum/management, qtask: rediscover, qchild: destination }    
+    - { role: aiqum/management, qtask: facts, qchild: source }
+    - { role: aiqum/management, qtask: rediscover, qchild: source }    
+    - { role: aiqum/management, qtask: facts, qchild: destination }
+    - { role: aiqum/management, qtask: rediscover, qchild: destination }    
 
